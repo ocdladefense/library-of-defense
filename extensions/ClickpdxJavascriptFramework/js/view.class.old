@@ -1,0 +1,110 @@
+(function(window,undefined){
+
+function View(options){
+	this.options = options;
+	this.rootSelector = options.rootSelector || document;
+	this.module = options.module;
+	this.isReady = false;
+}
+
+View.prototype = {
+	constructor: View,
+
+	
+
+	evts: [],
+
+	defaultEvent: 'click',
+	
+	_init: function(){
+		this.init();
+		this.bindActions();
+		this.evts.forEach((name) => { document.addEventListener(name,this.evtCallbacks[name].bind(this),false); });
+		this.isReady = true;
+	},
+	
+	trigger: function(evt,msg,data){
+		// This way the view can listen for these Events
+		var evt = new CustomEvent(evt, { 'detail': {message:msg,data:data} });
+		document.dispatchEvent(evt);
+	},
+	
+	bindActions: function(){
+		var rootElem = !!this.rootSelector.nodeType ? this.rootSelector : document.getElementById(this.rootSelector);
+		var actions = rootElem.querySelectorAll('*[data-module='+this.module+'][data-method]');
+		for(var i=0;i<actions.length;i++){
+			if(actions[i].dataset && actions[i].dataset.method){
+				let func = !!this[actions[i].dataset.method]?this[actions[i].dataset.method].bind(this): this['notSupported'].bind(this,actions[i].dataset.method);
+				let evt = !!actions[i].dataset.event?actions[i].dataset.event:this.defaultEvent;
+				actions[i].addEventListener(evt,function(e){
+					/*e.preventDefault();e.stopPropagation();*/
+					 try { return func(e); } catch(err){ console.log(err); }
+				},true);
+				actions[i].addEventListener('touchstart',function(e){
+					/*e.preventDefault();e.stopPropagation();*/
+					 try { return func(e); } catch(err){ console.log(err); }
+				},true);
+			}
+		}
+	},
+
+	notSupported: function(method){
+		alert('The method '+method+' is not defined for this application.');
+		return false;
+	},
+
+	getRemoteTemplate: function(templateId) {
+		jQuery.ajax({url:'https://membertest.ocdla.org/sites/default/modules/salesorder/templates/'+templateId+'.html',
+			success:function(data){
+				var head = document.getElementsByTagName('head')[0];
+				var script = document.createElement('script');
+				script.setAttribute('type','text/template');
+				var text = document.createTextNode(data);
+				script.appendChild(text);
+				head.appendChild(script);
+			},
+			error:function(self,status,e){
+				alert(status+': '+e);
+			}
+		});
+	},
+	/**
+	 * var data = must be an object
+	 * var template = must be a string
+	 */
+	parse: function(templateId,data){		
+		var tstring = document.getElementById(templateId).innerHTML;
+		for(var i in data) {
+			var replacement = data[i]||'';
+			tstring = tstring.replace(new RegExp('\\{\\{\\s*'+i+'\\s*\\}\\}','gi'),replacement);
+		}
+		tstring = tstring.replace(new RegExp('\\{\\{(.*?)\\}\\}','gi'),'');
+		return tstring;
+	},
+	
+	parseString: function(tstring,data){	
+		if(data) {	
+			for(var i in data) {
+				var replacement = data[i]||'';
+				tstring = tstring.replace(new RegExp('\\{\\{\\s*'+i+'\\s*\\}\\}','gi'),data[i]);
+			}
+			console.log(tstring);
+		}
+		tstring = tstring.replace(new RegExp('\\{\\{(.*?)\\}\\}','gi'),'');
+		return tstring;
+	}
+};
+
+
+var extend = function(options,methods){
+	var c = new View(options);
+	// console.log(c.prototype);
+	for(var i in methods){
+		c[i] = methods[i];
+	}
+	return c;
+};
+
+	window.extendView = extend;
+
+})(window,undefined);

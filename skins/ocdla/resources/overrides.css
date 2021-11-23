@@ -1,0 +1,313 @@
+.mw-customtoggle-sections {
+	display:none;
+}
+.no-cellspacing td {
+	margin:0px;
+}
+
+#right-navigation {
+	margin-right:100px;
+}
+.no-cellpaddin td {
+	padding:0px;
+}
+div.tright, table.floatright, div.floatright {
+	float:right;
+}
+
+td#main-blog {
+	width: 65%;
+	border: 0px;
+	padding-left:0px;
+	padding-top:0px !important;
+}
+#main-cases {
+	border-left: 3px solid #16759A;
+	padding:1em;
+	padding-top:0px;
+}
+#main-blog .editsection, #main-cases .editsection {
+	display:none;
+}
+
+.page-Welcome_to_The_Library #contentSub {
+	margin:0px 0px;
+}
+
+.wikitable.menu-right {
+	margin:0px;
+	padding:1em 0 1em 1em;
+	border-left:1px solid #ccc;
+	margin-left:15px;
+}
+
+/**
+ * Below can be used for versions of IE that display
+ * these pages in compatibility mode
+ */
+/*
+div#submast ul.submastlinks {
+	width:90%;
+}
+div#submast ul.submastlinks li {
+	width:auto;
+	display:block;
+	float:left;
+}
+div#mw-panel {
+	left:0px;
+}
+/**
+ * CSS declarations for mobile devices
+ *
+ **/
+@media only screen and (max-width:480px) {
+	* {
+		/*margin:0 !important;*/
+		/*padding:0 !important;*/
+		float:none;
+	}
+	html, body {
+		height:auto;
+		width:auto;
+	}
+	body {
+		background-image:none;
+		background-color:transparent;
+	}
+	
+	#right-navigation {
+		margin-right:0px;
+	}
+	#p-personal li[id|=pt], #left-navigation li[id|=ca] {
+		display:none;
+	}
+
+	h1, h2 {
+		margin-top:1.4em !important;
+		overflow:visible;
+		
+	}
+	
+	/** Masthead **/
+	
+	div#masthead .masthead_link {
+		display: inline-block;
+		float: none;
+		height: 75px;
+		left: 0;
+		top: 0;
+		width: auto;
+	}
+	div#masthead .masthead_filler {
+		background: none repeat scroll 0 0 #4586A4;
+		height: 75px;
+		margin-left: 0px;
+		display:none;
+	}
+	
+	/** Sections drop-down **/
+	.mw-customtoggle-sections {
+		padding-right:15px !important;
+		background-image:url('/skins/lod/images/toggle_up_icon_9x5.gif');
+		background-repeat:no-repeat;
+		background-position:right center;
+	}
+	
+	.portal ul>li:nth-child(even){
+		padding-left:15px !important;
+		border-left:1px solid #ccc;
+	}​
+
+	
+	.mw-search-results li {
+		margin-top:1.0em !important;
+	}
+	.mw-customtoggle-sections {
+		display:block;
+	}
+	#main-cases {
+		display:none;
+	}
+	div#wrapper {
+		/*padding:5px !important;*/
+	}
+	/* so personal links can be properly positioned absolutely */
+	#wiki-wrapper {
+		position:relative;
+		padding-left: 5% !important;
+		padding-right: 5% !important;
+		position: relative;
+		width: 90%;
+	}
+	#mw-page-base, #mw-head-base {
+		display:none;
+	}
+	div#mw-head {
+		right:auto;
+		left:0px;
+		top:0px;
+		position:static;
+	}
+	#mw-head a, #mw-head img {
+		display:block;
+	}
+	#p-personal {
+		position:static;
+	}
+	#p-personal li {
+		margin-bottom:0.2em;
+	}
+	#p-personal li[id|=pt] {
+		display:none;
+	}
+	#p-personal li#pt-userpage,
+	#p-personal li#pt-logout,
+	#p-personal li#pt-anonlogin {
+		display:block;
+	}
+	#left-navigation {
+		position:static;
+	}
+	#right-navigation {
+		display:none;
+	}
+	div.vectorTabs {
+		float:none;
+		height:auto;
+		background-image:none;
+	}
+	div.vectorTabs ul {
+		float:none;
+		height:auto;
+	}
+	div.vectorTabs ul li {
+		float:none;
+		height:auto;
+	}
+	div#masthead {
+		width:auto;
+		height:auto;
+		position:static;
+		display:block;
+		background-size:cover;
+		background-color:#4586A4;
+	}
+	div#masthead .header_link {
+		display:none;
+	}
+	div#submast {
+		width:auto;
+		height:auto;
+		line-height:auto;
+		display:none;
+	}
+	div#submast ul.submastlinks {
+		display:block;
+		float:none;
+		left:auto;
+		line-height:1.4em;
+		top:auto;
+	}
+	div#submast ul.submastlinks li {
+		display:block;
+		font-size:inherit;
+	}
+	div#mw-panel {
+		position:static;
+		/*height:10px;*/
+		top:auto;
+		padding-top:auto;
+		padding-left:auto;
+		overflow:hidden;
+		width:100%;
+	}
+	
+	div#content {
+		margin-left:auto;
+		position:static;
+		top:200px;
+	}
+	
+	#main-blog {
+		width: auto;
+		border: 0px;
+		padding: 0px;
+		margin:0px;
+	}
+	.wl-entry {
+		margin-top:1.0em !important;
+	}
+	#main-cases {
+	
+	}
+	/** content/articles **/
+	#mw-content-text #toc {
+		display:none;
+	}
+	.menu-right {
+		display:none;
+	}
+	
+	
+	/** search **/
+	#p-search {
+		float:none;
+		margin-left:auto;
+		margin-right:auto;
+	}
+	div#simpleSearch {
+		width:auto;
+	}
+	div.bodySearchBtnGo {
+		display:block;
+	}
+	/** links **/
+	.mw-content-ltr .editsection, .mw-content-rtl .mw-content-ltr .editsection {
+		float:right;
+		position:static;
+	}
+	#p-personal li {
+		float:none;
+		margin-left:0px;
+	}
+	div#footer {
+		margin:0px;
+		padding:0px;
+	}
+	li {
+		margin-bottom:1.4em;
+	}
+	div#mw-panel div.portal h5 {
+		clear:both;
+		font-size:0.9em;
+		padding-top:15px !important;
+	}
+	div#mw-panel div.portal {
+/*		margin-top:20px !important;*/
+	}
+	div#mw-panel div.portal div.body ul li {
+		float: left;
+		font-size: 0.8em;
+		height: 1.4em;
+		line-height: 1.2em;
+		text-transform: uppercase;
+		width: 45%;
+		padding-top:2px !important;
+		padding-bottom:2px !important;
+    float: left;
+    font-size: 0.8em;
+    line-height: 2em;
+    min-height: 25px;
+    padding-bottom: 2px !important;
+    padding-top: 2px !important;
+    text-transform: uppercase;
+    width: 45%;
+	}
+	#mw-customcollapsible-sections {
+	   border-left: 1px solid #AAAAAA;
+		margin-left: 10px;
+		margin-top: 0;
+		padding-left: 5px !important;
+	}
+}

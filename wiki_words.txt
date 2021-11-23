@@ -1,0 +1,107 @@
+affirmed without opinion > AWOP
+aggravated > agg
+alternative community service > ACS
+alternative incarceration programs > AIP
+appellate court > COA
+assault > aslt
+attempted > att
+attorney general > AG
+childrens services > CSD
+civ comp > civcomp
+civil compromise > civcomp
+Code of Federal Regulations > CFR
+court > ct
+court appointed attorney > CAA
+court of appeals > COA
+credit for time served > CTS
+crimes involving moral turpitude > CIMT
+criminal > crim
+cross examination > cross
+DA > prosecutor
+dangerous offender > DO
+delivery of a controlled substance > DCS
+department of corrections > DOC
+Department of Human Services > DHS
+Department of Motor Vehicles > DMV
+domestic violence > DV
+district attorney > DA
+prosecutor > DA
+DUI > DUII
+DWI > DUII
+driving under the influence > DUII
+driving while revoked > DWR
+driving while suspended > DWS
+encouraging child sex abuse > ECSA
+evaluation > eval
+failure to appear > FTA 
+false information to a police officer > FIPO
+felony > fel
+first degree > I
+fourth degree > IV
+grand jury > GJ
+guilty except insane > GBI
+GEI > GBI
+House Bill > HB
+identification > ID
+Indian Child Welfare Act > ICWA
+interfering with a police officer > IPO
+interfering with public transportation > IPT
+judgment > judgement
+lawful permanent resident > LPR
+Manufacture of a controlled substance > MCS
+maximum > max
+Measure > M
+Measure 11 > M11
+mens > mensrea
+mens rea > mensrea
+methamphetamine > meth
+misdemeanor > misdo
+motion for judgment of acquittal > mjoa
+motion to suppress > MTS
+negligent > neg
+no contest > NC
+Office of Public Defense Services > OPDS
+oregon administrative rule > OAR
+oregon administrative rules > OARs
+Oregon Criminal Defense Lawyers Association > OCDLA
+Oregon Evidence Code > OEC
+Oregon revised statute > ORS
+Oregon rule of civil procedure > ORCP
+Oregon rule of professional conduct > ORPC
+Oregon State Hospital > OSH
+Oregon Supreme Court > OSC
+plead > pled
+Portland police > PPB 
+possession of a controlled substance > PCS
+PSMV > PSV
+possession of a stolen vehicle > PSV
+Post-conviction relief > PCR
+post-prison supervision > PPS
+post-traumatic stress disorder > PTSD
+probable cause > PC
+probation officer > PO
+probation violation > PV
+psychiatric security review board > PSRB
+Public Defense Services Commission > PDSC
+reasonable suspicion > RS 
+repeat property offender > RePO
+robbery > rob
+second degree > II
+Senate Bill > SB
+set aside > expunge
+sex pen > sexpen
+sexual penetration > sexpen
+state unable to proceed > SUP
+statutory fines and assessments > SFA
+Supreme Court of the United States > SCOTUS
+termination of parental rights > TPR
+third degree > III
+traumatic brain injury > TBI
+UUMV > UUV
+unauthorized use of a vehicle > UUV
+united state supreme court > SCOTUS
+United States Supreme Court > USSC
+unlawful use of a weapon > UUW
+us supreme court > SCOTUS
+violation of a restraining order > VRO
+department > bureau

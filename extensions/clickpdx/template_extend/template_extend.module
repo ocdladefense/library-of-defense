@@ -1,0 +1,40 @@
+<?php
+
+function template_extend_theme($existing, $type, $theme, $path) {
+	return array(	
+		'node' => array(
+			'original hook' => 'node',
+		  'arguments' => array(
+		  	'node' => null,
+		  	'teaser' => false,
+		  	'page' => false,
+		  ),
+		  'path' => path_to_theme() . '/templates/node',
+		  'template' => 'node',
+		),
+	'block' => array(
+		'original hook' => 'block',
+		'path' => path_to_theme() .'/templates/block',
+	),
+		/*'page' => array(
+		
+		)
+		*/
+	);
+}
+
+function template_extend_theme_registry_alter( &$theme_registry ) {
+
+	
+	$theme_registry['page']['path'] = path_to_theme() .'/templates/page';
+	$theme_registry['block']['path'] = path_to_theme() .'/templates/block';
+	// $theme_registry['box']['path'] = path_to_theme() .'/templates/block';
+	// tail( $theme_registry['page'] );	
+	/*
+    [page] => Array
+        (
+            [template] => page
+            [path] => sites/default/themes/tinman
+            
+            */
+}

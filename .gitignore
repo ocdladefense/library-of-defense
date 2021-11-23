@@ -1,0 +1,53 @@
+search.php
+
+## Ignore random files
+phpinfo.php
+apc.php
+blah*
+cache/*
+index.html
+# index.php
+info.php
+error_log
+errorlog.txt
+profile_log.txt
+
+# ? - We don't know what core/ is
+core
+
+# Ignore robots
+robots.txt
+
+tmp/*.sql
+
+images/
+vendor/
+sites/
+
+# Keep all extensions in master repository for now.
+#   Delete extensions from development branch as we
+#   identify those that are no longer being used; or
+#    we replace extensions management into composer.json file.
+# extensions/
+
+## Ignore settings specific to the TEST/PROD sites.
+SiteSpecificSettings*
+LocalSettingsOverrides.php
+
+# Never copy over profiler settings used for debugging.
+StartProfiler.php
+xStartProfiler.php
+
+## Ignore any archives
+*.tar.gz
+*.tar
+*.gz
+
+## Keep images, PDFs and other uploaded assets
+# images/*
+tmp/*
+
+#
+*.log
+*.manifest
+*.appcache

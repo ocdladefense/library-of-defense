@@ -1,0 +1,145 @@
+.accordion li > a {
+	display: block;
+	position: relative;
+	min-width: 110px;
+	padding: 0 10px 0 0px;
+
+	color: #fdfdfd;
+	font: bold 12px/32px Arial, sans-serif;
+	text-decoration: none;
+	
+	/* text-shadow: 0px 1px 0px rgba(0,0,0, .35); */
+
+	/*
+	background: #6c6e74;
+	background: -moz-linear-gradient(top,  #6c6e74 0%, #4b4d51 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6c6e74), color-stop(100%,#4b4d51));
+	background: -webkit-linear-gradient(top,  #6c6e74 0%,#4b4d51 100%);
+	background: -o-linear-gradient(top,  #6c6e74 0%,#4b4d51 100%);
+	background: -ms-linear-gradient(top,  #6c6e74 0%,#4b4d51 100%);
+	background: linear-gradient(top,  #6c6e74 0%,#4b4d51 100%);
+	*/
+	-webkit-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .1);
+	-moz-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .1);
+	box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .1);
+}
+
+.accordion li > a span {
+	display: block;
+	position: absolute;
+	top: 7px;
+	right: 0;
+	padding: 0 10px;
+	margin-right: 10px;
+
+	font: normal bold 12px/18px Arial, sans-serif;
+	background: rgb(192,158,47);
+	color:#fff;
+
+	-webkit-border-radius: 15px;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+
+	-webkit-box-shadow: inset 1px 1px 1px rgba(0,0,0, .2), 1px 1px 1px rgba(255,255,255, .1);
+	-moz-box-shadow: inset 1px 1px 1px rgba(0,0,0, .2), 1px 1px 1px rgba(255,255,255, .1);
+	box-shadow: inset 1px 1px 1px rgba(0,0,0, .2), 1px 1px 1px rgba(255,255,255, .1);
+}
+
+
+
+
+
+.sub-menu li a {
+    color: #797979;
+    text-shadow: 1px 1px 0px rgba(255,255,255, .2);
+ 
+    /* background: #e5e5e5; */
+    border-bottom: 1px solid #c9c9c9;
+ 
+    -webkit-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .1);
+    -moz-box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .1);
+    box-shadow: inset 0px 1px 0px 0px rgba(255,255,255, .1), 0px 1px 0px 0px rgba(0,0,0, .1);
+}
+ 
+.sub-menu li:last-child a { border: none; }
+ 
+.sub-menu li > a span {
+    color: #797979;
+    text-shadow: 1px 1px 0px rgba(255,255,255, .2);
+    background: transparent;
+    border: 1px solid #c9c9c9;
+ 
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+
+/**
+ * Expand sub-menus
+ */
+
+.accordion li > .sub-menu {
+	height: auto;
+	max-height:0;
+	overflow: hidden;
+
+	-webkit-transition: max-height .2s ease-in-out;
+	-moz-transition: max-height .2s ease-in-out;
+	-o-transition: max-height .2s ease-in-out;
+	-ms-transition: max-height .2s ease-in-out;
+	transition: max-height .2s ease-in-out;
+}
+ 
+.accordion li:target > .sub-menu {
+	max-height:1200px;
+}
+
+
+
+/**
+ * Sub menus have different heights
+ */
+ 
+/*
+li[class~="DUII_Trial_Notebook"] {
+	color:blue;
+	font-size:2.0em;
+}
+*/
+
+
+/*
+.accordion li[class~="DUII_Trial_Notebook"]:target > .sub-menu {
+	height: 600px;
+}
+
+.accordion li[class~="Felony_Sentencing_in_Oregon"]:target > .sub-menu {
+	height: 440px;
+}
+
+.accordion li[class~="Investigators_Manual"]:target > .sub-menu {
+	min-height: 800px;
+}
+
+.accordion li[class~="Mental_Health_Manual"]:target > .sub-menu {
+	height: 320px;
+}
+
+.accordion li[class~="PostJudgment_Manual"]:target > .sub-menu {
+	height: 530px;
+}
+
+
+.accordion li[class~="Scientific_Evidence_Manual"]:target > .sub-menu {
+	height: 300px;
+}
+
+.accordion li[class~="Search_and_Seizure"]:target > .sub-menu {
+	height: 1100px;
+}
+
+.accordion li[class~="Trial_Notebook"]:target > .sub-menu {
+	height: 900px;
+}
+*/

@@ -1,0 +1,62 @@
+.site-contact-form
+{
+	font-size:1.35em;
+	font-family:'Trebuchet MS';
+}
+.site-contact-form label
+{
+	display:block;
+}
+.form-item
+{
+	margin-top:10px;
+}
+.form-text-item
+{
+	margin-top:8px;
+	width:75%;
+}
+.site-contact-form input,
+.site-contact-form select
+{
+	font-size:1.0em;
+}
+.site-contact-form textarea
+{
+	font-size:16.5px;
+	padding:8px;
+}
+
+.contact-form-button
+{
+	cursor:pointer;
+	padding-bottom:6px;
+	border-bottom:2px solid #fff;
+}
+.active-form-button
+{
+	border-bottom:2px solid #eee;
+}
+.contact-form-button:hover
+{
+	border-bottom:2px solid #eee;
+}
+
+#ocdla-contact-form-preview
+{
+	width:80%;
+	height:375px;
+	overflow:scroll;
+}
+
+button
+{
+	display:block;
+}
+
+legend.trigger
+{
+	color:blue;
+	text-decoration:underline;
+	cursor:pointer;
+}

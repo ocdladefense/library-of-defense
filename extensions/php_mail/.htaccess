@@ -1,0 +1,7 @@
+AuthType Basic
+AuthName "You need credentials to send email."
+# Optional line:
+# AuthBasicProvider file
+AuthUserFile /var/www/.htpasswd 
+# AuthGroupFile /usr/local/apache/passwd/groups
+Require valid-user

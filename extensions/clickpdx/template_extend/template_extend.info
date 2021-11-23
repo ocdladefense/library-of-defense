@@ -1,0 +1,5 @@
+; $Id$
+name = 'Template Extend'
+description = 'Update default template functionality and storage.'
+core = 6.x
+package = Clickpdx modules

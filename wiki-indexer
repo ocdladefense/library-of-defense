@@ -1,0 +1,4 @@
+#!/bin/bash
+# script to run indexer and mail results
+/usr/bin/indexer wiki_main --rotate  > /home/email/jbernal/wiki-indexer.log;
+mail -s "wiki indexer results" jbernal.web.dev@gmail.com < /home/email/jbernal/wiki-indexer.log

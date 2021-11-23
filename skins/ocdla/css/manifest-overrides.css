@@ -1,0 +1,166 @@
+body {
+	background-color:transparent;
+}
+
+div#masthead {
+	background-image: url('/skins/ocdla/images/masthead-new.png') !important;
+}
+	
+#p-personal {
+	-webkit-transform: translate3d(0,0,0);
+}
+
+div#wrapper {
+	overflow-x:visible;
+	overflow-y:visible;
+}	
+	
+#drawer {
+	padding:10px;
+}	
+
+div#simpleSearch, div#blogSearch {
+	display:inline-block;
+	margin-top:0px;
+	margin-left:0px;
+}
+	
+/**
+ * Drawer overrides
+ *
+ */
+#drawer li {
+	line-height: 30px;
+	height:auto;
+	padding-left:22px;
+}
+
+.drawer-heading {
+	padding-top:15px;
+}
+
+#drawer .ui-widget-content,
+#drawer .ui-state-active,
+#drawer .ui-widget-content .ui-state-active,
+#drawer .ui-widget-header .ui-state-active {
+	background-image:none;
+	background-color:transparent;
+	border:0px solid transparent;
+	background: transparent none 50% 50% no-repeat !important;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default
+{
+	background-image:none;
+	background-color:transparent;
+	border:0px solid transparent;
+	background: transparent none 50% 50% no-repeat !important;
+}
+
+
+	
+/*
+ * Hide the Library Collections sidebar
+ *
+ * Instead we use the drawer
+ */
+#mw-panel {
+	display:none;
+}
+
+
+/**
+ * By default, hide the user-login links
+
+div#mw-head {
+	position:absolute;
+	background-color:#fff;
+	right:0px;
+	left:auto;
+	top:-50px;
+	width:150px;
+	z-index:-1;
+}
+ */
+
+/**
+ *
+ * Structure
+ *
+ */
+
+#mw-page-base, #mw-head-base {
+	display:none;
+}
+
+#wiki-wrapper {
+	position:static;
+}
+
+#right-navigation {
+	margin-top:0px;
+}
+
+#left-navigation {
+	position:static;
+	left:auto;
+}
+
+div#simpleSearch, div#blogSearch {
+	height:2.0em;
+}
+
+div#mw-head {
+	position:static;
+	top:auto;
+	right:auto;
+	min-height:115px;
+}
+
+
+
+/**
+ * 
+ * Personal links
+ *
+ */
+
+#p-personal {
+	position:fixed;
+	margin-top:0px;
+	right:0px;
+	width:200px;
+	z-index:10;
+}
+
+
+
+#p-personal ul {
+	display:none;
+	background-color:rgb(192,158,47);
+	padding-right:15px;
+	padding-left:0px;
+	text-align:right;
+}
+
+#p-personal img {
+	width: 42px;
+	padding:8px;
+	float:right;
+}
+
+#p-personal.show ul {
+	display:block;
+	padding-top:35px;
+}
+
+#p-personal li {
+	padding:5px;
+	margin-top:0px;
+	float:none;
+}
+
+#p-personal li a {
+	color:#ddd;
+}
+

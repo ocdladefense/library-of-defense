@@ -1,0 +1,61 @@
+<HTML>
+<head>
+<title>Head Start of Lane County</title>
+</head>
+<body>
+<table width="560px" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr>
+	<td COLSPAN="2">
+	<IMG SRC="http://www.ocdla.org/images/rideshare_header.jpg">
+	</TD>
+</TR>
+<TR>
+	<TD ALIGN="left"><font face="Trebuchet MS, Arial, sans-serif" color="#666666">Head Start of Lane County</font>
+	</TD>
+</TR>
+<TR><TD COLSPAN="2"><IMG SRC="http://www.ocdla.org/images/vspacer.gif"></TD></TR>
+<TR>
+	<TD VALIGN="center" COLSPAN="2">
+		<font face="Trebuchet MS, Arial, sans-serif" color="#666666">
+		<font size="5"><B>Your Rideshare Post</B></font><br />
+		<font size="4" color="#000000"><strong>[Title]</strong>
+		<br /><br />
+	</TD>
+</TR>
+<TR><TD COLSPAN="2">&nbsp;</TD></TR>
+</table>
+<!--Introductory Announcement-->
+<table width="560px" border="0" cellspacing="0" cellpadding="0" align="center">
+<TR>
+	<TD COLSPAN="3" VALIGN="top">
+	<hr></TD>
+</TR>
+<!-- ANNOUNCEMENT-->
+<TR><TD COLSPAN="3"><IMG SRC="http://www.ocdla.org/images/vspacer.gif"></TD></TR>
+<TR>
+	<TD><IMG SRC="http://www.ocdla.org/images/spacer.gif"></TD>
+	<TD WIDTH="125px" ALIGN="left" VALIGN="top"></TD>
+	<TD>
+	<font face="Trebuchet MS, arial, sans-serif"><font size="4" color="#000000"> <br /> [Link] </font>
+
+		<font color="#333333"><p><font color="red"><b>Keep this message.</font></p><p>  You will need the above link to edit or remove your post later on!</b></p>
+
+	</p>
+ </font>
+	</TD>
+</font></TR>
+<TR><TD COLSPAN="3"><IMG SRC="http://www.ocdla.org/images/vspacer.gif"></TD></TR>
+<TR><TD COLSPAN="3"><HR></TD></TR></TABLE>
+<!--FOOTER-->
+<table width="560px" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr>
+	<td align="left">
+	<A href="http://www.ocdla.org"><img src="http://www.ocdla.org/images/gav.gif" width="110" height="100" alt="OCDLA Logo" /></a>
+	</TD>
+	<TD ALIGN="right"><IMG SRC="http://www.ocdla.org/images/blockspace.jpg" WIDTH="100px"><TD>
+	<TD>
+	<font color="#666666"><DIV STYLE="font-size:10pt;">Head Start of Lane County<br />Address Line 1<br />Springfield, Oregon  [zip]<br />Phone: (541) 686-8716<br />Fax: (541) 686-2319<br>Email: info@ocdla.org<br>Website: http://www.hsolc.org</font></DIV></TD>
+	</tr>
+</table>
+</body>
+</html>

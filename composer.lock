@@ -1,0 +1,67 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "154948533b86c1524a56e8fdd155f1c6",
+    "content-hash": "84d01a5f92edef5d3c6d3f12a033c285",
+    "packages": [
+        {
+            "name": "clickpdx/services",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/clickpdx-services.git",
+                "reference": "c79d12cb264fcbda0b2869c506c22407f1ee8bd6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/clickpdx-services/zipball/c79d12cb264fcbda0b2869c506c22407f1ee8bd6",
+                "reference": "c79d12cb264fcbda0b2869c506c22407f1ee8bd6",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Clickpdx\\": [
+                        "service/lib",
+                        "salesforce/lib",
+                        "resource/lib",
+                        "oauth/lib",
+                        "http/lib"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jose Bernal",
+                    "email": "jbernal.web.dev@gmail.com",
+                    "homepage": "http://clickpdx.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Http services libraries.",
+            "homepage": "https://github.com/ocdladefense/clickpdx-services",
+            "keywords": [
+                "http service",
+                "services"
+            ],
+            "time": "2016-07-17 17:29:22"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "clickpdx/services": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

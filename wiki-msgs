@@ -1,0 +1,20 @@
+sudo: sorry, you must have a tty to run sudo
+sudo: no tty present and no askpass program specified
+sudo: no tty present and no askpass program specified
+sudo: no tty present and no askpass program specified
+sudo: no tty present and no askpass program specified
+sudo: sorry, you must have a tty to run sudo
+sudo: no tty present and no askpass program specified
+sudo: no tty present and no askpass program specified
+>>> /etc/sudoers: syntax error near line 101 <<<
+sudo: parse error in /etc/sudoers near line 101
+sudo: no valid sudoers sources found, quitting
+>>> /etc/sudoers: syntax error near line 101 <<<
+sudo: parse error in /etc/sudoers near line 101
+sudo: no valid sudoers sources found, quitting
+>>> /etc/sudoers: syntax error near line 101 <<<
+sudo: parse error in /etc/sudoers near line 101
+sudo: no valid sudoers sources found, quitting
+>>> /etc/sudoers: syntax error near line 101 <<<
+sudo: parse error in /etc/sudoers near line 101
+sudo: no valid sudoers sources found, quitting
