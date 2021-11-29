@@ -4,7 +4,7 @@ search.php
 phpinfo.php
 apc.php
 blah*
-cache/*
+/cache/*
 index.html
 # index.php
 info.php
@@ -13,15 +13,18 @@ errorlog.txt
 profile_log.txt
 
 # ? - We don't know what core/ is
-core
+/core
 
 # Ignore robots
-robots.txt
+/robots.txt
 
-tmp/*.sql
+
+## Keep images, PDFs and other uploaded assets
+# images/*
+/tmp/*
 
 /images/
-vendor/
+/vendor/
 /sites/
 
 # Keep all extensions in master repository for now.
@@ -42,10 +45,6 @@ xStartProfiler.php
 *.tar.gz
 *.tar
 *.gz
-
-## Keep images, PDFs and other uploaded assets
-# images/*
-tmp/*
 
 #
 *.log
