@@ -20,9 +20,9 @@ robots.txt
 
 tmp/*.sql
 
-images/
+/images/
 vendor/
-sites/
+/sites/
 
 # Keep all extensions in master repository for now.
 #   Delete extensions from development branch as we
