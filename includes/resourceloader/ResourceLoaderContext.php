@@ -1,7 +1,5 @@
 <?php
 /**
- * Context for resource loader modules.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -41,7 +39,6 @@ class ResourceLoaderContext {
 	protected $only;
 	protected $version;
 	protected $hash;
-	protected $raw;
 
 	/* Methods */
 
@@ -65,7 +62,6 @@ class ResourceLoaderContext {
 		$this->debug     = $request->getFuzzyBool( 'debug', $wgResourceLoaderDebug );
 		$this->only      = $request->getVal( 'only' );
 		$this->version   = $request->getVal( 'version' );
-		$this->raw       = $request->getFuzzyBool( 'raw' );
 
 		$skinnames = Skin::getSkinNames();
 		// If no skin is specified, or we don't recognize the skin, use the default skin
@@ -161,7 +157,7 @@ class ResourceLoaderContext {
 			$this->direction = $this->request->getVal( 'dir' );
 			if ( !$this->direction ) {
 				# directionality based on user language (see bug 6100)
-				$this->direction = Language::factory( $this->getLanguage() )->getDir();
+				$this->direction = Language::factory( $this->language )->getDir();
 			}
 		}
 		return $this->direction;
@@ -200,13 +196,6 @@ class ResourceLoaderContext {
 	 */
 	public function getVersion() {
 		return $this->version;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function getRaw() {
-		return $this->raw;
 	}
 
 	/**

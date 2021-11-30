@@ -10,24 +10,25 @@
  * generally useful beyond startup
  *
  * jQuery has minimum requirements of:
- * * Internet Explorer 6.0+
- * * Firefox 3.6+
- * * Safari 5.0+
- * * Opera 11+
- * * Chrome
+ * * Firefox 2.0+
+ * * Internet Explorer 6+
+ * * Safari 3+
+ * * Opera 9+
+ * * Chrome 1+
  */
-function isCompatible() {
-	// IE < 6.0
+var isCompatible = function() {
+	// IE < 6
 	if ( navigator.appVersion.indexOf( 'MSIE' ) !== -1
 		&& parseFloat( navigator.appVersion.split( 'MSIE' )[1] ) < 6 )
 	{
 		return false;
 	}
-	// @todo FIXME: Firefox < 3.6
-	// @todo FIXME: Safari < 5.0
-	// @todo FIXME: Opera < 11
+	// TODO: Firefox < 2
+	// TODO: Safari < 3
+	// TODO: Opera < 9
+	// TODO: Chrome < 1
 	return true;
-}
+};
 /**
  * The startUp() function will be generated and added here (at the bottom)
  */

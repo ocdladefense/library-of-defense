@@ -2,21 +2,6 @@
 /**
  * This is the Oracle database abstraction layer.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
  * @file
  * @ingroup Database
  */
@@ -241,7 +226,6 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Usually aborts on failure
-	 * @return DatabaseBase|null
 	 */
 	function open( $server, $user, $password, $dbName ) {
 		if ( !function_exists( 'oci_connect' ) ) {
@@ -301,10 +285,17 @@ class DatabaseOracle extends DatabaseBase {
 	/**
 	 * Closes a database connection, if it is open
 	 * Returns success, true if already closed
-	 * @return bool
 	 */
-	protected function closeConnection() {
-		return oci_close( $this->mConn );
+	function close() {
+		$this->mOpened = false;
+		if ( $this->mConn ) {
+			if ( $this->mTrxLevel ) {
+				$this->commit();
+			}
+			return oci_close( $this->mConn );
+		} else {
+			return true;
+		}
 	}
 
 	function execFlags() {
@@ -410,7 +401,6 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * This must be called after nextSequenceVal
-	 * @return null
 	 */
 	function insertId() {
 		return $this->mInsertId;
@@ -449,7 +439,6 @@ class DatabaseOracle extends DatabaseBase {
 	/**
 	 * Returns information about an index
 	 * If errors are explicitly ignored, returns NULL on failure
-	 * @return bool
 	 */
 	function indexInfo( $table, $index, $fname = 'DatabaseOracle::indexExists' ) {
 		return false;
@@ -690,7 +679,6 @@ class DatabaseOracle extends DatabaseBase {
 	}
 	/**
 	 * Return the next in a sequence, save the value for retrieval via insertId()
-	 * @return null
 	 */
 	function nextSequenceValue( $seqName ) {
 		$res = $this->query( "SELECT $seqName.nextval FROM dual" );
@@ -701,7 +689,6 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Return sequence_name if table has a sequence
-	 * @return bool
 	 */
 	private function getSequenceData( $table ) {
 		if ( $this->sequenceData == null ) {
@@ -810,7 +797,7 @@ class DatabaseOracle extends DatabaseBase {
 	/**
 	 * Return aggregated value function call
 	 */
-	public function aggregateValue( $valuedata, $valuename = 'value' ) {
+	function aggregateValue ( $valuedata, $valuename = 'value' ) {
 		return $valuedata;
 	}
 
@@ -849,7 +836,6 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Query whether a given index exists
-	 * @return bool
 	 */
 	function indexExists( $table, $index, $fname = 'DatabaseOracle::indexExists' ) {
 		$table = $this->tableName( $table );
@@ -869,7 +855,6 @@ class DatabaseOracle extends DatabaseBase {
 
 	/**
 	 * Query whether a given table exists (in the given schema, or the default mw one if not given)
-	 * @return int
 	 */
 	function tableExists( $table, $fname = __METHOD__ ) {
 		$table = $this->tableName( $table );
@@ -955,12 +940,12 @@ class DatabaseOracle extends DatabaseBase {
 		return $this->fieldInfoMulti ($table, $field);
 	}
 
-	protected function doBegin( $fname = 'DatabaseOracle::begin' ) {
+	function begin( $fname = 'DatabaseOracle::begin' ) {
 		$this->mTrxLevel = 1;
 		$this->doQuery( 'SET CONSTRAINTS ALL DEFERRED' );
 	}
 
-	protected function doCommit( $fname = 'DatabaseOracle::commit' ) {
+	function commit( $fname = 'DatabaseOracle::commit' ) {
 		if ( $this->mTrxLevel ) {
 			$ret = oci_commit( $this->mConn );
 			if ( !$ret ) {
@@ -971,12 +956,17 @@ class DatabaseOracle extends DatabaseBase {
 		}
 	}
 
-	protected function doRollback( $fname = 'DatabaseOracle::rollback' ) {
+	function rollback( $fname = 'DatabaseOracle::rollback' ) {
 		if ( $this->mTrxLevel ) {
 			oci_rollback( $this->mConn );
 			$this->mTrxLevel = 0;
 			$this->doQuery( 'SET CONSTRAINTS ALL IMMEDIATE' );
 		}
+	}
+
+	/* Not even sure why this is used in the main codebase... */
+	function limitResultForUpdate( $sql, $num ) {
+		return $sql;
 	}
 
 	/* defines must comply with ^define\s*([^\s=]*)\s*=\s?'\{\$([^\}]*)\}'; */

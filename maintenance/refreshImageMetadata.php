@@ -1,6 +1,6 @@
 <?php
 /**
- * Refresh image metadata fields. See also rebuildImages.php
+ * Script to refresh image metadata fields. See also rebuildImages.php
  *
  * Usage: php refreshImageMetadata.php
  *
@@ -27,13 +27,8 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
-/**
- * Maintenance script to refresh image metadata fields.
- *
- * @ingroup Maintenance
- */
 class RefreshImageMetadata extends Maintenance {
 
 	/**

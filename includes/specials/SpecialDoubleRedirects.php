@@ -27,7 +27,7 @@
  *
  * @ingroup SpecialPage
  */
-class DoubleRedirectsPage extends QueryPage {
+class DoubleRedirectsPage extends PageQueryPage {
 
 	function __construct( $name = 'DoubleRedirects' ) {
 		parent::__construct( $name );
@@ -47,13 +47,13 @@ class DoubleRedirectsPage extends QueryPage {
 			'tables' => array ( 'ra' => 'redirect',
 					'rb' => 'redirect', 'pa' => 'page',
 					'pb' => 'page', 'pc' => 'page' ),
-			'fields' => array ( 'namespace' => 'pa.page_namespace',
-					'title' => 'pa.page_title',
-					'value' => 'pa.page_title',
-					'nsb' => 'pb.page_namespace',
-					'tb' => 'pb.page_title',
-					'nsc' => 'pc.page_namespace',
-					'tc' => 'pc.page_title' ),
+			'fields' => array ( 'pa.page_namespace AS namespace',
+					'pa.page_title AS title',
+					'pa.page_title AS value',
+					'pb.page_namespace AS nsb',
+					'pb.page_title AS tb',
+					'pc.page_namespace AS nsc',
+					'pc.page_title AS tc' ),
 			'conds' => array ( 'ra.rd_from = pa.page_id',
 					'pb.page_namespace = ra.rd_namespace',
 					'pb.page_title = ra.rd_title',

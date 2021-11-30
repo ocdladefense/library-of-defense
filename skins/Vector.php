@@ -18,40 +18,29 @@ if( !defined( 'MEDIAWIKI' ) ) {
  */
 class SkinVector extends SkinTemplate {
 
-	var $skinname = 'vector',
-	$stylename = 'vector',
-	$template = 'VectorTemplate',
-	$useHeadElement = true;
+	var $skinname = 'vector', $stylename = 'vector',
+		$template = 'VectorTemplate', $useHeadElement = true;
 
 	/**
 	 * Initializes output page and sets up skin-specific parameters
 	 * @param $out OutputPage object to initialize
 	 */
 	public function initPage( OutputPage $out ) {
-		global $wgLocalStylePath, $wgRequest;
+		global $wgLocalStylePath;
 
 		parent::initPage( $out );
 
 		// Append CSS which includes IE only behavior fixes for hover support -
 		// this is better than including this in a CSS fille since it doesn't
 		// wait for the CSS file to load before fetching the HTC file.
-		$min = $wgRequest->getFuzzyBool( 'debug' ) ? '' : '.min';
+		$min = $this->getRequest()->getFuzzyBool( 'debug' ) ? '' : '.min';
 		$out->addHeadItem( 'csshover',
 			'<!--[if lt IE 7]><style type="text/css">body{behavior:url("' .
 				htmlspecialchars( $wgLocalStylePath ) .
 				"/{$this->stylename}/csshover{$min}.htc\")}</style><![endif]-->"
 		);
-	   $out->addMeta('viewport','width=device-width; initial-scale=1; maximum-scale=1; minimum-scale=1; user-scalable=no;');
-	   $out->addMeta( 'http:X-UA-Compatible', 'IE=Edge' );
 
-		/*http://www.mediawiki.org/wiki/Manual:$wgRequest*/
-		$request = $out->getRequest();
 		$out->addModuleScripts( 'skins.vector' );
-		$out->addScriptFile ('/resources/jquery/jquery.makeCollapsible.js');
-		// $out->addScriptFile( '
-		// $out->addModuleStyles();
-		// $out->addHTML('<h1>Hello World!</h1>');
-		$out->addStyle( '/content/style.css?v=0.5', 'all','lt IE 9' );
 	}
 
 	/**
@@ -59,15 +48,9 @@ class SkinVector extends SkinTemplate {
 	 * fixes bug 22916
 	 * @param $out OutputPage object
 	 */
-	 // parent is includes/SkinTemplate.php
-	 // commented out 2013-03-16 to prevent legacy stylesheet's media queries from 
-	 // interfering with mobile CSS
 	function setupSkinUserCss( OutputPage $out ){
-		// parent::setupSkinUserCss( $out );
-		$out->addStyle( '/skins/vector/screen.css?v=0.6', 'all');
-		$out->addStyle( '/content/overrides.css?v=0.6', 'all');
-		// $out->addModuleStyles( 'skins.vector' );
-
+		parent::setupSkinUserCss( $out );
+		$out->addModuleStyles( 'skins.vector' );
 	}
 }
 
@@ -77,29 +60,19 @@ class SkinVector extends SkinTemplate {
  */
 class VectorTemplate extends BaseTemplate {
 
-	/* Members */
-
-	/**
-	 * @var Skin Cached skin object
-	 */
-	var $skin;
-
 	/* Functions */
 
 	/**
 	 * Outputs the entire contents of the (X)HTML page
 	 */
 	public function execute() {
-		global $wgLang, $wgVectorUseIconWatch, $wgRequest, $wgUser;
-
-		$this->skin = $this->data['skin'];
+		global $wgVectorUseIconWatch;
 
 		// Build additional attributes for navigation urls
-		//$nav = $this->skin->buildNavigationUrls();
 		$nav = $this->data['content_navigation'];
 
 		if ( $wgVectorUseIconWatch ) {
-			$mode = $this->skin->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
+			$mode = $this->getSkin()->getTitle()->userIsWatching() ? 'unwatch' : 'watch';
 			if ( isset( $nav['actions'][$mode] ) ) {
 				$nav['views'][$mode] = $nav['actions'][$mode];
 				$nav['views'][$mode]['class'] = rtrim( 'icon ' . $nav['views'][$mode]['class'], ' ' );
@@ -138,7 +111,7 @@ class VectorTemplate extends BaseTemplate {
 		$this->data['variant_urls'] = $nav['variants'];
 
 		// Reverse horizontally rendered navigation elements
-		if ( $wgLang->isRTL() ) {
+		if ( $this->data['rtl'] ) {
 			$this->data['view_urls'] =
 				array_reverse( $this->data['view_urls'] );
 			$this->data['namespace_urls'] =
@@ -149,68 +122,10 @@ class VectorTemplate extends BaseTemplate {
 		// Output HTML Page
 		$this->html( 'headelement' );
 ?>
-    <div id="wrapper">
-    <div id="masthead">
-      	<a href='/' class="masthead_link">&nbsp;</a>
-      	<div class="ocdla_link header_link">
-      		<a href="http://www.ocdla.org" title="Go to the OCDLA homepage"><img src="/skins/vector/images/ocdla_link.png" alt="Go to the OCDLA website"></a><br />
-      		<a href="http://www.ocdla.org" title="Go to the OCDLA homepage">OCDLA HOME</a>
-      	</div>
-      	<div class="getinvolved_link header_link">
-      		<a href="/Get_Involved" title="Get Involved"><img src="/skins/vector/images/get_involved.png" alt="Get Inolved with the Library of Defense"></a><br />
-      		<a href="/Get_Involved" title="Get Involved">GET INVOLVED</a>
-      	</div>
-
-
-      	<div class="masthead_filler">
-		</div>
-    </div>
-    <div id="submast">
-	    <ul class="submastlinks">
-	      	<li><a href="/">Main Entrance</a></li>
-	  		<li><a href="/Blog:Main">Blog</a></li>
-	  		<li><a href="/Blog:Case_Reviews">Case Reviews</a></li>
-	  		<li><a href="/Resources">Resources</a></li>
-	  		<li><a href="/User:Ryan">Ryan Scott</a></li>
-	  		<li><a href="/How_To_Edit">Edit This Site!</a></li>
-	  		<?php if($wgUser->mId == 0) { ?>
-	  			<!--<li><a href="/Special:UserLogin&returnto=Welcome_to_The_Library">Log In</a></li>
-	  			-->
-	  			<li><a href="https://www.ocdla.org/index.php?q=login&amp;referrer=<?php print $wgRequest->getFullRequestURL() ?>">Log In</a></li>
-	  		<?php } ?>
-	  	</ul>
-  	</div>
-    <div id="wiki-wrapper">
 		<div id="mw-page-base" class="noprint"></div>
 		<div id="mw-head-base" class="noprint"></div>
-		<!-- header -->
-		<!-- moved from below -->
-		<div id="mw-head" class="noprint">
-			<a href="/">
-				<img src="/images/book.png" style="margin:24px 5px" alt="A Book from the Library of Defense" />
-			</a>
-			<?php $this->renderNavigation( 'PERSONAL' ); ?>
-			<div id="left-navigation">
-				<?php $this->renderNavigation( array( 'NAMESPACES', 'VARIANTS', 'SEARCH' ) ); ?>
-			</div>
-			<div id="right-navigation">
-				<?php $this->renderNavigation( array( 'VIEWS', 'ACTIONS') ); ?>
-			</div>
-		</div>
-		<!-- /header -->
-		<!-- panel -->
-
-			<div id="mw-panel" class="noprint">
-			<h3 class="mw-customtoggle-sections">
-				Library Collections
-			</h3>
-			<div id="mw-customcollapsible-sections" class="noprint mw-collapsible">
-				<?php $this->renderPortals( $this->data['sidebar'] ); ?>
-			</div>
-			</div>
-		<!-- /panel -->
 		<!-- content -->
-		<div id="content">
+		<div id="content" class="mw-body">
 			<a id="top"></a>
 			<div id="mw-js-message" style="display:none;"<?php $this->html( 'userlangattributes' ) ?>></div>
 			<?php if ( $this->data['sitenotice'] ): ?>
@@ -219,7 +134,9 @@ class VectorTemplate extends BaseTemplate {
 			<!-- /sitenotice -->
 			<?php endif; ?>
 			<!-- firstHeading -->
-			<h1 id="firstHeading" class="firstHeading"><?php $this->html( 'title' ) ?></h1>
+			<h1 id="firstHeading" class="firstHeading">
+				<span dir="auto"><?php $this->html( 'title' ) ?></span>
+			</h1>
 			<!-- /firstHeading -->
 			<!-- bodyContent -->
 			<div id="bodyContent">
@@ -243,7 +160,7 @@ class VectorTemplate extends BaseTemplate {
 				<?php endif; ?>
 				<?php if ( $this->data['showjumplinks'] ): ?>
 				<!-- jumpto -->
-				<div id="jump-to-nav">
+				<div id="jump-to-nav" class="mw-jump">
 					<?php $this->msg( 'jumpto' ) ?> <a href="#mw-head"><?php $this->msg( 'jumptonavigation' ) ?></a>,
 					<a href="#p-search"><?php $this->msg( 'jumptosearch' ) ?></a>
 				</div>
@@ -278,47 +195,40 @@ class VectorTemplate extends BaseTemplate {
 		</div>
 		<!-- /content -->
 		<!-- header -->
-		<!-- moved above to appropriate region -->
-		<?php
-		/*<div id="mw-head" class="noprint">
-			<a href="/">
-				<img src="/images/book.png" style="margin:24px 5px" alt="A Book from the Library of Defense" />
-			</a>
+		<div id="mw-head" class="noprint">
 			<?php $this->renderNavigation( 'PERSONAL' ); ?>
 			<div id="left-navigation">
-				<?php $this->renderNavigation( array( 'NAMESPACES', 'VARIANTS', 'SEARCH' ) ); ?>
+				<?php $this->renderNavigation( array( 'NAMESPACES', 'VARIANTS' ) ); ?>
 			</div>
 			<div id="right-navigation">
-				<?php $this->renderNavigation( array( 'VIEWS', 'ACTIONS') ); ?>
+				<?php $this->renderNavigation( array( 'VIEWS', 'ACTIONS', 'SEARCH' ) ); ?>
 			</div>
 		</div>
-		*/
-		?>
 		<!-- /header -->
 		<!-- panel -->
-		<!--	<div id="mw-panel" class="noprint">
-				<?php /*$this->renderPortals( $this->data['sidebar'] );*/ ?>
+			<div id="mw-panel" class="noprint">
+				<!-- logo -->
+					<div id="p-logo"><a style="background-image: url(<?php $this->text( 'logopath' ) ?>);" href="<?php echo htmlspecialchars( $this->data['nav_urls']['mainpage']['href'] ) ?>" <?php echo Xml::expandAttributes( Linker::tooltipAndAccesskeyAttribs( 'p-logo' ) ) ?>></a></div>
+				<!-- /logo -->
+				<?php $this->renderPortals( $this->data['sidebar'] ); ?>
 			</div>
-		-->
 		<!-- /panel -->
 		<!-- footer -->
 		<div id="footer"<?php $this->html( 'userlangattributes' ) ?>>
-			<?php if( count( $this->getFooterLinks() ) > 0 ) {
-				foreach( $this->getFooterLinks() as $category => $links ): ?>
+			<?php foreach( $this->getFooterLinks() as $category => $links ): ?>
 				<ul id="footer-<?php echo $category ?>">
 					<?php foreach( $links as $link ): ?>
 						<li id="footer-<?php echo $category ?>-<?php echo $link ?>"><?php $this->html( $link ) ?></li>
 					<?php endforeach; ?>
 				</ul>
-			<?php endforeach; 
-				} ?>
+			<?php endforeach; ?>
 			<?php $footericons = $this->getFooterIcons("icononly");
 			if ( count( $footericons ) > 0 ): ?>
 				<ul id="footer-icons" class="noprint">
 <?php			foreach ( $footericons as $blockName => $footerIcons ): ?>
 					<li id="footer-<?php echo htmlspecialchars( $blockName ); ?>ico">
 <?php				foreach ( $footerIcons as $icon ): ?>
-						<?php echo $this->skin->makeFooterIcon( $icon ); ?>
+						<?php echo $this->getSkin()->makeFooterIcon( $icon ); ?>
 
 <?php				endforeach; ?>
 					</li>
@@ -328,13 +238,8 @@ class VectorTemplate extends BaseTemplate {
 			<div style="clear:both"></div>
 		</div>
 		<!-- /footer -->
-		<!-- fixalpha -->
-		<script type="<?php $this->text( 'jsmimetype' ) ?>"> if ( window.isMSIE55 ) fixalpha(); </script>
-		<!-- /fixalpha -->
 		<?php $this->printTrail(); ?>
 
-  </div>
-  </div>
 	</body>
 </html>
 <?php
@@ -379,11 +284,10 @@ class VectorTemplate extends BaseTemplate {
 			}
 			echo "\n<!-- /{$name} -->\n";
 		}
-
 	}
 
 	private function renderPortal( $name, $content, $msg = null, $hook = null ) {
-		if ( !isset( $msg ) ) {
+		if ( $msg === null ) {
 			$msg = $name;
 		}
 		?>
@@ -391,7 +295,7 @@ class VectorTemplate extends BaseTemplate {
 	<h5<?php $this->html( 'userlangattributes' ) ?>><?php $msgObj = wfMessage( $msg ); echo htmlspecialchars( $msgObj->exists() ? $msgObj->text() : $msg ); ?></h5>
 	<div class="body">
 <?php
-		if ( is_array( $content ) && count( $content ) > 0 ): ?>
+		if ( is_array( $content ) ): ?>
 		<ul>
 <?php
 			foreach( $content as $key => $val ): ?>
@@ -399,7 +303,7 @@ class VectorTemplate extends BaseTemplate {
 
 <?php
 			endforeach;
-			if ( isset( $hook ) ) {
+			if ( $hook !== null ) {
 				wfRunHooks( $hook, array( &$this, true ) );
 			}
 			?>
@@ -417,16 +321,18 @@ class VectorTemplate extends BaseTemplate {
 	/**
 	 * Render one or more navigations elements by name, automatically reveresed
 	 * when UI is in RTL mode
+	 *
+	 * @param $elements array
 	 */
 	private function renderNavigation( $elements ) {
-		global $wgVectorUseSimpleSearch, $wgVectorShowVariantName, $wgUser, $wgLang;
+		global $wgVectorUseSimpleSearch;
 
 		// If only one element was given, wrap it in an array, allowing more
 		// flexible arguments
 		if ( !is_array( $elements ) ) {
 			$elements = array( $elements );
 		// If there's a series of elements, reverse them when in RTL mode
-		} elseif ( $wgLang->isRTL() ) {
+		} elseif ( $this->data['rtl'] ) {
 			$elements = array_reverse( $elements );
 		}
 		// Render elements
@@ -448,15 +354,13 @@ class VectorTemplate extends BaseTemplate {
 				case 'VARIANTS':
 ?>
 <div id="p-variants" class="vectorMenu<?php if ( count( $this->data['variant_urls'] ) == 0 ) echo ' emptyPortlet'; ?>">
-	<?php if ( $wgVectorShowVariantName ): ?>
-		<h4>
-		<?php foreach ( $this->data['variant_urls'] as $link ): ?>
-			<?php if ( stripos( $link['attributes'], 'selected' ) !== false ): ?>
-				<?php echo htmlspecialchars( $link['text'] ) ?>
-			<?php endif; ?>
-		<?php endforeach; ?>
-		</h4>
-	<?php endif; ?>
+	<h4>
+	<?php foreach ( $this->data['variant_urls'] as $link ): ?>
+		<?php if ( stripos( $link['attributes'], 'selected' ) !== false ): ?>
+			<?php echo htmlspecialchars( $link['text'] ) ?>
+		<?php endif; ?>
+	<?php endforeach; ?>
+	</h4>
 	<h5><span><?php $this->msg( 'variants' ) ?></span><a href="#"></a></h5>
 	<div class="menu">
 		<ul<?php $this->html( 'userlangattributes' ) ?>>
@@ -517,22 +421,23 @@ class VectorTemplate extends BaseTemplate {
 <div id="p-search">
 	<h5<?php $this->html( 'userlangattributes' ) ?>><label for="searchInput"><?php $this->msg( 'search' ) ?></label></h5>
 	<form action="<?php $this->text( 'wgScript' ) ?>" id="searchform">
-		<input type='hidden' name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
-		<?php if ( true ): ?>
+		<?php if ( $wgVectorUseSimpleSearch && $this->getSkin()->getUser()->getOption( 'vector-simplesearch' ) ): ?>
 		<div id="simpleSearch">
 			<?php if ( $this->data['rtl'] ): ?>
-			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->skin->getSkinStylePath( 'images/search-rtl.png' ) ) ); ?>
+			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-rtl.png' ) ) ); ?>
 			<?php endif; ?>
 			<?php echo $this->makeSearchInput( array( 'id' => 'searchInput', 'type' => 'text' ) ); ?>
 			<?php if ( !$this->data['rtl'] ): ?>
-			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->skin->getSkinStylePath( 'images/search-ltr.png' ) ) ); ?>
+			<?php echo $this->makeSearchButton( 'image', array( 'id' => 'searchButton', 'src' => $this->getSkin()->getSkinStylePath( 'images/search-ltr.png' ) ) ); ?>
 			<?php endif; ?>
-		</div>
 		<?php else: ?>
-		<?php echo $this->makeSearchInput( array( 'id' => 'searchInput' ) ); ?>
-		<?php echo $this->makeSearchButton( 'go', array( 'id' => 'searchGoButton', 'class' => 'searchButton' ) ); ?>
-		<?php echo $this->makeSearchButton( 'fulltext', array( 'id' => 'mw-searchButton', 'class' => 'searchButton' ) ); ?>
+		<div>
+			<?php echo $this->makeSearchInput( array( 'id' => 'searchInput' ) ); ?>
+			<?php echo $this->makeSearchButton( 'go', array( 'id' => 'searchGoButton', 'class' => 'searchButton' ) ); ?>
+			<?php echo $this->makeSearchButton( 'fulltext', array( 'id' => 'mw-searchButton', 'class' => 'searchButton' ) ); ?>
 		<?php endif; ?>
+			<input type='hidden' name="title" value="<?php $this->text( 'searchtitle' ) ?>"/>
+		</div>
 	</form>
 </div>
 <?php

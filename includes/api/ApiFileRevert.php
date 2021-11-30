@@ -71,10 +71,9 @@ class ApiFileRevert extends ApiBase {
 	 * @param $user User The user to check.
 	 */
 	protected function checkPermissions( $user ) {
-		$title = $this->file->getTitle();
 		$permissionErrors = array_merge(
-			$title->getUserPermissionsErrors( 'edit' , $user ),
-			$title->getUserPermissionsErrors( 'upload' , $user )
+			$this->file->getTitle()->getUserPermissionsErrors( 'edit' , $user ),
+			$this->file->getTitle()->getUserPermissionsErrors( 'upload' , $user )
 		);
 
 		if ( $permissionErrors ) {
@@ -92,17 +91,15 @@ class ApiFileRevert extends ApiBase {
 		if ( is_null( $title ) ) {
 			$this->dieUsageMsg( array( 'invalidtitle', $this->params['filename'] ) );
 		}
-		$localRepo = RepoGroup::singleton()->getLocalRepo();
-
 		// Check if the file really exists
-		$this->file = $localRepo->newFile( $title );
+		$this->file = wfLocalFile( $title );
 		if ( !$this->file->exists() ) {
 			$this->dieUsageMsg( 'notanarticle' );
 		}
 
 		// Check if the archivename is valid for this file
 		$this->archiveName = $this->params['archivename'];
-		$oldFile = $localRepo->newFromArchiveName( $title, $this->archiveName );
+		$oldFile = RepoGroup::singleton()->getLocalRepo()->newFromArchiveName( $title, $this->archiveName );
 		if ( !$oldFile->exists() ) {
 			$this->dieUsageMsg( 'filerevert-badversion' );
 		}
@@ -129,38 +126,21 @@ class ApiFileRevert extends ApiBase {
 				ApiBase::PARAM_TYPE => 'string',
 				ApiBase::PARAM_REQUIRED => true,
 			),
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
+			'token' => null,
 		);
 
 	}
 
 	public function getParamDescription() {
-		return array(
-			'filename' => 'Target filename without the File: prefix',
+		$params = array(
+			'filename' => 'Target filename',
 			'token' => 'Edit token. You can get one of these through prop=info',
 			'comment' => 'Upload comment',
 			'archivename' => 'Archive name of the revision to revert to',
 		);
-	}
 
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'result' => array(
-					ApiBase::PROP_TYPE => array(
-						'Success',
-						'Failure'
-					)
-				),
-				'errors' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
+		return $params;
+
 	}
 
 	public function getDescription() {

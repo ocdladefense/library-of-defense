@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * This is the main web entry point for MediaWiki.
  *
@@ -37,29 +35,15 @@
  *
  * @file
  */
-# Uncomment this section to display errors
-# Useful for debugging
-/*
-ini_set("log_errors", 1);
-ini_set("error_log", "/home/users/lod/lodtest/html/errorlog.txt");
 
-// http://www.php.net/manual/en/errorfunc.configuration.php#ini.display-errors
-ini_set('display_errors','1');
-error_reporting( E_ALL ^ E_NOTICE );
-*/
 # Bail on old versions of PHP.  Pretty much every other file in the codebase
 # has structures (try/catch, foo()->bar(), etc etc) which throw parse errors in
 # PHP 4. Setup.php and ObjectCache.php have structures invalid in PHP 5.0 and
-# 5.1, respectively
-
-if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.3.2' ) < 0 ) {
-	// We need to use dirname( __FILE__ ) here cause __DIR__ is PHP5.3+
+# 5.1, respectively.
+if ( !function_exists( 'version_compare' ) || version_compare( phpversion(), '5.2.3' ) < 0 ) {
 	require( dirname( __FILE__ ) . '/includes/PHPVersionError.php' );
 	wfPHPVersionError( 'index.php' );
 }
-
-$foo  = ini_set('session.gc_maxlifetime', 2592000);
-$bar  = ini_set('session.cookie_lifetime', 2592000);
 
 # Initialise common code.  This gives us access to GlobalFunctions, the
 # AutoLoader, and the globals $wgRequest, $wgOut, $wgUser, $wgLang and
@@ -67,13 +51,8 @@ $bar  = ini_set('session.cookie_lifetime', 2592000);
 if ( isset( $_SERVER['MW_COMPILED'] ) ) {
 	require ( 'phase3/includes/WebStart.php' );
 } else {
-	require ( __DIR__ . '/includes/WebStart.php' );
+	require ( dirname( __FILE__ ) . '/includes/WebStart.php' );
 }
 
-$foo  = ini_set('session.gc_maxlifetime', 2592000);
-$bar  = ini_set('session.cookie_lifetime', 2592000);
 $mediaWiki = new MediaWiki();
-
-$foo  = ini_set('session.gc_maxlifetime', 2592000);
-$bar  = ini_set('session.cookie_lifetime', 2592000);
 $mediaWiki->run();

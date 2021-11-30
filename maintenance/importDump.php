@@ -1,8 +1,6 @@
 <?php
 /**
- * Import XML dump files into the current wiki.
- *
- * Copyright © 2005 Brion Vibber <brion@pobox.com>
+ * Copyright (C) 2005 Brion Vibber <brion@pobox.com>
  * http://www.mediawiki.org/
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,11 +22,9 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
 /**
- * Maintenance script that imports XML dump files into the current wiki.
- *
  * @ingroup Maintenance
  */
 class BackupReader extends Maintenance {
@@ -208,7 +204,7 @@ TEXT;
 
 	function showReport() {
 		if ( !$this->mQuiet ) {
-			$delta = microtime( true ) - $this->startTime;
+			$delta = wfTime() - $this->startTime;
 			if ( $delta ) {
 				$rate = sprintf( "%.2f", $this->pageCount / $delta );
 				$revrate = sprintf( "%.2f", $this->revCount / $delta );
@@ -254,7 +250,7 @@ TEXT;
 	}
 
 	function importFromHandle( $handle ) {
-		$this->startTime = microtime( true );
+		$this->startTime = wfTime();
 
 		$source = new ImportStreamSource( $handle );
 		$importer = new WikiImporter( $source );

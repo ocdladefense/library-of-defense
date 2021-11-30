@@ -42,9 +42,9 @@ class PopularPagesPage extends QueryPage {
 	function getQueryInfo() {
 		return array (
 			'tables' => array( 'page' ),
-			'fields' => array( 'namespace' => 'page_namespace',
-					'title' => 'page_title',
-					'value' => 'page_counter'),
+			'fields' => array( 'page_namespace AS namespace',
+					'page_title AS title',
+					'page_counter AS value'),
 			'conds' => array( 'page_is_redirect' => 0,
 					'page_namespace' => MWNamespace::getContentNamespaces() ) );
 	}
@@ -56,13 +56,7 @@ class PopularPagesPage extends QueryPage {
 	 */
 	function formatResult( $skin, $result ) {
 		global $wgContLang;
-
-		$title = Title::makeTitleSafe( $result->namespace, $result->title );
-		if( !$title ) {
-			return Html::element( 'span', array( 'class' => 'mw-invalidtitle' ),
-				Linker::getInvalidTitleDescription( $this->getContext(), $result->namespace, $result->title ) );
-		}
-
+		$title = Title::makeTitle( $result->namespace, $result->title );
 		$link = Linker::linkKnown(
 			$title,
 			htmlspecialchars( $wgContLang->convert( $title->getPrefixedText() ) )

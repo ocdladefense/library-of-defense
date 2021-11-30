@@ -1,21 +1,6 @@
 <?php
 /**
- * Job to fix double redirects after moving a page.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * Job to fix double redirects after moving a page
  *
  * @file
  * @ingroup JobQueue
@@ -36,7 +21,7 @@ class DoubleRedirectJob extends Job {
 
 	/**
 	 * Insert jobs into the job queue to fix redirects to the given title
-	 * @param $reason String: the reason for the fix, see message "double-redirect-fixed-<reason>"
+	 * @param $reason String: the reason for the fix, see message double-redirect-fixed-<reason>
 	 * @param $redirTitle Title: the title which has changed, redirects pointing to this title are fixed
 	 * @param $destTitle bool Not used
 	 */
@@ -89,7 +74,7 @@ class DoubleRedirectJob extends Job {
 			return false;
 		}
 
-		$targetRev = Revision::newFromTitle( $this->title, false, Revision::READ_LATEST );
+		$targetRev = Revision::newFromTitle( $this->title );
 		if ( !$targetRev ) {
 			wfDebug( __METHOD__.": target redirect already deleted, ignoring\n" );
 			return true;
@@ -141,9 +126,8 @@ class DoubleRedirectJob extends Job {
 		$oldUser = $wgUser;
 		$wgUser = $this->getUser();
 		$article = WikiPage::factory( $this->title );
-		$reason = wfMessage( 'double-redirect-fixed-' . $this->reason,
-			$this->redirTitle->getPrefixedText(), $newTitle->getPrefixedText()
-		)->inContentLanguage()->text();
+		$reason = wfMsgForContent( 'double-redirect-fixed-' . $this->reason,
+			$this->redirTitle->getPrefixedText(), $newTitle->getPrefixedText() );
 		$article->doEdit( $newText, $reason, EDIT_UPDATE | EDIT_SUPPRESS_RC, false, $this->getUser() );
 		$wgUser = $oldUser;
 
@@ -155,7 +139,7 @@ class DoubleRedirectJob extends Job {
 	 *
 	 * @param $title Title
 	 *
-	 * @return bool if the specified title is not a redirect, or if it is a circular redirect
+	 * @return false if the specified title is not a redirect, or if it is a circular redirect
 	 */
 	public static function getFinalDestination( $title ) {
 		$dbw = wfGetDB( DB_MASTER );
@@ -195,7 +179,7 @@ class DoubleRedirectJob extends Job {
 	 */
 	function getUser() {
 		if ( !self::$user ) {
-			self::$user = User::newFromName( wfMessage( 'double-redirect-fixer' )->inContentLanguage()->text(), false );
+			self::$user = User::newFromName( wfMsgForContent( 'double-redirect-fixer' ), false );
 			# FIXME: newFromName could return false on a badly configured wiki.
 			if ( !self::$user->isLoggedIn() ) {
 				self::$user->addToDatabase();

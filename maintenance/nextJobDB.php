@@ -17,18 +17,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @file
  * @todo Make this work on PostgreSQL and maybe other database servers
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
-/**
- * Maintenance script that picks a database that has pending jobs.
- *
- * @ingroup Maintenance
- */
 class nextJobDB extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -100,11 +94,10 @@ class nextJobDB extends Maintenance {
 		$lb = wfGetLB( $dbName );
 		$db = $lb->getConnection( DB_MASTER, array(), $dbName );
 		if ( $type === false ) {
-			$conds = Job::defaultQueueConditions( );
+			$conds = array();
 		} else {
 			$conds = array( 'job_cmd' => $type );
 		}
-
 
 		$exists = (bool) $db->selectField( 'job', '1', $conds, __METHOD__ );
 		$lb->reuseConnection( $db );

@@ -4,7 +4,7 @@
  *
  * Created on July 6, 2007
  *
- * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
+ * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,12 +73,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			}
 
 			$result = $this->getResult();
-			//search only inside the local repo
-			if( $params['localonly'] ) {
-				$images = RepoGroup::singleton()->getLocalRepo()->findFiles( $titles );
-			} else {
-				$images = RepoGroup::singleton()->findFiles( $titles );
-			}
+			$images = RepoGroup::singleton()->findFiles( $titles );
 			foreach ( $images as $img ) {
 				// Skip redirects
 				if ( $img->getOriginalTitle()->isRedirect() ) {
@@ -86,14 +81,14 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				}
 
 				$start = $skip ? $fromTimestamp : $params['start'];
-				$pageId = $pageIds[NS_FILE][ $img->getOriginalTitle()->getDBkey() ];
+				$pageId = $pageIds[NS_IMAGE][ $img->getOriginalTitle()->getDBkey() ];
 
 				$fit = $result->addValue(
 					array( 'query', 'pages', intval( $pageId ) ),
 					'imagerepository', $img->getRepoName()
 				);
 				if ( !$fit ) {
-					if ( count( $pageIds[NS_FILE] ) == 1 ) {
+					if ( count( $pageIds[NS_IMAGE] ) == 1 ) {
 						// The user is screwed. imageinfo can't be solely
 						// responsible for exceeding the limit in this case,
 						// so set a query-continue that just returns the same
@@ -124,7 +119,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 						self::getInfo( $img, $prop, $result,
 							$finalThumbParams, $params['metadataversion'] ) );
 					if ( !$fit ) {
-						if ( count( $pageIds[NS_FILE] ) == 1 ) {
+						if ( count( $pageIds[NS_IMAGE] ) == 1 ) {
 							// See the 'the user is screwed' comment above
 							$this->setContinueEnumParameter( 'start',
 								wfTimestamp( TS_ISO_8601, $img->getTimestamp() ) );
@@ -154,7 +149,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 						self::getInfo( $oldie, $prop, $result,
 							$finalThumbParams, $params['metadataversion'] ) );
 					if ( !$fit ) {
-						if ( count( $pageIds[NS_FILE] ) == 1 ) {
+						if ( count( $pageIds[NS_IMAGE] ) == 1 ) {
 							$this->setContinueEnumParameter( 'start',
 								wfTimestamp( TS_ISO_8601, $oldie->getTimestamp() ) );
 						} else {
@@ -361,7 +356,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 
 					if ( isset( $prop['thumbmime'] ) && $file->getHandler() ) {
 						list( $ext, $mime ) = $file->getHandler()->getThumbType(
-							$mto->getExtension(), $file->getMimeType(), $thumbParams );
+							substr( $mto->getPath(), strrpos( $mto->getPath(), '.' ) + 1 ),
+							$file->getMimeType(), $thumbParams );
 						$vals['thumbmime'] = $mime;
 					}
 				} elseif ( $mto && $mto->isError() ) {
@@ -434,7 +430,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 * @param $img File
 	 * @return string
 	 */
-	protected function getContinueStr( $img ) {
+	private function getContinueStr( $img ) {
 		return $img->getOriginalTitle()->getText() .
 			'|' .  $img->getTimestamp();
 	}
@@ -476,7 +472,6 @@ class ApiQueryImageInfo extends ApiQueryBase {
 				ApiBase::PARAM_TYPE => 'string',
 			),
 			'continue' => null,
-			'localonly' => false,
 		);
 	}
 
@@ -496,7 +491,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 *
 	 * @return array
 	 */
-	private static function getProperties( $modulePrefix = '' ) {
+	private static function getProperties() {
 		return array(
 			'timestamp' =>      ' timestamp     - Adds timestamp for the uploaded version',
 			'user' =>           ' user          - Adds the user who uploaded the image version',
@@ -508,8 +503,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			'dimensions' =>     ' dimensions    - Alias for size', // For backwards compatibility with Allimages
 			'sha1' =>           ' sha1          - Adds SHA-1 hash for the image',
 			'mime' =>           ' mime          - Adds MIME type of the image',
-			'thumbmime' =>      ' thumbmime     - Adds MIME type of the image thumbnail' .
-				' (requires url and param ' . $modulePrefix . 'urlwidth)',
+			'thumbmime' =>      ' thumbmime     - Adds MIME type of the image thumbnail (requires url)',
 			'mediatype' =>      ' mediatype     - Adds the media type of the image',
 			'metadata' =>       ' metadata      - Lists EXIF metadata for the version of the image',
 			'archivename' =>    ' archivename   - Adds the file name of the archive version for non-latest versions',
@@ -524,10 +518,10 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	 *
 	 * @return array
 	 */
-	public static function getPropertyDescriptions( $filter = array(), $modulePrefix = '' ) {
+	public static function getPropertyDescriptions( $filter = array() ) {
 		return array_merge(
 			array( 'What image information to get:' ),
-			array_values( array_diff_key( self::getProperties( $modulePrefix ), array_flip( $filter ) ) )
+			array_values( array_diff_key( self::getProperties(), array_flip( $filter ) ) )
 		);
 	}
 
@@ -538,7 +532,7 @@ class ApiQueryImageInfo extends ApiQueryBase {
 	public function getParamDescription() {
 		$p = $this->getModulePrefix();
 		return array(
-			'prop' => self::getPropertyDescriptions( array(), $p ),
+			'prop' => self::getPropertyDescriptions(),
 			'urlwidth' => array( "If {$p}prop=url is set, a URL to an image scaled to this width will be returned.",
 					    'Only the current version of the image can be scaled' ),
 			'urlheight' => "Similar to {$p}urlwidth. Cannot be used without {$p}urlwidth",
@@ -549,117 +543,8 @@ class ApiQueryImageInfo extends ApiQueryBase {
 			'end' => 'Timestamp to stop listing at',
 			'metadataversion' => array( "Version of metadata to use. if 'latest' is specified, use latest version.",
 						"Defaults to '1' for backwards compatibility" ),
-			'continue' => 'If the query response includes a continue value, use it here to get another page of results',
-			'localonly' => 'Look only for files in the local repository',
+			'continue' => 'If the query response includes a continue value, use it here to get another page of results'
 		);
-	}
-
-	public static function getResultPropertiesFiltered( $filter = array() ) {
-		$props = array(
-			'timestamp' => array(
-				'timestamp' => 'timestamp'
-			),
-			'user' => array(
-				'userhidden' => 'boolean',
-				'user' => 'string',
-				'anon' => 'boolean'
-			),
-			'userid' => array(
-				'userhidden' => 'boolean',
-				'userid' => 'integer',
-				'anon' => 'boolean'
-			),
-			'size' => array(
-				'size' => 'integer',
-				'width' => 'integer',
-				'height' => 'integer',
-				'pagecount' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'comment' => array(
-				'commenthidden' => 'boolean',
-				'comment' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'parsedcomment' => array(
-				'commenthidden' => 'boolean',
-				'parsedcomment' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'url' => array(
-				'filehidden' => 'boolean',
-				'thumburl' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'thumbwidth' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'thumbheight' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'thumberror' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'url' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'descriptionurl' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'sha1' => array(
-				'filehidden' => 'boolean',
-				'sha1' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'mime' => array(
-				'filehidden' => 'boolean',
-				'mime' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'mediatype' => array(
-				'filehidden' => 'boolean',
-				'mediatype' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'archivename' => array(
-				'filehidden' => 'boolean',
-				'archivename' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'bitdepth' => array(
-				'filehidden' => 'boolean',
-				'bitdepth' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-		);
-		return array_diff_key( $props, array_flip( $filter ) );
-	}
-
-	public function getResultProperties() {
-		return self::getResultPropertiesFiltered();
 	}
 
 	public function getDescription() {

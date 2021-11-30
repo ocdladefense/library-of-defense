@@ -37,9 +37,7 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 	function execute( $par ) {
 		global $wgAuth;
 
-		$this->setHeaders();
-		$this->outputHeader();
-		$this->getOutput()->disallowUserJs();
+		$this->checkReadOnly();
 
 		$request = $this->getRequest();
 		$this->mUserName = trim( $request->getVal( 'wpName' ) );
@@ -48,7 +46,16 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 		$this->mRetype = $request->getVal( 'wpRetype' );
 		$this->mDomain = $request->getVal( 'wpDomain' );
 
+		$this->setHeaders();
+		$this->outputHeader();
+		$this->getOutput()->disallowUserJs();
+
 		$user = $this->getUser();
+
+		if ( !$user->isLoggedIn() && !LoginForm::getLoginToken() ) {
+			LoginForm::setLoginToken();
+		}
+
 		if( !$request->wasPosted() && !$user->isLoggedIn() ) {
 			$this->error( $this->msg( 'resetpass-no-info' )->text() );
 			return;
@@ -59,14 +66,23 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 			return;
 		}
 
-		$this->checkReadOnly();
-
 		if( $request->wasPosted() && $user->matchEditToken( $request->getVal( 'token' ) ) ) {
 			try {
-				$this->mDomain = $wgAuth->getDomain();
+				if ( isset( $_SESSION['wsDomain'] ) ) {
+					$this->mDomain = $_SESSION['wsDomain'];
+				}
+				$wgAuth->setDomain( $this->mDomain );
 				if( !$wgAuth->allowPasswordChange() ) {
 					$this->error( $this->msg( 'resetpass_forbidden' )->text() );
 					return;
+				}
+
+				if ( !$user->isLoggedIn()
+					&& $request->getVal( 'wpLoginOnChangeToken' ) !== LoginForm::getLoginToken()
+				) {
+					// Potential CSRF (bug 62497)
+					$this->error( $this->msg( 'sessionfailure' )->text() );
+					return false;
 				}
 
 				$this->attemptReset( $this->mNewpass, $this->mRetype );
@@ -133,15 +149,10 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 			$oldpassMsg = 'oldpassword';
 			$submitMsg = 'resetpass-submit-loggedin';
 		}
-		$extraFields = array();
-		wfRunHooks( 'ChangePasswordForm', array( &$extraFields ) );
-		$prettyFields = array(
-					array( 'wpName', 'username', 'text', $this->mUserName ),
-					array( 'wpPassword', $oldpassMsg, 'password', $this->mOldpass ),
-					array( 'wpNewPassword', 'newpassword', 'password', null ),
-					array( 'wpRetype', 'retypenew', 'password', null ),
-				);
-		$prettyFields = array_merge( $prettyFields, $extraFields );
+		$loginOnChangeToken = '';
+		if ( !$user->isLoggedIn() ) {
+			$loginOnChangeToken = Html::hidden( 'wpLoginOnChangeToken', LoginForm::getLoginToken() );
+		}
 		$this->getOutput()->addHTML(
 			Xml::fieldset( $this->msg( 'resetpass_header' )->text() ) .
 			Xml::openElement( 'form',
@@ -153,9 +164,15 @@ class SpecialChangePassword extends UnlistedSpecialPage {
 			Html::hidden( 'wpName', $this->mUserName ) . "\n" .
 			Html::hidden( 'wpDomain', $this->mDomain ) . "\n" .
 			Html::hidden( 'returnto', $this->getRequest()->getVal( 'returnto' ) ) . "\n" .
+			$loginOnChangeToken .
 			$this->msg( 'resetpass_text' )->parseAsBlock() . "\n" .
 			Xml::openElement( 'table', array( 'id' => 'mw-resetpass-table' ) ) . "\n" .
-			$this->pretty( $prettyFields ) . "\n" .
+			$this->pretty( array(
+				array( 'wpName', 'username', 'text', $this->mUserName ),
+				array( 'wpPassword', $oldpassMsg, 'password', $this->mOldpass ),
+				array( 'wpNewPassword', 'newpassword', 'password', null ),
+				array( 'wpRetype', 'retypenew', 'password', null ),
+			) ) . "\n" .
 			$rememberMe .
 			"<tr>\n" .
 				"<td></td>\n" .

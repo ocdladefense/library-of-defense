@@ -41,9 +41,9 @@ class MostimagesPage extends ImageQueryPage {
 	function getQueryInfo() {
 		return array (
 			'tables' => array ( 'imagelinks' ),
-			'fields' => array ( 'namespace' => NS_FILE,
-					'title' => 'il_to',
-					'value' => 'COUNT(*)' ),
+			'fields' => array ( "'" . NS_FILE . "' AS namespace",
+					'il_to AS title',
+					'COUNT(*) AS value' ),
 			'options' => array ( 'GROUP BY' => 'il_to',
 					'HAVING' => 'COUNT(*) > 1' )
 		);

@@ -7,7 +7,6 @@
  * @ingroup Language
  * @file
  *
- * @author Geitost
  * @author Laximilian scoken
  * @author Mucalexx
  * @author Revolus
@@ -23,7 +22,7 @@ $messages = array(
 'february'     => 'Februar',
 'december'     => 'Dezember',
 'january-gen'  => 'Jänners',
-'february-gen' => 'Februars',
+'february-gen' => 'Febers',
 'jan'          => 'Jän',
 
 );

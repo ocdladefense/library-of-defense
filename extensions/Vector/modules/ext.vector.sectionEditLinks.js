@@ -1,17 +1,17 @@
 /*
  * Section Edit Links for Vector
  */
-( function ( $, mw ) {
+( function( $, mw ) {
 
 var eventBase = 'ext.vector.sectionEditLinks-bucket:';
 var cookieBase = 'ext.vector.sectionEditLinks-';
-var bucket = null;
 
 if ( mw.config.get( 'wgVectorSectionEditLinksBucketTest', false ) ) {
 	// If the version in the client's cookie doesn't match wgVectorSectionEditLinksExperiment, then
 	// we need to disregard the bucket they may already be in to ensure accurate redistribution
 	var currentExperiment = $.cookie( cookieBase + 'experiment' );
 	var experiment = Number( mw.config.get( 'wgVectorSectionEditLinksExperiment', 0 ) );
+	var bucket = null;
 	if ( currentExperiment === null || Number( currentExperiment ) != experiment ) {
 		$.cookie( cookieBase + 'experiment', experiment );
 	} else {
@@ -32,15 +32,10 @@ if ( mw.config.get( 'wgVectorSectionEditLinksBucketTest', false ) ) {
 		}
 	}
 }
-
-if ( bucket <= 0 ) {
-	return;
-}
-
-$(document).ready( function () {
+if ( bucket > 0 ) {
 	// Transform the targets of section edit links to route through the click tracking API
 	var session = $.cookie( 'clicktracking-session' );
-	$( 'span.editsection a, #ca-edit a' ).each( function () {
+	$( 'span.editsection a, #ca-edit a' ).each( function() {
 		var event = eventBase + bucket + '@' + experiment;
 		if ( $(this).is( '#ca-edit a' ) ) {
 			event += '-tab';
@@ -54,7 +49,7 @@ $(document).ready( function () {
 	} );
 	if ( bucket == 2 ) {
 		// Move the link over to be next to the heading text and style it with an icon
-		$( 'span.mw-headline' ).each( function () {
+		$( 'span.mw-headline' ).each( function() {
 			$(this)
 				.after(
 					$( '<span class="editsection vector-editLink"></span>' )
@@ -62,7 +57,7 @@ $(document).ready( function () {
 							$(this)
 								.prev( 'span.editsection' )
 								.find( 'a' )
-									.each( function () {
+									.each( function() {
 										var text = $(this).text();
 										$(this).text(
 											text.substr( 0, 1 ).toUpperCase() + text.substr( 1 )
@@ -75,6 +70,6 @@ $(document).ready( function () {
 					.remove();
 		} );
 	}
-} );
+}
 
 } )( jQuery, mediaWiki );

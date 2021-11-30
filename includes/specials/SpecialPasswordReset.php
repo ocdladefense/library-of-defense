@@ -65,9 +65,6 @@ class SpecialPasswordReset extends FormSpecialPage {
 				'type' => 'text',
 				'label-message' => 'passwordreset-username',
 			);
-			if( $this->getUser()->isLoggedIn() ) {
-				$a['Username']['default'] = $this->getUser()->getName();
-			}
 		}
 
 		if ( isset( $wgPasswordResetRoutes['email'] ) && $wgPasswordResetRoutes['email'] ) {
@@ -98,7 +95,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 	}
 
 	public function alterForm( HTMLForm $form ) {
-		$form->setSubmitTextMsg( 'mailmypassword' );
+		$form->setSubmitText( wfMessage( "mailmypassword" ) );
 	}
 
 	protected function preText() {
@@ -113,7 +110,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 		if ( isset( $wgPasswordResetRoutes['domain'] ) && $wgPasswordResetRoutes['domain'] ) {
 			$i++;
 		}
-		return $this->msg( 'passwordreset-pretext', $i )->parseAsBlock();
+		return wfMessage( 'passwordreset-pretext', $i )->parseAsBlock();
 	}
 
 	/**
@@ -154,7 +151,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 			$method = 'email';
 			$res = wfGetDB( DB_SLAVE )->select(
 				'user',
-				User::selectFields(),
+				'*',
 				array( 'user_email' => $data['Email'] ),
 				__METHOD__
 			);
@@ -190,7 +187,8 @@ class SpecialPasswordReset extends FormSpecialPage {
 		$firstUser = $users[0];
 
 		if ( !$firstUser instanceof User || !$firstUser->getID() ) {
-			return array( array( 'nosuchuser', $data['Username'] ) );
+			// Don't parse username as wikitext (bug 65501)
+			return array( array( 'nosuchuser', wfEscapeWikiText( $data['Username'] ) ) );
 		}
 
 		// Check against the rate limiter
@@ -213,7 +211,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 		// All the users will have the same email address
 		if ( $firstUser->getEmail() == '' ) {
 			// This won't be reachable from the email route, so safe to expose the username
-			return array( array( 'noemail', $firstUser->getName() ) );
+			return array( array( 'noemail', wfEscapeWikiText( $firstUser->getName() ) ) );
 		}
 
 		// We need to have a valid IP address for the hook, but per bug 18347, we should
@@ -237,12 +235,12 @@ class SpecialPasswordReset extends FormSpecialPage {
 			$password = $user->randomPassword();
 			$user->setNewpassword( $password );
 			$user->saveSettings();
-			$passwords[] = $this->msg( 'passwordreset-emailelement', $user->getName(), $password
-				)->inLanguage( $userLanguage )->text(); // We'll escape the whole thing later
+			$passwords[] = wfMessage( 'passwordreset-emailelement', $user->getName(), $password
+				)->inLanguage( $userLanguage )->plain(); // We'll escape the whole thing later
 		}
 		$passwordBlock = implode( "\n\n", $passwords );
 
-		$this->email = $this->msg( $msg )->inLanguage( $userLanguage );
+		$this->email = wfMessage( $msg )->inLanguage( $userLanguage );
 		$this->email->params(
 			$username,
 			$passwordBlock,
@@ -251,7 +249,7 @@ class SpecialPasswordReset extends FormSpecialPage {
 			round( $wgNewPasswordExpiry / 86400 )
 		);
 
-		$title = $this->msg( 'passwordreset-emailtitle' );
+		$title = wfMessage( 'passwordreset-emailtitle' );
 
 		$this->result = $firstUser->sendMail( $title->escaped(), $this->email->escaped() );
 

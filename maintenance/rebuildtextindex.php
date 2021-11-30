@@ -20,18 +20,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @file
  * @ingroup Maintenance
  * @todo document
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
-/**
- * Maintenance script that rebuilds search index table from scratch.
- *
- * @ingroup Maintenance
- */
 class RebuildTextIndex extends Maintenance {
 	const RTI_CHUNK_SIZE = 500;
 

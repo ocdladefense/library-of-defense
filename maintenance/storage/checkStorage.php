@@ -22,7 +22,7 @@
  */
 
 if ( !defined( 'MEDIAWIKI' ) ) {
-	require_once( __DIR__ . '/../commandLine.inc' );
+	require_once( dirname( __FILE__ ) . '/../commandLine.inc' );
 
 	$cs = new CheckStorage;
 	$fix = isset( $options['fix'] );
@@ -381,15 +381,14 @@ class CheckStorage {
 			$extDb->freeResult( $res );
 
 			// Print errors for missing blobs rows
-			foreach ( $oldIds as $blobId => $oldIds2 ) {
-				$this->error( 'restore text', "Error: missing target $cluster/$blobId for two-part ES URL", $oldIds2 );
+			foreach ( $oldIds as $blobId => $oldIds ) {
+				$this->error( 'restore text', "Error: missing target $cluster/$blobId for two-part ES URL", $oldIds );
 			}
 		}
 	}
 
 	function restoreText( $revIds, $xml ) {
-		global $wgDBname;
-		$tmpDir = wfTempDir();
+		global $wgTmpDirectory, $wgDBname;
 
 		if ( !count( $revIds ) ) {
 			return;
@@ -397,8 +396,8 @@ class CheckStorage {
 
 		print "Restoring text from XML backup...\n";
 
-		$revFileName = "$tmpDir/broken-revlist-$wgDBname";
-		$filteredXmlFileName = "$tmpDir/filtered-$wgDBname.xml";
+		$revFileName = "$wgTmpDirectory/broken-revlist-$wgDBname";
+		$filteredXmlFileName = "$wgTmpDirectory/filtered-$wgDBname.xml";
 
 		// Write revision list
 		if ( !file_put_contents( $revFileName, implode( "\n", $revIds ) ) ) {
@@ -482,3 +481,4 @@ class CheckStorage {
 		$this->errors['fixed'][$id] = true;
 	}
 }
+

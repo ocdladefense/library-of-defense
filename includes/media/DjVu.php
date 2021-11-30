@@ -1,21 +1,6 @@
 <?php
 /**
- * Handler for DjVu images.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * Handler for DjVu images
  *
  * @file
  * @ingroup Media
@@ -138,7 +123,7 @@ class DjVuHandler extends ImageHandler {
 			$width = isset( $params['width'] ) ? $params['width'] : 0;
 			$height = isset( $params['height'] ) ? $params['height'] : 0;
 			return new MediaTransformError( 'thumbnail_error', $width, $height,
-				wfMessage( 'djvu_no_xml' )->text() );
+				wfMsg( 'djvu_no_xml' ) );
 		}
 
 		if ( !$this->normaliseParams( $image, $params ) ) {
@@ -146,40 +131,28 @@ class DjVuHandler extends ImageHandler {
 		}
 		$width = $params['width'];
 		$height = $params['height'];
+		$srcPath = $image->getLocalRefPath();
 		$page = $params['page'];
 		if ( $page > $this->pageCount( $image ) ) {
-			return new MediaTransformError(
-				'thumbnail_error',
-				$width,
-				$height,
-				wfMessage( 'djvu_page_error' )->text()
-			);
+			return new MediaTransformError( 'thumbnail_error', $width, $height, wfMsg( 'djvu_page_error' ) );
 		}
 
 		if ( $flags & self::TRANSFORM_LATER ) {
-			$params = array(
-				'width' => $width,
-				'height' => $height,
-				'page' => $page
-			);
-			return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
+			return new ThumbnailImage( $image, $dstUrl, $width, $height, $dstPath, $page );
 		}
 
 		if ( !wfMkdirParents( dirname( $dstPath ), null, __METHOD__ ) ) {
-			return new MediaTransformError(
-				'thumbnail_error',
-				$width,
-				$height,
-				wfMessage( 'thumbnail_dest_directory' )->text()
-			);
+			return new MediaTransformError( 'thumbnail_error', $width, $height, wfMsg( 'thumbnail_dest_directory' ) );
 		}
 
-		$srcPath = $image->getLocalRefPath();
 		# Use a subshell (brackets) to aggregate stderr from both pipeline commands
 		# before redirecting it to the overall stdout. This works in both Linux and Windows XP.
-		$cmd = '(' . wfEscapeShellArg( $wgDjvuRenderer ) . " -format=ppm -page={$page}" .
-			" -size={$params['physicalWidth']}x{$params['physicalHeight']} " .
-			wfEscapeShellArg( $srcPath );
+		$cmd = '(' . wfEscapeShellArg(
+			$wgDjvuRenderer,
+			"-format=ppm",
+			"-page={$page}",
+			"-size={$params['physicalWidth']}x{$params['physicalHeight']}",
+			$srcPath );
 		if ( $wgDjvuPostProcessor ) {
 			$cmd .= " | {$wgDjvuPostProcessor}";
 		}
@@ -197,12 +170,7 @@ class DjVuHandler extends ImageHandler {
 					wfHostname(), $retval, trim($err), $cmd ) );
 			return new MediaTransformError( 'thumbnail_error', $width, $height, $err );
 		} else {
-			$params = array(
-				'width' => $width,
-				'height' => $height,
-				'page' => $page
-			);
-			return new ThumbnailImage( $image, $dstUrl, $dstPath, $params );
+			return new ThumbnailImage( $image, $dstUrl, $width, $height, $dstPath, $page );
 		}
 	}
 
@@ -226,7 +194,6 @@ class DjVuHandler extends ImageHandler {
 	 * Cache a document tree for the DjVu XML metadata
 	 * @param $image File
 	 * @param $gettext Boolean: DOCUMENT (Default: false)
-	 * @return bool
 	 */
 	function getMetaTree( $image , $gettext = false ) {
 		if ( isset( $image->dejaMetaTree ) ) {

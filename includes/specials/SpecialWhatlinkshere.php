@@ -163,7 +163,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 			'rd_from = page_id',
 			'rd_namespace' => $target->getNamespace(),
 			'rd_title' => $target->getDBkey(),
-			'rd_interwiki = ' . $dbr->addQuotes( '' ) . ' OR rd_interwiki IS NULL'
+			'(rd_interwiki is NULL) or (rd_interwiki = \'\')'
 		)));
 
 		if( $fetchlinks ) {
@@ -288,7 +288,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 				'whatlinkshere-links', 'isimage' );
 			$msgcache = array();
 			foreach ( $msgs as $msg ) {
-				$msgcache[$msg] = $this->msg( $msg )->escaped();
+				$msgcache[$msg] = wfMsgExt( $msg, array( 'escapenoentities' ) );
 			}
 		}
 
@@ -316,12 +316,12 @@ class SpecialWhatLinksHere extends SpecialPage {
 			$props[] = $msgcache['isimage'];
 
 		if ( count( $props ) ) {
-			$propsText = $this->msg( 'parentheses' )->rawParams( implode( $msgcache['semicolon-separator'], $props ) )->escaped();
+			$propsText = '(' . implode( $msgcache['semicolon-separator'], $props ) . ')';
 		}
 
 		# Space for utilities links, with a what-links-here link provided
 		$wlhLink = $this->wlhLink( $nt, $msgcache['whatlinkshere-links'] );
-		$wlh = Xml::wrapClass( $this->msg( 'parentheses' )->rawParams( $wlhLink )->escaped(), 'mw-whatlinkshere-tools' );
+		$wlh = Xml::wrapClass( "($wlhLink)", 'mw-whatlinkshere-tools' );
 
 		return $notClose ?
 			Xml::openElement( 'li' ) . "$link $propsText $dirmark $wlh\n" :
@@ -356,8 +356,8 @@ class SpecialWhatLinksHere extends SpecialPage {
 
 	function getPrevNext( $prevId, $nextId ) {
 		$currentLimit = $this->opts->getValue( 'limit' );
-		$prev = $this->msg( 'whatlinkshere-prev' )->numParams( $currentLimit )->escaped();
-		$next = $this->msg( 'whatlinkshere-next' )->numParams( $currentLimit )->escaped();
+		$prev = wfMessage( 'whatlinkshere-prev' )->numParams( $currentLimit )->escaped();
+		$next = wfMessage( 'whatlinkshere-next' )->numParams( $currentLimit )->escaped();
 
 		$changed = $this->opts->getChangedValues();
 		unset($changed['target']); // Already in the request title
@@ -381,7 +381,7 @@ class SpecialWhatLinksHere extends SpecialPage {
 
 		$nums = $lang->pipeList( $limitLinks );
 
-		return $this->msg( 'viewprevnext' )->rawParams( $prev, $next, $nums )->escaped();
+		return wfMsgHtml( 'viewprevnext', $prev, $next, $nums );
 	}
 
 	function whatlinkshereForm() {
@@ -404,31 +404,22 @@ class SpecialWhatLinksHere extends SpecialPage {
 			$f .= Html::hidden( $name, $value );
 		}
 
-		$f .= Xml::fieldset( $this->msg( 'whatlinkshere' )->text() );
+		$f .= Xml::fieldset( wfMsg( 'whatlinkshere' ) );
 
 		# Target input
-		$f .= Xml::inputLabel( $this->msg( 'whatlinkshere-page' )->text(), 'target',
+		$f .= Xml::inputLabel( wfMsg( 'whatlinkshere-page' ), 'target',
 				'mw-whatlinkshere-target', 40, $target );
 
 		$f .= ' ';
 
 		# Namespace selector
-		$f .= Html::namespaceSelector(
-			array(
-				'selected' => $namespace,
-				'all' => '',
-				'label' => $this->msg( 'namespace' )->text()
-			), array(
-				'name'  => 'namespace',
-				'id'    => 'namespace',
-				'class' => 'namespaceselector',
-			)
-		);
+		$f .= Xml::label( wfMsg( 'namespace' ), 'namespace' ) . '&#160;' .
+			Xml::namespaceSelector( $namespace, '' );
 
 		$f .= ' ';
 
 		# Submit
-		$f .= Xml::submitButton( $this->msg( 'allpagessubmit' )->text() );
+		$f .= Xml::submitButton( wfMsg( 'allpagessubmit' ) );
 
 		# Close
 		$f .= Xml::closeElement( 'fieldset' ) . Xml::closeElement( 'form' ) . "\n";
@@ -442,8 +433,8 @@ class SpecialWhatLinksHere extends SpecialPage {
 	 * @return string HTML fieldset and filter panel with the show/hide links
 	 */
 	function getFilterPanel() {
-		$show = $this->msg( 'show' )->escaped();
-		$hide = $this->msg( 'hide' )->escaped();
+		$show = wfMsgHtml( 'show' );
+		$hide = wfMsgHtml( 'hide' );
 
 		$changed = $this->opts->getChangedValues();
 		unset($changed['target']); // Already in the request title
@@ -454,14 +445,13 @@ class SpecialWhatLinksHere extends SpecialPage {
 			$types[] = 'hideimages';
 
 		// Combined message keys: 'whatlinkshere-hideredirs', 'whatlinkshere-hidetrans', 'whatlinkshere-hidelinks', 'whatlinkshere-hideimages'
-		// To be sure they will be found by grep
+		// To be sure they will be find by grep
 		foreach( $types as $type ) {
 			$chosen = $this->opts->getValue( $type );
 			$msg = $chosen ? $show : $hide;
 			$overrides = array( $type => !$chosen );
-			$links[] =  $this->msg( "whatlinkshere-{$type}" )->rawParams(
-				$this->makeSelfLink( $msg, array_merge( $changed, $overrides ) ) )->escaped();
+			$links[] =  wfMsgHtml( "whatlinkshere-{$type}", $this->makeSelfLink( $msg, array_merge( $changed, $overrides ) ) );
 		}
-		return Xml::fieldset( $this->msg( 'whatlinkshere-filters' )->text(), $this->getLanguage()->pipeList( $links ) );
+		return Xml::fieldset( wfMsg( 'whatlinkshere-filters' ), $this->getLanguage()->pipeList( $links ) );
 	}
 }

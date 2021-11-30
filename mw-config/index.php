@@ -8,11 +8,11 @@
 define( 'MW_CONFIG_CALLBACK', 'Installer::overrideConfig' );
 define( 'MEDIAWIKI_INSTALL', true );
 
-chdir( dirname( __DIR__ ) );
+chdir( dirname( dirname( __FILE__ ) ) );
 if ( isset( $_SERVER['MW_COMPILED'] ) ) {
-	require ( 'core/includes/WebStart.php' );
+	require ( 'phase3/includes/WebStart.php' );
 } else {
-	require( dirname( __DIR__ ) . '/includes/WebStart.php' );
+	require( dirname( dirname( __FILE__ ) ) . '/includes/WebStart.php' );
 }
 
 wfInstallerMain();
@@ -20,7 +20,7 @@ wfInstallerMain();
 function wfInstallerMain() {
 	global $wgRequest, $wgLang, $wgMetaNamespace, $wgCanonicalNamespaceNames;
 
-	$installer = InstallerOverrides::getWebInstaller( $wgRequest );
+	$installer = new WebInstaller( $wgRequest );
 
 	if ( !$installer->startSession() ) {
 		$installer->finish();

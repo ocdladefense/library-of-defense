@@ -1,22 +1,5 @@
 <?php
 /**
- * Localisation messages cache.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
  * @file
  * @ingroup Cache
  */
@@ -132,7 +115,6 @@ class MessageCache {
 	function getParserOptions() {
 		if ( !$this->mParserOptions ) {
 			$this->mParserOptions = new ParserOptions;
-			$this->mParserOptions->setEditSection( false );
 		}
 		return $this->mParserOptions;
 	}
@@ -144,7 +126,7 @@ class MessageCache {
 	 *
 	 * @param $hash String: the hash of contents, to check validity.
 	 * @param $code Mixed: Optional language code, see documenation of load().
-	 * @return bool on failure.
+	 * @return false on failure.
 	 */
 	function loadFromLocal( $hash, $code ) {
 		global $wgCacheDirectory, $wgLocalMessageCacheSerialized;
@@ -278,7 +260,6 @@ class MessageCache {
 	 * is disabled.
 	 *
 	 * @param $code String: language to which load messages
-	 * @return bool
 	 */
 	function load( $code = false ) {
 		global $wgUseLocalMessageCache;
@@ -515,7 +496,7 @@ class MessageCache {
 		if ( $code === 'en'  ) {
 			// Delete all sidebars, like for example on action=purge on the
 			// sidebar messages
-			$codes = array_keys( Language::fetchLanguageNames() );
+			$codes = array_keys( Language::getLanguageNames() );
 		}
 
 		global $wgMemc;
@@ -539,7 +520,7 @@ class MessageCache {
 	 * @param $cache Array: cached messages with a version.
 	 * @param $memc Bool: Wether to update or not memcache.
 	 * @param $code String: Language code.
-	 * @return bool on somekind of error.
+	 * @return False on somekind of error.
 	 */
 	protected function saveToCaches( $cache, $memc = true, $code = false ) {
 		wfProfileIn( __METHOD__ );
@@ -607,7 +588,7 @@ class MessageCache {
 	 * @param $isFullKey Boolean: specifies whether $key is a two part key
 	 *                   "msg/lang".
 	 *
-	 * @return string|bool
+	 * @return string|false
 	 */
 	function get( $key, $useDB = true, $langcode = true, $isFullKey = false ) {
 		global $wgLanguageCode, $wgContLang;
@@ -715,7 +696,7 @@ class MessageCache {
 	 * @param $title String: Message cache key with initial uppercase letter.
 	 * @param $code String: code denoting the language to try.
 	 *
-	 * @return string|bool False on failure
+	 * @return string|false
 	 */
 	function getMsgFromNamespace( $title, $code ) {
 		global $wgAdaptiveMessageCache;
@@ -766,14 +747,12 @@ class MessageCache {
 		}
 
 		# Try loading it from the database
-		$revision = Revision::newFromTitle(
-			Title::makeTitle( NS_MEDIAWIKI, $title ), false, Revision::READ_LATEST
-		);
+		$revision = Revision::newFromTitle( Title::makeTitle( NS_MEDIAWIKI, $title ) );
 		if ( $revision ) {
 			$message = $revision->getText();
 			if ($message === false) {
 				// A possibly temporary loading failure.
-				wfDebugLog( 'MessageCache', __METHOD__ . ": failed to load message page text for {$title} ($code)" );
+				wfDebugLog( 'MessageCache', __METHOD__ . ": failed to load message page text for {$title->getDbKey()} ($code)" );
 			} else {
 				$this->mCache[$code][$title] = ' ' . $message;
 				$this->mMemc->set( $titleKey, ' ' . $message, $this->mExpiry );
@@ -889,7 +868,7 @@ class MessageCache {
 	 * Clear all stored messages. Mainly used after a mass rebuild.
 	 */
 	function clear() {
-		$langs = Language::fetchLanguageNames( null, 'mw' );
+		$langs = Language::getLanguageNames( false );
 		foreach ( array_keys($langs) as $code ) {
 			# Global cache
 			$this->mMemc->delete( wfMemcKey( 'messages', $code ) );
@@ -911,7 +890,8 @@ class MessageCache {
 		}
 
 		$lang = array_pop( $pieces );
-		if( !Language::fetchLanguageName( $lang, null, 'mw' ) ) {
+		$validCodes = Language::getLanguageNames();
+		if( !array_key_exists( $lang, $validCodes ) ) {
 			return array( $key, $wgLanguageCode );
 		}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * XHTML sanitizer for %MediaWiki.
+ * XHTML sanitizer for MediaWiki
  *
  * Copyright © 2002-2005 Brion Vibber <brion@pobox.com> et al
  * http://www.mediawiki.org/
@@ -374,7 +374,7 @@ class Sanitizer {
 		if ( !$staticInitialised ) {
 
 			$htmlpairsStatic = array( # Tags that must be closed
-				'b', 'bdi', 'del', 'i', 'ins', 'u', 'font', 'big', 'small', 'sub', 'sup', 'h1',
+				'b', 'del', 'i', 'ins', 'u', 'font', 'big', 'small', 'sub', 'sup', 'h1',
 				'h2', 'h3', 'h4', 'h5', 'h6', 'cite', 'code', 'em', 's',
 				'strike', 'strong', 'tt', 'var', 'div', 'center',
 				'blockquote', 'ol', 'ul', 'dl', 'table', 'caption', 'pre',
@@ -613,6 +613,102 @@ class Sanitizer {
 	}
 
 	/**
+	 * Take an array of attribute names and values and fix some deprecated values
+	 * for the given element type.
+	 * This does not validate properties, so you should ensure that you call
+	 * validateTagAttributes AFTER this to ensure that the resulting style rule
+	 * this may add is safe.
+	 *
+	 * - Converts most presentational attributes like align into inline css
+	 *
+	 * @param $attribs Array
+	 * @param $element String
+	 * @return Array
+	 */
+	static function fixDeprecatedAttributes( $attribs, $element ) {
+		global $wgHtml5, $wgCleanupPresentationalAttributes;
+
+		// presentational attributes were removed from html5, we can leave them
+		// in when html5 is turned off
+		if ( !$wgHtml5 || !$wgCleanupPresentationalAttributes ) {
+			return $attribs;
+		}
+
+		$table = array( 'table' );
+		$cells = array( 'td', 'th' );
+		$colls = array( 'col', 'colgroup' );
+		$tblocks = array( 'tbody', 'tfoot', 'thead' );
+		$h = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+
+		$presentationalAttribs = array(
+			'align' => array( 'text-align', array_merge( array( 'caption', 'hr', 'div', 'p', 'tr' ), $table, $cells, $colls, $tblocks, $h ) ),
+			'clear' => array( 'clear', array( 'br' ) ),
+			'height' => array( 'height', $cells ),
+			'nowrap' => array( 'white-space', $cells ),
+			'size' => array( 'height', array( 'hr' ) ),
+			'type' => array( 'list-style-type', array( 'li', 'ol', 'ul' ) ),
+			'valign' => array( 'vertical-align', array_merge( $cells, $colls, $tblocks ) ),
+			'width' => array( 'width', array_merge( array( 'hr', 'pre' ), $table, $cells, $colls ) ),
+		);
+
+		// Ensure that any upper case or mixed case attributes are converted to lowercase
+		foreach ( $attribs as $attribute => $value ) {
+			if ( $attribute !== strtolower( $attribute ) && array_key_exists( strtolower( $attribute ), $presentationalAttribs ) ) {
+				$attribs[strtolower( $attribute )] = $value;
+				unset( $attribs[$attribute] );
+			}
+		}
+
+		$style = "";
+		foreach ( $presentationalAttribs as $attribute => $info ) {
+			list( $property, $elements ) = $info;
+
+			// Skip if this attribute is not relevant to this element
+			if ( !in_array( $element, $elements ) ) {
+				continue;
+			}
+
+			// Skip if the attribute is not used
+			if ( !array_key_exists( $attribute, $attribs ) ) {
+				continue;
+			}
+
+			$value = $attribs[$attribute];
+
+			// For nowrap the value should be nowrap instead of whatever text is in the value
+			if ( $attribute === 'nowrap' ) {
+				$value = 'nowrap';
+			}
+
+			// clear="all" is clear: both; in css
+			if ( $attribute === 'clear' && strtolower( $value ) === 'all' ) {
+				$value = 'both';
+			}
+
+			// Size based properties should have px applied to them if they have no unit
+			if ( in_array( $attribute, array( 'height', 'width', 'size' ) ) ) {
+				if ( preg_match( '/^[\d.]+$/', $value ) ) {
+					$value = "{$value}px";
+				}
+			}
+
+			$style .= " $property: $value;";
+
+			unset( $attribs[$attribute] );
+		}
+
+		if ( $style ) {
+			// Prepend our style rules so that they can be overridden by user css
+			if ( isset($attribs['style']) ) {
+				$style .= " " . $attribs['style'];
+			}
+			$attribs['style'] = trim($style);
+		}
+
+		return $attribs;
+	}
+
+	/**
 	 * Take an array of attribute names and values and normalize or discard
 	 * illegal values for the given element type.
 	 *
@@ -741,23 +837,16 @@ class Sanitizer {
 	}
 
 	/**
-	 * Pick apart some CSS and check it for forbidden or unsafe structures.
-	 * Returns a sanitized string. This sanitized string will have
-	 * character references and escape sequences decoded, and comments
-	 * stripped. If the input is just too evil, only a comment complaining
-	 * about evilness will be returned.
-	 *
-	 * Currently URL references, 'expression', 'tps' are forbidden.
-	 *
-	 * NOTE: Despite the fact that character references are decoded, the
-	 * returned string may contain character references given certain
-	 * clever input strings. These character references must
-	 * be escaped before the return value is embedded in HTML.
-	 *
-	 * @param $value String
-	 * @return String
+	 * Normalize CSS into a format we can easily search for hostile input
+	 *  - decode character references
+	 *  - decode escape sequences
+	 *  - convert characters that IE6 interprets into ascii
+	 *  - remove comments, unless the entire value is one single comment
+	 * @param string $value the css string
+	 * @return string normalized css
 	 */
-	static function checkCss( $value ) {
+	public static function normalizeCss( $value ) {
+
 		// Decode character references like &#123;
 		$value = Sanitizer::decodeCharReferences( $value );
 
@@ -788,14 +877,8 @@ class Sanitizer {
 
 		// Normalize Halfwidth and Fullwidth Unicode block that IE6 might treat as ascii
 		$value = preg_replace_callback(
-			'/[！-ｚ]/u', // U+FF01 to U+FF5A
-			function ( $matches ) {
-				$cp = utf8ToCodepoint( $matches[0] );
-				if ( $cp === false ) {
-					return '';
-				}
-				return chr( $cp - 65248 ); // ASCII range \x21-\x7A
-			},
+			'/[！-［］-ｚ]/u', // U+FF01 to U+FF5A, excluding U+FF3C (bug 58088)
+			array( __CLASS__, 'cssNormalizeUnicodeWidth' ),
 			$value
 		);
 
@@ -838,13 +921,60 @@ class Sanitizer {
 			$value
 		);
 
+		return $value;
+	}
+
+
+	/**
+	 * Pick apart some CSS and check it for forbidden or unsafe structures.
+	 * Returns a sanitized string. This sanitized string will have
+	 * character references and escape sequences decoded and comments
+	 * stripped (unless it is itself one valid comment, in which case the value
+	 * will be passed through). If the input is just too evil, only a comment
+	 * complaining about evilness will be returned.
+	 *
+	 * Currently URL references, 'expression', 'tps' are forbidden.
+	 *
+	 * NOTE: Despite the fact that character references are decoded, the
+	 * returned string may contain character references given certain
+	 * clever input strings. These character references must
+	 * be escaped before the return value is embedded in HTML.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	static function checkCss( $value ) {
+		$value = self::normalizeCss( $value );
+
 		// Reject problematic keywords and control characters
 		if ( preg_match( '/[\000-\010\013\016-\037\177]/', $value ) ) {
 			return '/* invalid control char */';
-		} elseif ( preg_match( '! expression | filter\s*: | accelerator\s*: | url\s*\( !ix', $value ) ) {
-			return '/* insecure input */';
+		} elseif ( preg_match(
+			'! expression
+				| filter\s*:
+				| accelerator\s*:
+				| -o-link\s*:
+				| -o-link-source\s*:
+				| -o-replace\s*:
+				| url\s*\(
+				| image\s*\(
+				| image-set\s*\(
+			!ix', $value ) ) {			return '/* insecure input */';
 		}
 		return $value;
+	}
+
+	/**
+	 * Normalize Unicode U+FF01 to U+FF5A
+	 * @param character $char
+	 * @return character in ASCII range \x21-\x7A
+	 */
+	static function cssNormalizeUnicodeWidth( $matches ) {
+		$cp = utf8ToCodepoint( $matches[0] );
+		if ( $cp === false ) {
+			return '';
+		}
+		return chr( $cp - 65248 ); // ASCII range \x21-\x7A
 	}
 
 	/**
@@ -897,6 +1027,7 @@ class Sanitizer {
 		}
 
 		$decoded = Sanitizer::decodeTagAttributes( $text );
+		$decoded = Sanitizer::fixDeprecatedAttributes( $decoded, $element );
 		$stripped = Sanitizer::validateTagAttributes( $decoded, $element );
 
 		$attribs = array();
@@ -956,7 +1087,7 @@ class Sanitizer {
 
 		# Stupid hack
 		$encValue = preg_replace_callback(
-			'/((?i)' . wfUrlProtocols() . ')/',
+			'/(' . wfUrlProtocols() . ')/',
 			array( 'Sanitizer', 'armorLinksCallback' ),
 			$encValue );
 		return $encValue;
@@ -1183,7 +1314,7 @@ class Sanitizer {
 	 * a. named char refs can only be &lt; &gt; &amp; &quot;, others are
 	 *   numericized (this way we're well-formed even without a DTD)
 	 * b. any numeric char refs must be legal chars, not invalid or forbidden
-	 * c. use lower cased "&#x", not "&#X"
+	 * c. use &#x, not &#X
 	 * d. fix or reject non-valid attributes
 	 *
 	 * @param $text String
@@ -1351,7 +1482,7 @@ class Sanitizer {
 	/**
 	 * If the named entity is defined in the HTML 4.0/XHTML 1.0 DTD,
 	 * return the UTF-8 encoding of that character. Otherwise, returns
-	 * pseudo-entity source (eg "&foo;")
+	 * pseudo-entity source (eg &foo;)
 	 *
 	 * @param $name String
 	 * @return String
@@ -1551,10 +1682,6 @@ class Sanitizer {
 			# 'title' may not be 100% valid here; it's XHTML
 			# http://www.w3.org/TR/REC-MathML/
 			'math'       => array( 'class', 'style', 'id', 'title' ),
-
-			# HTML 5 section 4.6
-			'bdi' => $common,
-
 			);
 		return $whitelist;
 	}

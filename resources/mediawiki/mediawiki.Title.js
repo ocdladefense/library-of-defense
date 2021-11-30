@@ -7,7 +7,7 @@
  *
  * Relies on: mw.config (wgFormattedNamespaces, wgNamespaceIds, wgCaseSensitiveNamespaces), mw.util.wikiGetlink
  */
-( function ( mw, $ ) {
+( function( $ ) {
 
 	/* Local space */
 
@@ -20,25 +20,19 @@
 	 * @param namespace {Number} (optional) Namespace id. If given, title will be taken as-is.
 	 * @return {Title} this
 	 */
-	function Title( title, namespace ) {
-		this.ns = 0; // integer namespace id
-		this.name = null; // name in canonical 'database' form
-		this.ext = null; // extension
+var	Title = function( title, namespace ) {
+		this._ns = 0; // integer namespace id
+		this._name = null; // name in canonical 'database' form
+		this._ext = null; // extension
 
 		if ( arguments.length === 2 ) {
 			setNameAndExtension( this, title );
-			this.ns = fixNsId( namespace );
+			this._ns = fixNsId( namespace );
 		} else if ( arguments.length === 1 ) {
 			setAll( this, title );
 		}
 		return this;
-	}
-
-var
-	/**
-	 * Public methods (defined later)
-	 */
-	fn,
+	},
 
 	/**
 	 * Strip some illegal chars: control chars, colon, less than, greater than,
@@ -47,7 +41,7 @@ var
 	 * @param s {String}
 	 * @return {String}
 	 */
-	clean = function ( s ) {
+	clean = function( s ) {
 		if ( s !== undefined ) {
 			return s.replace( /[\x00-\x1f\x23\x3c\x3e\x5b\x5d\x7b\x7c\x7d\x7f\s]+/g, '_' );
 		}
@@ -69,14 +63,14 @@ var
 	/**
 	 * Sanitize name.
 	 */
-	fixName = function ( s ) {
+	fixName = function( s ) {
 		return clean( $.trim( s ) );
 	},
 
 	/**
 	 * Sanitize name.
 	 */
-	fixExt = function ( s ) {
+	fixExt = function( s ) {
 		return clean( s );
 	},
 
@@ -85,7 +79,7 @@ var
 	 * @param id {Number} Namespace id.
 	 * @return {Number|Boolean} The id as-is or boolean false if invalid.
 	 */
-	fixNsId = function ( id ) {
+	fixNsId = function( id ) {
 		// wgFormattedNamespaces is an object of *string* key-vals (ie. arr["0"] not arr[0] )
 		var ns = mw.config.get( 'wgFormattedNamespaces' )[id.toString()];
 
@@ -104,13 +98,9 @@ var
 	 * @param ns {String} Namespace name (case insensitive, leading/trailing space ignored).
 	 * @return {Number|Boolean} Namespace id or boolean false if unrecognized.
 	 */
-	getNsIdByName = function ( ns ) {
-		// Don't cast non-strings to strings, because null or undefined
-		// should not result in returning the id of a potential namespace
-		// called "Null:" (e.g. on nullwiki.example.org)
-		// Also, toLowerCase throws exception on null/undefined, because
-		// it is a String.prototype method.
-		if ( typeof ns !== 'string' ) {
+	getNsIdByName = function( ns ) {
+		// toLowerCase throws exception on null/undefined. Return early.
+		if ( ns == null ) {
 			return false;
 		}
 		ns = clean( $.trim( ns.toLowerCase() ) ); // Normalize
@@ -129,22 +119,22 @@ var
 	 * @param raw {String}
 	 * @return {mw.Title}
 	 */
-	setAll = function ( title, s ) {
+	setAll = function( title, s ) {
 		// In normal browsers the match-array contains null/undefined if there's no match,
 		// IE returns an empty string.
-		var matches = s.match( /^(?:([^:]+):)?(.*?)(?:\.(\w+))?$/ ),
+		var	matches = s.match( /^(?:([^:]+):)?(.*?)(?:\.(\w{1,5}))?$/ ),
 			ns_match = getNsIdByName( matches[1] );
 
 		// Namespace must be valid, and title must be a non-empty string.
 		if ( ns_match && typeof matches[2] === 'string' && matches[2] !== '' ) {
-			title.ns = ns_match;
-			title.name = fixName( matches[2] );
+			title._ns = ns_match;
+			title._name = fixName( matches[2] );
 			if ( typeof matches[3] === 'string' && matches[3] !== '' ) {
-				title.ext = fixExt( matches[3] );
+				title._ext = fixExt( matches[3] );
 			}
 		} else {
 			// Consistency with MediaWiki PHP: Unknown namespace -> fallback to main namespace.
-			title.ns = 0;
+			title._ns = 0;
 			setNameAndExtension( title, s );
 		}
 		return title;
@@ -157,16 +147,16 @@ var
 	 * @param raw {String}
 	 * @return {mw.Title}
 	 */
-	setNameAndExtension = function ( title, raw ) {
+	setNameAndExtension = function( title, raw ) {
 		// In normal browsers the match-array contains null/undefined if there's no match,
 		// IE returns an empty string.
-		var matches = raw.match( /^(?:)?(.*?)(?:\.(\w+))?$/ );
+		var matches = raw.match( /^(?:)?(.*?)(?:\.(\w{1,5}))?$/ );
 
 		// Title must be a non-empty string.
 		if ( typeof matches[1] === 'string' && matches[1] !== '' ) {
-			title.name = fixName( matches[1] );
+			title._name = fixName( matches[1] );
 			if ( typeof matches[2] === 'string' && matches[2] !== '' ) {
-				title.ext = fixExt( matches[2] );
+				title._ext = fixExt( matches[2] );
 			}
 		} else {
 			throw new Error( 'mw.Title: Could not parse title "' + raw + '"' );
@@ -182,7 +172,7 @@ var
 	 * @param title {mixed} prefixed db-key name (string) or instance of Title
 	 * @return {mixed} Boolean true/false if the information is available. Otherwise null.
 	 */
-	Title.exists = function ( title ) {
+	Title.exists = function( title ) {
 		var type = $.type( title ), obj = Title.exist.pages, match;
 		if ( type === 'string' ) {
 			match = obj[title];
@@ -213,7 +203,7 @@ var
 		 * @param state {Boolean} (optional) State of the given titles. Defaults to true.
 		 * @return {Boolean}
 		 */
-		set: function ( titles, state ) {
+		set: function( titles, state ) {
 			titles = $.isArray( titles ) ? titles : [titles];
 			state = state === undefined ? true : !!state;
 			var pages = this.pages, i, len = titles.length;
@@ -226,15 +216,15 @@ var
 
 	/* Public methods */
 
-	fn = {
+	var fn = {
 		constructor: Title,
 
 		/**
 		 * Get the namespace number.
 		 * @return {Number}
 		 */
-		getNamespaceId: function (){
-			return this.ns;
+		getNamespaceId: function(){
+			return this._ns;
 		},
 
 		/**
@@ -242,19 +232,19 @@ var
 		 * In NS_MAIN this is '', otherwise namespace name plus ':'
 		 * @return {String}
 		 */
-		getNamespacePrefix: function (){
-			return mw.config.get( 'wgFormattedNamespaces' )[this.ns].replace( / /g, '_' ) + (this.ns === 0 ? '' : ':');
+		getNamespacePrefix: function(){
+			return mw.config.get( 'wgFormattedNamespaces' )[this._ns].replace( / /g, '_' ) + (this._ns === 0 ? '' : ':');
 		},
 
 		/**
 		 * The name, like "Foo_bar"
 		 * @return {String}
 		 */
-		getName: function () {
-			if ( $.inArray( this.ns, mw.config.get( 'wgCaseSensitiveNamespaces' ) ) !== -1 ) {
-				return this.name;
+		getName: function() {
+			if ( $.inArray( this._ns, mw.config.get( 'wgCaseSensitiveNamespaces' ) ) !== -1 ) {
+				return this._name;
 			} else {
-				return $.ucFirst( this.name );
+				return $.ucFirst( this._name );
 			}
 		},
 
@@ -262,7 +252,7 @@ var
 		 * The name, like "Foo bar"
 		 * @return {String}
 		 */
-		getNameText: function () {
+		getNameText: function() {
 			return text( this.getName() );
 		},
 
@@ -270,7 +260,7 @@ var
 		 * Get full name in prefixed DB form, like File:Foo_bar.jpg,
 		 * most useful for API calls, anything that must identify the "title".
 		 */
-		getPrefixedDb: function () {
+		getPrefixedDb: function() {
 			return this.getNamespacePrefix() + this.getMain();
 		},
 
@@ -278,7 +268,7 @@ var
 		 * Get full name in text form, like "File:Foo bar.jpg".
 		 * @return {String}
 		 */
-		getPrefixedText: function () {
+		getPrefixedText: function() {
 			return text( this.getPrefixedDb() );
 		},
 
@@ -286,7 +276,7 @@ var
 		 * The main title (without namespace), like "Foo_bar.jpg"
 		 * @return {String}
 		 */
-		getMain: function () {
+		getMain: function() {
 			return this.getName() + this.getDotExtension();
 		},
 
@@ -294,7 +284,7 @@ var
 		 * The "text" form, like "Foo bar.jpg"
 		 * @return {String}
 		 */
-		getMainText: function () {
+		getMainText: function() {
 			return text( this.getMain() );
 		},
 
@@ -302,23 +292,23 @@ var
 		 * Get the extension (returns null if there was none)
 		 * @return {String|null} extension
 		 */
-		getExtension: function () {
-			return this.ext;
+		getExtension: function() {
+			return this._ext;
 		},
 
 		/**
 		 * Convenience method: return string like ".jpg", or "" if no extension
 		 * @return {String}
 		 */
-		getDotExtension: function () {
-			return this.ext === null ? '' : '.' + this.ext;
+		getDotExtension: function() {
+			return this._ext === null ? '' : '.' + this._ext;
 		},
 
 		/**
 		 * Return the URL to this title
 		 * @return {String}
 		 */
-		getUrl: function () {
+		getUrl: function() {
 			return mw.util.wikiGetlink( this.toString() );
 		},
 
@@ -326,7 +316,7 @@ var
 		 * Whether this title exists on the wiki.
 		 * @return {mixed} Boolean true/false if the information is available. Otherwise null.
 		 */
-		exists: function () {
+		exists: function() {
 			return Title.exists( this );
 		}
 	};
@@ -341,4 +331,4 @@ var
 	// Expose
 	mw.Title = Title;
 
-}( mediaWiki, jQuery ) );
+})(jQuery);

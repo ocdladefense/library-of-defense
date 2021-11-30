@@ -1,12 +1,12 @@
 /*
  * JavaScript for Special:ChangeEmail
  */
-( function ( mw, $ ) {
+( function( $, mw ) {
 
 /**
  * Given an email validity status (true, false, null) update the label CSS class
  */
-function updateMailValidityLabel( mail ) {
+var updateMailValidityLabel = function( mail ) {
 	var	isValid = mw.util.validateEmail( mail ),
 		$label = $( '#mw-emailaddress-validity' );
 
@@ -22,21 +22,19 @@ function updateMailValidityLabel( mail ) {
 	} else {
 		$label.text( mw.msg( 'email-address-validity-invalid' ) ).addClass( 'invalid' ).removeClass( 'valid' );
 	}
-}
+};
 
-$( document ).ready( function () {
-	// Lame tip to let user know if its email is valid. See bug 22449
-	// Only bind once for 'blur' so that the user can fill it in without errors
-	// After that look at every keypress for direct feedback if it was invalid onblur
-	$( '#wpNewEmail' ).one( 'blur', function () {
-		if ( $( '#mw-emailaddress-validity' ).length === 0 ) {
-			$(this).after( '<label for="wpNewEmail" id="mw-emailaddress-validity"></label>' );
-		}
+// Lame tip to let user know if its email is valid. See bug 22449
+// Only bind once for 'blur' so that the user can fill it in without errors
+// After that look at every keypress for direct feedback if it was invalid onblur
+$( '#wpNewEmail' ).one( 'blur', function() {
+	if ( $( '#mw-emailaddress-validity' ).length === 0 ) {
+		$(this).after( '<label for="wpNewEmail" id="mw-emailaddress-validity"></label>' );
+	}
+	updateMailValidityLabel( $(this).val() );
+	$(this).keyup( function() {
 		updateMailValidityLabel( $(this).val() );
-		$(this).keyup( function () {
-			updateMailValidityLabel( $(this).val() );
-		} );
 	} );
 } );
 
-}( mediaWiki, jQuery ) );
+} )( jQuery, mediaWiki );

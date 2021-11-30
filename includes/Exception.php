@@ -1,21 +1,6 @@
 <?php
 /**
- * Exception class and handler.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * Exception class and handler
  *
  * @file
  */
@@ -30,11 +15,8 @@
  * @ingroup Exception
  */
 class MWException extends Exception {
-	var $logId;
-
 	/**
-	 * Should the exception use $wgOut to output the error?
-	 *
+	 * Should the exception use $wgOut to output the error ?
 	 * @return bool
 	 */
 	function useOutputPage() {
@@ -45,8 +27,7 @@ class MWException extends Exception {
 	}
 
 	/**
-	 * Can the extension use the Message class/wfMessage to get i18n-ed messages?
-	 *
+	 * Can the extension use wfMsg() to get i18n messages ?
 	 * @return bool
 	 */
 	function useMessageCache() {
@@ -64,19 +45,19 @@ class MWException extends Exception {
 	/**
 	 * Run hook to allow extensions to modify the text of the exception
 	 *
-	 * @param $name string: class name of the exception
-	 * @param $args array: arguments to pass to the callback functions
-	 * @return string|null string to output or null if any hook has been called
+	 * @param $name String: class name of the exception
+	 * @param $args Array: arguments to pass to the callback functions
+	 * @return Mixed: string to output or null if any hook has been called
 	 */
 	function runHooks( $name, $args = array() ) {
 		global $wgExceptionHooks;
 
 		if ( !isset( $wgExceptionHooks ) || !is_array( $wgExceptionHooks ) ) {
-			return null; // Just silently ignore
+			return; // Just silently ignore
 		}
 
 		if ( !array_key_exists( $name, $wgExceptionHooks ) || !is_array( $wgExceptionHooks[ $name ] ) ) {
-			return null;
+			return;
 		}
 
 		$hooks = $wgExceptionHooks[ $name ];
@@ -93,23 +74,22 @@ class MWException extends Exception {
 				return $result;
 			}
 		}
-		return null;
 	}
 
 	/**
 	 * Get a message from i18n
 	 *
-	 * @param $key string: message name
-	 * @param $fallback string: default message if the message cache can't be
+	 * @param $key String: message name
+	 * @param $fallback String: default message if the message cache can't be
 	 *                  called by the exception
 	 * The function also has other parameters that are arguments for the message
-	 * @return string message with arguments replaced
+	 * @return String message with arguments replaced
 	 */
 	function msg( $key, $fallback /*[, params...] */ ) {
 		$args = array_slice( func_get_args(), 2 );
 
 		if ( $this->useMessageCache() ) {
-			return wfMessage( $key, $args )->plain();
+			return wfMsgNoTrans( $key, $args );
 		} else {
 			return wfMsgReplaceArgs( $fallback, $args );
 		}
@@ -120,7 +100,7 @@ class MWException extends Exception {
 	 * backtrace to the error, otherwise show a message to ask to set it to true
 	 * to show that information.
 	 *
-	 * @return string html to output
+	 * @return String html to output
 	 */
 	function getHTML() {
 		global $wgShowExceptionDetails;
@@ -130,22 +110,15 @@ class MWException extends Exception {
 				'</p><p>Backtrace:</p><p>' . nl2br( htmlspecialchars( $this->getTraceAsString() ) ) .
 				"</p>\n";
 		} else {
-			return
-				"<div class=\"errorbox\">" .
-				'[' . $this->getLogId() . '] ' .
-				gmdate( 'Y-m-d H:i:s' ) .
-				": Fatal exception of type " . get_class( $this ) . "</div>\n" .
-				"<!-- Set \$wgShowExceptionDetails = true; " .
+			return "<p>Set <b><tt>\$wgShowExceptionDetails = true;</tt></b> " .
 				"at the bottom of LocalSettings.php to show detailed " .
-				"debugging information. -->";
+				"debugging information.</p>";
 		}
 	}
 
 	/**
-	 * Get the text to display when reporting the error on the command line.
 	 * If $wgShowExceptionDetails is true, return a text message with a
 	 * backtrace to the error.
-	 *
 	 * @return string
 	 */
 	function getText() {
@@ -161,38 +134,22 @@ class MWException extends Exception {
 	}
 
 	/**
-	 * Return the title of the page when reporting this error in a HTTP response.
-	 *
-	 * @return string
+	 * Return titles of this error page
+	 * @return String
 	 */
 	function getPageTitle() {
 		return $this->msg( 'internalerror', "Internal error" );
 	}
 
 	/**
-	 * Get a random ID for this error.
-	 * This allows to link the exception to its correspoding log entry when
-	 * $wgShowExceptionDetails is set to false.
-	 *
-	 * @return string
-	 */
-	function getLogId() {
-		if ( $this->logId === null ) {
-			$this->logId = wfRandomString( 8 );
-		}
-		return $this->logId;
-	}
-
-	/**
 	 * Return the requested URL and point to file and line number from which the
-	 * exception occurred
+	 * exception occured
 	 *
-	 * @return string
+	 * @return String
 	 */
 	function getLogMessage() {
 		global $wgRequest;
 
-		$id = $this->getLogId();
 		$file = $this->getFile();
 		$line = $this->getLine();
 		$message = $this->getMessage();
@@ -206,12 +163,10 @@ class MWException extends Exception {
 			$url = '[no req]';
 		}
 
-		return "[$id] $url   Exception from line $line of $file: $message";
+		return "$url   Exception from line $line of $file: $message";
 	}
 
-	/**
-	 * Output the exception report using HTML.
-	 */
+	/** Output the exception report using HTML */
 	function reportHTML() {
 		global $wgOut;
 		if ( $this->useOutputPage() ) {
@@ -227,19 +182,13 @@ class MWException extends Exception {
 			$wgOut->output();
 		} else {
 			header( "Content-Type: text/html; charset=utf-8" );
-			echo "<!doctype html>\n" .
-				'<html><head>' .
-				'<title>' . htmlspecialchars( $this->getPageTitle() ) . '</title>' .
-				"</head><body>\n";
-
 			$hookResult = $this->runHooks( get_class( $this ) . "Raw" );
 			if ( $hookResult ) {
-				echo $hookResult;
-			} else {
-				echo $this->getHTML();
+				die( $hookResult );
 			}
 
-			echo "</body></html>\n";
+			echo $this->getHTML();
+			die(1);
 		}
 	}
 
@@ -248,35 +197,21 @@ class MWException extends Exception {
 	 * It will be either HTML or plain text based on isCommandLine().
 	 */
 	function report() {
-		global $wgLogExceptionBacktrace;
 		$log = $this->getLogMessage();
 
 		if ( $log ) {
-			if ( $wgLogExceptionBacktrace ) {
-				wfDebugLog( 'exception', $log . "\n" . $this->getTraceAsString() . "\n" );
-			} else {
-				wfDebugLog( 'exception', $log );
-			}
+			wfDebugLog( 'exception', $log );
 		}
 
-		if ( defined( 'MW_API' ) ) {
-			// Unhandled API exception, we can't be sure that format printer is alive
-			header( 'MediaWiki-API-Error: internal_api_error_' . get_class( $this ) );
-			wfHttpError(500, 'Internal Server Error', $this->getText() );
-		} elseif ( self::isCommandLine() ) {
+		if ( self::isCommandLine() ) {
 			MWExceptionHandler::printError( $this->getText() );
 		} else {
-			header( "HTTP/1.1 500 MediaWiki exception" );
-			header( "Status: 500 MediaWiki exception", true );
-
 			$this->reportHTML();
 		}
 	}
 
 	/**
-	 * Check whether we are in command line mode or not to report the exception
-	 * in the correct format.
-	 *
+	 * @static
 	 * @return bool
 	 */
 	static function isCommandLine() {
@@ -287,8 +222,6 @@ class MWException extends Exception {
 /**
  * Exception class which takes an HTML error message, and does not
  * produce a backtrace. Replacement for OutputPage::fatalError().
- *
- * @since 1.7
  * @ingroup Exception
  */
 class FatalError extends MWException {
@@ -309,20 +242,14 @@ class FatalError extends MWException {
 }
 
 /**
- * An error page which can definitely be safely rendered using the OutputPage.
- *
- * @since 1.7
+ * An error page which can definitely be safely rendered using the OutputPage
  * @ingroup Exception
  */
 class ErrorPageError extends MWException {
 	public $title, $msg, $params;
 
 	/**
-	 * Note: these arguments are keys into wfMessage(), not text!
-	 *
-	 * @param $title string|Message Message key (string) for page title, or a Message object
-	 * @param $msg string|Message Message key (string) for error text, or a Message object
-	 * @param $params array with parameters to wfMessage()
+	 * Note: these arguments are keys into wfMsg(), not text!
 	 */
 	function __construct( $title, $msg, $params = null ) {
 		$this->title = $title;
@@ -332,12 +259,13 @@ class ErrorPageError extends MWException {
 		if( $msg instanceof Message ){
 			parent::__construct( $msg );
 		} else {
-			parent::__construct( wfMessage( $msg )->text() );
+			parent::__construct( wfMsg( $msg ) );
 		}
 	}
 
 	function report() {
 		global $wgOut;
+
 
 		$wgOut->showErrorPage( $this->title, $this->msg, $this->params );
 		$wgOut->output();
@@ -348,14 +276,12 @@ class ErrorPageError extends MWException {
  * Show an error page on a badtitle.
  * Similar to ErrorPage, but emit a 400 HTTP error code to let mobile
  * browser it is not really a valid content.
- *
- * @since 1.19
- * @ingroup Exception
  */
 class BadTitleError extends ErrorPageError {
+
 	/**
-	 * @param $msg string|Message A message key (default: 'badtitletext')
-	 * @param $params Array parameter to wfMessage()
+	 * @param $msg string A message key (default: 'badtitletext')
+	 * @param $params Array parameter to wfMsg()
 	 */
 	function __construct( $msg = 'badtitletext', $params = null ) {
 		parent::__construct( 'badtitle', $msg, $params );
@@ -379,8 +305,6 @@ class BadTitleError extends ErrorPageError {
 /**
  * Show an error when a user tries to do something they do not have the necessary
  * permissions for.
- *
- * @since 1.18
  * @ingroup Exception
  */
 class PermissionsError extends ErrorPageError {
@@ -417,9 +341,7 @@ class PermissionsError extends ErrorPageError {
 
 /**
  * Show an error when the wiki is locked/read-only and the user tries to do
- * something that requires write access.
- *
- * @since 1.18
+ * something that requires write access
  * @ingroup Exception
  */
 class ReadOnlyError extends ErrorPageError {
@@ -433,9 +355,7 @@ class ReadOnlyError extends ErrorPageError {
 }
 
 /**
- * Show an error when the user hits a rate limit.
- *
- * @since 1.18
+ * Show an error when the user hits a rate limit
  * @ingroup Exception
  */
 class ThrottledError extends ErrorPageError {
@@ -449,14 +369,12 @@ class ThrottledError extends ErrorPageError {
 	public function report(){
 		global $wgOut;
 		$wgOut->setStatusCode( 503 );
-		parent::report();
+		return parent::report();
 	}
 }
 
 /**
- * Show an error when the user tries to do something whilst blocked.
- *
- * @since 1.18
+ * Show an error when the user tries to do something whilst blocked
  * @ingroup Exception
  */
 class UserBlockedError extends ErrorPageError {
@@ -473,7 +391,7 @@ class UserBlockedError extends ErrorPageError {
 
 		$reason = $block->mReason;
 		if( $reason == '' ) {
-			$reason = wfMessage( 'blockednoreason' )->text();
+			$reason = wfMsg( 'blockednoreason' );
 		}
 
 		/* $ip returns who *is* being blocked, $intended contains who was meant to be blocked.
@@ -498,57 +416,9 @@ class UserBlockedError extends ErrorPageError {
 }
 
 /**
- * Shows a generic "user is not logged in" error page.
- *
- * This is essentially an ErrorPageError exception which by default use the
- * 'exception-nologin' as a title and 'exception-nologin-text' for the message.
- * @see bug 37627
- * @since 1.20
- *
- * @par Example:
- * @code
- * if( $user->isAnon ) {
- * 	throw new UserNotLoggedIn();
- * }
- * @endcode
- *
- * Please note the parameters are mixed up compared to ErrorPageError, this
- * is done to be able to simply specify a reason whitout overriding the default
- * title.
- *
- * @par Example:
- * @code
- * if( $user->isAnon ) {
- * 	throw new UserNotLoggedIn( 'action-require-loggedin' );
- * }
- * @endcode
- *
- * @ingroup Exception
- */
-class UserNotLoggedIn extends ErrorPageError {
-
-	/**
-	 * @param $reasonMsg A message key containing the reason for the error.
-	 *        Optional, default: 'exception-nologin-text'
-	 * @param $titleMsg A message key to set the page title.
-	 *        Optional, default: 'exception-nologin'
-	 * @param $params Parameters to wfMessage().
-	 *        Optiona, default: null
-	 */
-	public function __construct(
-		$reasonMsg = 'exception-nologin-text',
-		$titleMsg  = 'exception-nologin',
-		$params = null
-	) {
-		parent::__construct( $titleMsg, $reasonMsg, $params );
-	}
-}
-
-/**
  * Show an error that looks like an HTTP server error.
  * Replacement for wfHttpError().
  *
- * @since 1.19
  * @ingroup Exception
  */
 class HttpError extends MWException {
@@ -568,7 +438,7 @@ class HttpError extends MWException {
 		$this->content = $content;
 	}
 
-	public function report() {
+	public function reportHTML() {
 		$httpMessage = HttpStatus::getMessage( $this->httpCode );
 
 		header( "Status: {$this->httpCode} {$httpMessage}" );
@@ -588,7 +458,7 @@ class HttpError extends MWException {
 			$content = htmlspecialchars( $this->content );
 		}
 
-		print "<!DOCTYPE html>\n".
+		print "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n".
 			"<html><head><title>$header</title></head>\n" .
 			"<body><h1>$header</h1><p>$content</p></body></html>\n";
 	}
@@ -638,7 +508,7 @@ class MWExceptionHandler {
 				if ( $cmdLine ) {
 					self::printError( $message );
 				} else {
-					echo nl2br( htmlspecialchars( $message ) ) . "\n";
+					self::escapeEchoAndDie( $message );
 				}
 			}
 		} else {
@@ -652,7 +522,7 @@ class MWExceptionHandler {
 			if ( $cmdLine ) {
 				self::printError( $message );
 			} else {
-				echo nl2br( htmlspecialchars( $message ) ) . "\n";
+				self::escapeEchoAndDie( $message );
 			}
 		}
 	}
@@ -660,8 +530,7 @@ class MWExceptionHandler {
 	/**
 	 * Print a message, if possible to STDERR.
 	 * Use this in command line mode only (see isCommandLine)
-	 *
-	 * @param $message string Failure text
+	 * @param $message String Failure text
 	 */
 	public static function printError( $message ) {
 		# NOTE: STDERR may not be available, especially if php-cgi is used from the command line (bug #15602).
@@ -671,6 +540,16 @@ class MWExceptionHandler {
 		} else {
 			echo( $message );
 		}
+	}
+
+	/**
+	 * Print a message after escaping it and converting newlines to <br>
+	 * Use this for non-command line failures
+	 * @param $message String Failure text
+	 */
+	private static function escapeEchoAndDie( $message ) {
+		echo nl2br( htmlspecialchars( $message ) ) . "\n";
+		die(1);
 	}
 
 	/**

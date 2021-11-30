@@ -31,7 +31,7 @@ class WatchAction extends FormAction {
 	}
 
 	protected function getDescription() {
-		return $this->msg( 'addwatch' )->escaped();
+		return wfMsgHtml( 'addwatch' );
 	}
 
 	/**
@@ -136,11 +136,11 @@ class WatchAction extends FormAction {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		$form->setSubmitTextMsg( 'confirm-watch-button' );
+		$form->setSubmitText( wfMsg( 'confirm-watch-button' ) );
 	}
 
 	protected function preText() {
-		return $this->msg( 'confirm-watch-top' )->parse();
+		return wfMessage( 'confirm-watch-top' )->parse();
 	}
 
 	public function onSuccess() {
@@ -155,7 +155,7 @@ class UnwatchAction extends WatchAction {
 	}
 
 	protected function getDescription() {
-		return $this->msg( 'removewatch' )->escaped();
+		return wfMsg( 'removewatch' );
 	}
 
 	public function onSubmit( $data ) {
@@ -166,11 +166,11 @@ class UnwatchAction extends WatchAction {
 	}
 
 	protected function alterForm( HTMLForm $form ) {
-		$form->setSubmitTextMsg( 'confirm-unwatch-button' );
+		$form->setSubmitText( wfMsg( 'confirm-unwatch-button' ) );
 	}
 
 	protected function preText() {
-		return $this->msg( 'confirm-unwatch-top' )->parse();
+		return wfMessage( 'confirm-unwatch-top' )->parse();
 	}
 
 	public function onSuccess() {

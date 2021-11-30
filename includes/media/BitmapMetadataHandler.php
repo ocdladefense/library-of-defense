@@ -1,36 +1,13 @@
 <?php
 /**
- * Extraction of metadata from different bitmap image types.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
- * @ingroup Media
- */
+Class to deal with reconciling and extracting metadata from bitmap images.
+This is meant to comply with http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf
 
-/**
- * Class to deal with reconciling and extracting metadata from bitmap images.
- * This is meant to comply with http://www.metadataworkinggroup.org/pdf/mwg_guidance.pdf
- *
- * This sort of acts as an intermediary between MediaHandler::getMetadata
- * and the various metadata extractors.
- *
- * @todo other image formats.
- * @ingroup Media
- */
+This sort of acts as an intermediary between MediaHandler::getMetadata
+and the various metadata extractors.
+
+@todo other image formats.
+*/
 class BitmapMetadataHandler {
 
 	private $metadata = array();
@@ -145,11 +122,11 @@ class BitmapMetadataHandler {
 	/** Main entry point for jpeg's.
 	 *
 	 * @param $filename string filename (with full path)
-	 * @return array metadata result array.
+	 * @return metadata result array.
 	 * @throws MWException on invalid file.
 	 */
 	static function Jpeg ( $filename ) {
-		$showXMP = function_exists( 'xml_parser_create_ns' );
+		$showXMP = XMPReader::isSupported();
 		$meta = new self();
 
 		$seg = JpegMetadataExtractor::segmentSplitter( $filename );
@@ -191,7 +168,7 @@ class BitmapMetadataHandler {
 	 * @return Array Array for storage in img_metadata.
 	 */
 	static public function PNG ( $filename ) {
-		$showXMP = function_exists( 'xml_parser_create_ns' );
+		$showXMP = XMPReader::isSupported();
 
 		$meta = new self();
 		$array = PNGMetadataExtractor::getMetadata( $filename );
@@ -216,7 +193,7 @@ class BitmapMetadataHandler {
 	 * They don't really have native metadata, so just merges together
 	 * XMP and image comment.
 	 *
-	 * @param $filename string full path to file
+	 * @param $filename full path to file
 	 * @return Array metadata array
 	 */
 	static public function GIF ( $filename ) {
@@ -228,7 +205,7 @@ class BitmapMetadataHandler {
 			$meta->addMetadata( array( 'GIFFileComment' => $baseArray['comment'] ), 'native' );
 		}
 
-		if ( $baseArray['xmp'] !== '' && function_exists( 'xml_parser_create_ns' ) ) {
+		if ( $baseArray['xmp'] !== '' && XMPReader::isSupported() ) {
 			$xmp = new XMPReader();
 			$xmp->parse( $baseArray['xmp'] );
 			$xmpRes = $xmp->getResults();

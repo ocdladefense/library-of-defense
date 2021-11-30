@@ -278,6 +278,10 @@ img {
 	margin: 0 0 0 0;
 }
 
+div.printfooter {
+	display: none;
+}
+
 p {
 	margin: 1em 0 1em 0;
 }
@@ -811,7 +815,7 @@ span.subpages {
 	display: block;
 }
 
-pre, .mw-code {
+pre {
 	border: solid 1px #3c78b5;
 	padding: 0.4em;
 	background-color: #f0f0f0;

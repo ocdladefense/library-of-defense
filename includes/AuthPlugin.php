@@ -34,12 +34,6 @@
  * someone logs in who can be authenticated externally.
  */
 class AuthPlugin {
-
-	/**
-	 * @var string
-	 */
-	protected $domain;
-
 	/**
 	 * Check whether there exists a user account with the given name.
 	 * The name will be normalized to MediaWiki's requirements, so
@@ -90,19 +84,6 @@ class AuthPlugin {
 	}
 
 	/**
-	 * Get the user's domain
-	 *
-	 * @return string
-	 */
-	public function getDomain() {
-		if ( isset( $this->domain ) ) {
-			return $this->domain;
-		} else {
-			return 'invaliddomain';
-		}
-	}
-
-	/**
 	 * Check to see if the specific domain is a valid domain.
 	 *
 	 * @param $domain String: authentication domain.
@@ -122,7 +103,6 @@ class AuthPlugin {
 	 * forget the & on your function declaration.
 	 *
 	 * @param $user User object
-	 * @return bool
 	 */
 	public function updateUser( &$user ) {
 		# Override this and do something
@@ -276,8 +256,6 @@ class AuthPlugin {
 	/**
 	 * If you want to munge the case of an account name before the final
 	 * check, now is your chance.
-	 * @param $username string
-	 * @return string
 	 */
 	public function getCanonicalName( $username ) {
 		return $username;

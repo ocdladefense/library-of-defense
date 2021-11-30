@@ -27,7 +27,7 @@
  *
  * @ingroup SpecialPage
  */
-class BrokenRedirectsPage extends QueryPage {
+class BrokenRedirectsPage extends PageQueryPage {
 
 	function __construct( $name = 'BrokenRedirects' ) {
 		parent::__construct( $name );
@@ -45,9 +45,9 @@ class BrokenRedirectsPage extends QueryPage {
 		return array(
 			'tables' => array( 'redirect', 'p1' => 'page',
 					'p2' => 'page' ),
-			'fields' => array( 'namespace' => 'p1.page_namespace',
-					'title' => 'p1.page_title',
-					'value' => 'p1.page_title',
+			'fields' => array( 'p1.page_namespace AS namespace',
+					'p1.page_title AS title',
+					'p1.page_title AS value',
 					'rd_namespace',
 					'rd_title'
 			),

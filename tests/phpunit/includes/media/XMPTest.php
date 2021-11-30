@@ -1,6 +1,12 @@
 <?php
 class XMPTest extends MediaWikiTestCase {
 
+	function setUp() {
+		if ( !wfDl( 'xml' ) ) {
+			$this->markTestSkipped( 'Requires libxml to do XMP parsing' );
+		}
+	}
+
 	/**
 	 * Put XMP in, compare what comes out...
 	 *
@@ -11,9 +17,6 @@ class XMPTest extends MediaWikiTestCase {
 	 * @dataProvider dataXMPParse
 	 */
 	public function testXMPParse( $xmp, $expected, $info ) {
-		if ( !function_exists( 'xml_parser_create_ns' ) ) {
-			$this->markIncomplete( 'Requires libxml to do XMP parsing' );
-		}
 		if ( !is_string( $xmp ) || !is_array( $expected ) ) {
 			throw new Exception( "Invalid data provided to " . __METHOD__ );
 		}
@@ -50,6 +53,8 @@ class XMPTest extends MediaWikiTestCase {
 			array( 'utf32LE', 'UTF-32LE encoding' ),
 			array( 'xmpExt', 'Extended XMP missing second part' ),
 		 );
+		$xmpFiles[] = array( 'doctype-included', 'XMP includes doctype' );
+
 		foreach( $xmpFiles as $file ) {
 			$xmp = file_get_contents( $xmpPath . $file[0] . '.xmp' );
 			// I'm not sure if this is the best way to handle getting the
@@ -151,4 +156,51 @@ class XMPTest extends MediaWikiTestCase {
 		$this->assertEquals( $expected, $actual );
 	}
 
+	/**
+	 * Test for multi-section, hostile XML
+	 * @covers checkParseSafety
+	 */
+	public function testCheckParseSafety() {
+
+		// Test for detection
+		$xmpPath = __DIR__ . '/../../data/xmp/';
+		$file = fopen( $xmpPath . 'doctype-included.xmp', 'rb' );
+		$valid = false;
+		$reader = new XMPReader();
+		do {
+			$chunk = fread( $file, 10 );
+			$valid = $reader->parse( $chunk, feof( $file ) );
+		} while ( !feof( $file ) );
+		$this->assertFalse( $valid, 'Check that doctype is detected in fragmented XML' );
+		$this->assertEquals(
+			array(),
+			$reader->getResults(),
+			'Check that doctype is detected in fragmented XML'
+		);
+		fclose( $file );
+		unset( $reader );
+
+		// Test for false positives
+		$file = fopen( $xmpPath . 'doctype-not-included.xmp', 'rb' );
+		$valid = false;
+		$reader = new XMPReader();
+		do {
+			$chunk = fread( $file, 10 );
+			$valid = $reader->parse( $chunk, feof( $file ) );
+		} while ( !feof( $file ) );
+		$this->assertTrue(
+			$valid,
+			'Check for false-positive detecting doctype in fragmented XML'
+		);
+		$this->assertEquals(
+			array(
+				'xmp-exif' => array(
+					'DigitalZoomRatio' => '0/10',
+					'Flash' => '9'
+				)
+			),
+			$reader->getResults(),
+			'Check that doctype is detected in fragmented XML'
+		);
+	}
 }

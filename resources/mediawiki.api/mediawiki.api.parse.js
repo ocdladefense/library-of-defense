@@ -1,42 +1,31 @@
 /**
- * mw.Api methods for parsing wikitext.
+ * Additional mw.Api methods to assist with API calls related to parsing wikitext.
  */
-( function ( mw, $ ) {
+
+( function( $, mw ) {
 
 	$.extend( mw.Api.prototype, {
 		/**
 		 * Convinience method for 'action=parse'. Parses wikitext into HTML.
 		 *
 		 * @param wikiText {String}
-		 * @param ok {Function} [optional] deprecated (success callback)
-		 * @param err {Function} [optional] deprecated (error callback)
-		 * @return {jQuery.Promise}
+		 * @param success {Function} callback to which to pass success HTML
+		 * @param err {Function} callback if error (optional)
+		 * @return {jqXHR}
 		 */
-		parse: function ( wikiText, ok, err ) {
-			var apiDeferred = $.Deferred();
-
-			// Backwards compatibility (< MW 1.20)
-			if ( ok ) {
-				apiDeferred.done( ok );
-			}
-			if ( err ) {
-				apiDeferred.fail( err );
-			}
-
-			this.get( {
-					action: 'parse',
-					text: wikiText
-				} )
-				.done( function ( data ) {
+		parse: function( wikiText, success, err ) {
+			var params = {
+					text: wikiText,
+					action: 'parse'
+				},
+				ok = function( data ) {
 					if ( data.parse && data.parse.text && data.parse.text['*'] ) {
-						apiDeferred.resolve( data.parse.text['*'] );
+						success( data.parse.text['*'] );
 					}
-				} )
-				.fail( apiDeferred.reject );
-
-			// Return the promise
-			return apiDeferred.promise();
+				};
+			return this.get( params, { ok: ok, err: err } );
 		}
+
 	} );
 
-}( mediaWiki, jQuery ) );
+} )( jQuery, mediaWiki );

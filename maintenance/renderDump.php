@@ -28,14 +28,8 @@
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
-/**
- * Maintenance script that takes page text out of an XML dump file
- * and render basic HTML out to files.
- *
- * @ingroup Maintenance
- */
 class DumpRenderer extends Maintenance {
 
 	private $count = 0;
@@ -52,7 +46,7 @@ class DumpRenderer extends Maintenance {
 	public function execute() {
 		$this->outputDirectory = $this->getOption( 'output-dir' );
 		$this->prefix = $this->getOption( 'prefix', 'wiki' );
-		$this->startTime = microtime( true );
+		$this->startTime = wfTime();
 
 		if ( $this->hasOption( 'parser' ) ) {
 			global $wgParserConf;
@@ -68,7 +62,7 @@ class DumpRenderer extends Maintenance {
 
 		$importer->doImport();
 
-		$delta = microtime( true ) - $this->startTime;
+		$delta = wfTime() - $this->startTime;
 		$this->error( "Rendered {$this->count} pages in " . round($delta, 2) . " seconds " );
 		if ($delta > 0)
 			$this->error( round($this->count / $delta, 2) . " pages/sec" );
