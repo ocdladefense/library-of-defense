@@ -570,7 +570,7 @@ $extensions = array(
 	),
 	"googleAnalytics" => array(
 		"path"   => "googleAnalytics/googleAnalytics",
-		"active" => !$ocdlaDisableExtensionGoogleAnalytics ? true : false
+		"active" => false//!$ocdlaDisableExtensionGoogleAnalytics ? true : false
 	),
 	"InputBox" => array(
 		"path"   => "InputBox/InputBox",
@@ -602,7 +602,10 @@ $extensions = array(
 	),
 	"PwaOcdla" => array(
 		"path"   => "PwaOcdla/PwaOcdla",
-		"active" => false
+		"active" => false,
+		"init" 	 => array(
+			function(){PwaOcdla::SetupPwaOcdla();}
+		)
 	),
 	"RegistrationForm" => array(
 		"path"   => "RegistrationForm/RegistrationForm",
@@ -635,17 +638,23 @@ $extensions = array(
 		"path"   => "Teaser/Teaser",
 		"active" => false
 	),
-	"UIDrawer" => array(
-		"path"   => "UIDrawer/UIDrawer",
-		"active" => false
-	),
 	"UIFixedNav" => array(
 		"path"   => "UIFixedNav/UIFixedNav",
-		"active" => false
+		"active" => true,
+		"init" 	 => array(
+			function(){UIFixedNav::SetupUIFixedNav();}
+		)
+	),
+	"UIDrawer" => array(
+		"path"   => "UIDrawer/UIDrawer",
+		"active" => true,
+		"init" 	 => array(
+			function(){UIDrawer::SetupUIDrawer();}
+		)
 	),
 	"VarnishCache" => array(
 		"path"   => "VarnishCache/VarnishCache",
-		"active" => !$ocdlaDisableExtensionVarnishCache ? true : false,
+		"active" => false, //!$ocdlaDisableExtensionVarnishCache ? true : false,
 		"init"   => array(
 			function(){SetupVarnishCache();}
 		)
