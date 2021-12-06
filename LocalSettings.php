@@ -466,36 +466,6 @@ $wgUseSiteCss = true;
 
 
 
-################### START "OAuth" Extension Configuration #############################################
-
-$oauth_config = array(
-    "name"    => "ocdla-sandbox",
-    "default" => true,
-    "sandbox" => true, // Might be used to determine domain for urls
-    "client_id" => "3MVG9cb9UNjJbdEw9uiUeYjQdTxvQD7ukjRbReVXtViiDsfziH0rhXmEqRpy7mR79d2URjHsQWKD3RYyI8mq6",
-    "client_secret" => "68FAC64C6BA5DDA1D94A848077B3A8DBE8A616B7DF77783FAB255038A078E903",
-    "auth" => array(
-        "saml" => array(),
-        "oauth" => array(
-            "usernamepassword" => array(
-                "token_url" => "https://test.salesforce.com/services/oauth2/token",
-                "username" => "membernation@ocdla.com.ocdpartial",
-                "password" => "asdi49ir4",
-                "security_token" => "4te6Z194Uw4SHVHYut71NJvV"
-            ),
-            "webserver" => array(
-                "token_url" => "https://ocdpartial-ocdla.cs217.force.com/services/oauth2/token",
-                "auth_url" => "https://ocdpartial-ocdla.cs217.force.com/services/oauth2/authorize",
-                "redirect_url" => "https://lodtest.ocdla.org/index.php/Special:OAuthEndpoint",
-                "callback_url" => "https://localhost/jobs"
-            )
-        )
-    )
-);
-
-
-################### END "OAuth" Extension Configuration ########################################
-
 
 ######### ACTIVATE EXTENSIONS	##############
 ######################################################################
