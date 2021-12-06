@@ -191,7 +191,7 @@ define("NS_DTN", 500);
 define("NS_DTN_TALK", 501);
 
 define("NS_DNB", 502);
-define("NS_DTN_TALK", 503);
+define("NS_DNB_TALK", 503);
 
 define("NS_FSM", 504);
 define("NS_FSM_TALK", 505);
