@@ -333,9 +333,6 @@ class LodTemplate extends BaseTemplate {
 					$this->renderNavigation( 'PERSONAL' );
 				}
 			?>
-			<div id="p-personal" class="">
-			
-			</div>
 			<div id="left-navigation">
 				<?php $this->renderNavigation( array( 'NAMESPACES', 'VARIANTS', 'SEARCH' ) ); ?>
 			</div>
