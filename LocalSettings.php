@@ -13,6 +13,13 @@ require_once('SiteSpecificSettings.php');
 require_once('SiteSpecificSettingsLogging.php');
 
 
+# Replace and set the login link in the primary navigation.  We are not replacing the logout link.
+$wgAuthOcdla_ReplaceLogin = true;
+$wgAuthOcdla_LoginURL = "/Special:OAuthEndpoint/login";
+$wgAuthOcdla_ReplaceLogout = false;
+//$wgAuthOcdla_LogoutURL = "";
+
+
 
 
 # Disable editing; does not disable all database writes (e.g., increment view counter, etc.)
