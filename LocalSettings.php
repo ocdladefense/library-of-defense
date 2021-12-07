@@ -13,6 +13,8 @@ require_once('SiteSpecificSettings.php');
 require_once('SiteSpecificSettingsLogging.php');
 
 
+
+
 # Disable editing; does not disable all database writes (e.g., increment view counter, etc.)
 // $wgReadOnly = "We are upgrading MediaWiki, please be patient. This wiki will be back in a few hours.";
 
@@ -78,7 +80,34 @@ $wgEmailAuthentication = true;
 # MySQL specific settings
 # All table prefixes have been removed as of 2014-08-04
 # $wgDBprefix         = "xxxxx_";
+
+
+
+# Cookie settings.
+$wgCookieDomain = $subdomain . ".ocdla.org";
+
 $wgCookiePrefix = $cookiePrefix;
+
+/**
+ * Set the default cookie expiration to 1 month
+ * This ensures that users remain logged in for a reasonable
+ * period of time before their cookie is invalidated.
+ * Per OCDLA's request.
+ */
+$wgCookieExpiration = 30*86400;
+
+
+$wgCookieSecure = true;
+
+
+$wgCookieHttpOnly = false;
+
+
+
+
+
+
+
 
 # MySQL table options to use during installation or update
 $wgDBTableOptions  = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
@@ -111,7 +140,7 @@ $wgMainCacheType = CACHE_NONE; //CACHE_DB;
 $wgEnableParserCache = false;
 
 # http://www.mediawiki.org/wiki/Manual:$wgParserCacheType
-$wgParserCacheType = isset($ocdlaParserCacheType) ? $ocdlaParserCacheType : CACHE_DB;
+$wgParserCacheType = CACHE_NONE; //isset($ocdlaParserCacheType) ? $ocdlaParserCacheType : CACHE_DB;
 
 # http://www.mediawiki.org/wiki/Manual:$wgCachePages
 $wgCachePages = false;
@@ -413,15 +442,7 @@ $wgWhitelistedNamespaces = array(
  *
  */
 
-$wgCookieDomain = 'lodtest.ocdla.org';//@jbernal
 
-/**
- * Set the default cookie expiration to 1 month
- * This ensures that users remain logged in for a reasonable
- * period of time before their cookie is invalidated.
- * Per OCDLA's request.
- */
-$wgCookieExpiration = 30*86400;
 
 // $wgShowExceptionDetails = true;
 $wgLocaltimezone = "America/Los_Angeles";
@@ -656,8 +677,7 @@ $extensions = array(
 );
 
 
-error_reporting(E_ALL & ~E_NOTICE);
-ini_set('display_errors', 1);
+
 
 //wfLoadExtensionOnly("OAuth");
 
@@ -697,3 +717,8 @@ function wfLoadExtensionOnly($name) {
 
 
 require_once('LocalSettingsOverrides.php');
+
+
+
+error_reporting(E_ALL);    
+ini_set('display_errors', 0);
