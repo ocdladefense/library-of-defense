@@ -519,7 +519,7 @@ $extensions = array(
 	),
 	"AuthOcdla" => array(
 		"path"   => "AuthOcdla/AuthOcdla",
-		"active" => false
+		"active" => true
 	),
 	"BooksOnlineOcdla" => array(
 		"path"   => "BooksOnlineOcdla/BooksOnlineOcdla",
