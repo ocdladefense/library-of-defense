@@ -82,6 +82,9 @@ class AuthOcdlaPersonalLinks
 	
 	public function getLinks()
 	{
+
+		global $wgAuthOcdla_LogoutURL;
+
 		$keys = func_get_args();
 		// $keys = is_array($key)?$keys:array($keys);
 		$links = array(
@@ -152,7 +155,7 @@ class AuthOcdlaPersonalLinks
 				),
 				'pt-logout' => array(
 					'title' => 'Log out',
-					'href' => $this->manager->getLogoutUrl(),
+					'href' => $wgAuthOcdla_LogoutURL,
 					'name' => 'Log out'
 				)
 		);

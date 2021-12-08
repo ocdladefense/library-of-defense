@@ -10,7 +10,7 @@ $userInfoLoad.done(function(data){
 	// drawer-p-personal
 	$('#drawer-p-personal').html(data.markup);
 	if(data.logged_in) {
-		$('#header-login').remove();
+		//$('#header-login').remove();
 	}
 });
 

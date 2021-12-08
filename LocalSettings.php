@@ -17,7 +17,7 @@ require_once('SiteSpecificSettingsLogging.php');
 $wgAuthOcdla_ReplaceLogin = true;
 $wgAuthOcdla_LoginURL = "/Special:OAuthEndpoint/login";
 $wgAuthOcdla_ReplaceLogout = false;
-//$wgAuthOcdla_LogoutURL = "";
+$wgAuthOcdla_LogoutURL = "/Special:UserLogout";
 
 
 
@@ -519,13 +519,18 @@ $extensions = array(
 	),
 	"AuthOcdla" => array(
 		"path"   => "AuthOcdla/AuthOcdla",
-		"active" => true
+		"active" => true,
+		"init"	 => array(
+			function(){AuthOcdlaSetup::SetupAuthOcdla();}
+		)
 	),
 	"BooksOnlineOcdla" => array(
 		"path"   => "BooksOnlineOcdla/BooksOnlineOcdla",
 		"active" => false,
 		"init"   => array(
 			function(){BooksOnlineOcdla::SetupBooksOnlineOcdla();}
+			//function(){AuthOcdlaSetup::OverrideMWLocalClass('LoginForm','SpecialUserlogin');}
+
 		)
 	),
 	"Cite" => array(
