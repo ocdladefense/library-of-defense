@@ -4,11 +4,13 @@
 
 # MediaWiki Installation (Version 1.19.24)
 
-#### View or edit all system messages
-https://lodtest.ocdla.org/Special:AllMessages
-
-
 #### View system requirements, installation and upgrade details.
 - RELEASE-NOTES
 - INSTALL
 - UPGRADE
+
+
+
+#### View or edit all system messages
+https://lodtest.ocdla.org/Special:AllMessages
+
