@@ -5,7 +5,7 @@
 # MediaWiki Installation (Version 1.19.24)
 
 #### View or edit all system messages
-https://lodtest.ocdla.org/index.php?title=Special%3AAllMessages&prefix=&filter=all&lang=en&limit=5000
+https://lodtest.ocdla.org/Special:AllMessages
 
 
 #### View system requirements, installation and upgrade details.
