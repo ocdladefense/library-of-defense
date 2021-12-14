@@ -48,7 +48,7 @@ if ( !class_exists( 'SphinxClient' ) ) {
 }
 
 # Host and port on which searchd deamon is running
-$wgSphinxSearch_host = '207.189.130.196';
+$wgSphinxSearch_host = '172.31.47.173';
 $wgSphinxSearch_port = 9312;
 
 # Main sphinx.conf index to search

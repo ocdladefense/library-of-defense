@@ -624,7 +624,7 @@ $extensions = array(
 	),
 	"SearchOcdla" => array(
 		"path"   => "SearchOcdla/SearchOcdla",
-		"active" => true,
+		"active" => false,
 		"init" => array(
 			function(){SearchOcdlaHooks::SetupSearchOcdla();}
 		)
