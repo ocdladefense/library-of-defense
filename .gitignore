@@ -27,8 +27,8 @@ profile_log.txt
 /vendor/
 /sites/
 
-
-composer.lock
+# As of 12/15/2021 we want to be using "composer install" to update our composer libraries.
+#composer.lock
 
 
 
