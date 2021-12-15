@@ -1,7 +1,5 @@
 <?php
 /**
- * Module for resource loader initialization.
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,8 +35,8 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	protected function getConfig( $context ) {
 		global $wgLoadScript, $wgScript, $wgStylePath, $wgScriptExtension,
 			$wgArticlePath, $wgScriptPath, $wgServer, $wgContLang,
-			$wgVariantArticlePath, $wgActionPaths, $wgVersion,
-			$wgEnableAPI, $wgEnableWriteAPI, $wgDBname,
+			$wgVariantArticlePath, $wgActionPaths, $wgUseAjax, $wgVersion,
+			$wgEnableAPI, $wgEnableWriteAPI, $wgDBname, $wgEnableMWSuggest,
 			$wgSitename, $wgFileExtensions, $wgExtensionAssetsPath,
 			$wgCookiePrefix, $wgResourceLoaderMaxQueryLength;
 
@@ -79,7 +77,10 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgVersion' => $wgVersion,
 			'wgEnableAPI' => $wgEnableAPI,
 			'wgEnableWriteAPI' => $wgEnableWriteAPI,
-			'wgMainPageTitle' => $mainPage->getPrefixedText(),
+			'wgDefaultDateFormat' => $wgContLang->getDefaultDateFormat(),
+			'wgMonthNames' => $wgContLang->getMonthNamesArray(),
+			'wgMonthNamesShort' => $wgContLang->getMonthAbbreviationsArray(),
+			'wgMainPageTitle' => $mainPage ? $mainPage->getPrefixedText() : null,
 			'wgFormattedNamespaces' => $wgContLang->getFormattedNamespaces(),
 			'wgNamespaceIds' => $namespaceIds,
 			'wgSiteName' => $wgSitename,
@@ -95,6 +96,9 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			'wgResourceLoaderMaxQueryLength' => $wgResourceLoaderMaxQueryLength,
 			'wgCaseSensitiveNamespaces' => $caseSensitiveNamespaces,
 		);
+		if ( $wgUseAjax && $wgEnableMWSuggest ) {
+			$vars['wgMWSuggestTemplate'] = SearchEngine::getMWSuggestTemplate();
+		}
 
 		wfRunHooks( 'ResourceLoaderGetConfigVars', array( &$vars ) );
 
@@ -121,12 +125,12 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		// Register modules
 		foreach ( $resourceLoader->getModuleNames() as $name ) {
 			$module = $resourceLoader->getModule( $name );
-			$deps = $module->getDependencies();
-			$group = $module->getGroup();
-			$source = $module->getSource();
 			// Support module loader scripts
 			$loader = $module->getLoaderScript();
 			if ( $loader !== false ) {
+				$deps = $module->getDependencies();
+				$group = $module->getGroup();
+				$source = $module->getSource();
 				$version = wfTimestamp( TS_ISO_8601_BASIC,
 					$module->getModifiedTime( $context ) );
 				$out .= ResourceLoader::makeCustomLoaderScript( $name, $version, $deps, $group, $source, $loader );
@@ -139,23 +143,26 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 				$mtime = max( $moduleMtime, wfTimestamp( TS_UNIX, $wgCacheEpoch ) );
 				// Modules without dependencies, a group or a foreign source pass two arguments (name, timestamp) to
 				// mw.loader.register()
-				if ( !count( $deps ) && $group === null && $source === 'local' ) {
+				if ( !count( $module->getDependencies() && $module->getGroup() === null && $module->getSource() === 'local' ) ) {
 					$registrations[] = array( $name, $mtime );
 				}
 				// Modules with dependencies but no group or foreign source pass three arguments
 				// (name, timestamp, dependencies) to mw.loader.register()
-				elseif ( $group === null && $source === 'local' ) {
-					$registrations[] = array( $name, $mtime, $deps );
+				elseif ( $module->getGroup() === null && $module->getSource() === 'local' ) {
+					$registrations[] = array(
+						$name, $mtime,  $module->getDependencies() );
 				}
 				// Modules with a group but no foreign source pass four arguments (name, timestamp, dependencies, group)
 				// to mw.loader.register()
-				elseif ( $source === 'local' ) {
-					$registrations[] = array( $name, $mtime, $deps, $group );
+				elseif ( $module->getSource() === 'local' ) {
+					$registrations[] = array(
+						$name, $mtime,  $module->getDependencies(), $module->getGroup() );
 				}
 				// Modules with a foreign source pass five arguments (name, timestamp, dependencies, group, source)
 				// to mw.loader.register()
 				else {
-					$registrations[] = array( $name, $mtime, $deps, $group, $source );
+					$registrations[] = array(
+						$name, $mtime, $module->getDependencies(), $module->getGroup(), $module->getSource() );
 				}
 			}
 		}
@@ -168,13 +175,6 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 	/* Methods */
 
 	/**
-	 * @return bool
-	 */
-	public function isRaw() {
-		return true;
-	}
-
-	/**
 	 * @param $context ResourceLoaderContext
 	 * @return string
 	 */
@@ -185,25 +185,24 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 		if ( $context->getOnly() === 'scripts' ) {
 
 			// The core modules:
-			$moduleNames = array( 'jquery', 'mediawiki' );
-			wfRunHooks( 'ResourceLoaderGetStartupModules', array( &$moduleNames ) );
+			$modules = array( 'jquery', 'mediawiki' );
+			wfRunHooks( 'ResourceLoaderGetStartupModules', array( &$modules ) );
 
 			// Get the latest version
-			$loader = $context->getResourceLoader();
 			$version = 0;
-			foreach ( $moduleNames as $moduleName ) {
+			foreach ( $modules as $moduleName ) {
 				$version = max( $version,
-					$loader->getModule( $moduleName )->getModifiedTime( $context )
+					$context->getResourceLoader()->getModule( $moduleName )->getModifiedTime( $context )
 				);
 			}
 			// Build load query for StartupModules
 			$query = array(
-				'modules' => ResourceLoader::makePackedModulesString( $moduleNames ),
+				'modules' => ResourceLoader::makePackedModulesString( $modules ),
 				'only' => 'scripts',
 				'lang' => $context->getLanguage(),
 				'skin' => $context->getSkin(),
 				'debug' => $context->getDebug() ? 'true' : 'false',
-				'version' => null//wfTimestamp( TS_ISO_8601_BASIC, $version )@jbernal
+				'version' => wfTimestamp( TS_ISO_8601_BASIC, $version )
 			);
 			// Ensure uniform query order
 			ksort( $query );
@@ -211,7 +210,6 @@ class ResourceLoaderStartUpModule extends ResourceLoaderModule {
 			// Startup function
 			$configuration = $this->getConfig( $context );
 			$registrations = self::getModuleRegistrations( $context );
-			$registrations = str_replace( "\n", "\n\t", trim( $registrations ) ); // fix indentation
 			$out .= "var startUp = function() {\n" .
 				"\tmw.config = new " . Xml::encodeJsCall( 'mw.Map', array( $wgLegacyJavaScriptGlobals ) ) . "\n" .
 				"\t$registrations\n" .

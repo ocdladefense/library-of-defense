@@ -20,7 +20,7 @@
  *
  * @ingroup Maintenance ExternalStorage
  */
-require_once( __DIR__ . '/../Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/../Maintenance.php' );
 
 class OrphanStats extends Maintenance {
 	public function __construct() {
@@ -28,7 +28,7 @@ class OrphanStats extends Maintenance {
 		$this->mDescription = "how some statistics on the blob_orphans table, created with trackBlobs.php";
 	}
 
-	protected function &getDB( $cluster, $groups = array(), $wiki = false ) {
+	private function getDB( $cluster ) {
 		$lb = wfGetLBFactory()->getExternalLB( $cluster );
 		return $lb->getConnection( DB_SLAVE );
 	}

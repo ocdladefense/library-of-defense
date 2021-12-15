@@ -4,7 +4,7 @@
  *
  * Created on Oct 19, 2006
  *
- * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
+ * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,37 +70,24 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	/**
 	 * @param  $pageid
 	 * @param  $title
-	 * @param $rc RecentChange (optional)
+	 * @param $rc RecentChange
 	 * @return bool|String
 	 */
-	public static function getPatrolToken( $pageid, $title, $rc = null ) {
+	public static function getPatrolToken( $pageid, $title, $rc ) {
 		global $wgUser;
-
-		$validTokenUser = false;
-
-		if ( $rc ) {
-			if ( ( $wgUser->useRCPatrol() && $rc->getAttribute( 'rc_type' ) == RC_EDIT ) ||
-				( $wgUser->useNPPatrol() && $rc->getAttribute( 'rc_type' ) == RC_NEW ) )
-			{
-				$validTokenUser = true;
-			}
-		} else {
-			if ( $wgUser->useRCPatrol() || $wgUser->useNPPatrol() ) {
-				$validTokenUser = true;
-			}
-		}
-
-		if ( $validTokenUser ) {
-			// The patrol token is always the same, let's exploit that
-			static $cachedPatrolToken = null;
-			if ( is_null( $cachedPatrolToken ) ) {
-				$cachedPatrolToken = $wgUser->getEditToken( 'patrol' );
-			}
-			return $cachedPatrolToken;
-		} else {
+		if ( !$wgUser->useRCPatrol() && ( !$wgUser->useNPPatrol() ||
+				$rc->getAttribute( 'rc_type' ) != RC_NEW ) )
+		{
 			return false;
 		}
 
+		// The patrol token is always the same, let's exploit that
+		static $cachedPatrolToken = null;
+		if ( is_null( $cachedPatrolToken ) ) {
+			$cachedPatrolToken = $wgUser->getEditToken( 'patrol' );
+		}
+
+		return $cachedPatrolToken;
 	}
 
 	/**
@@ -144,7 +131,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 		/* Build our basic query. Namely, something along the lines of:
 		 * SELECT * FROM recentchanges WHERE rc_timestamp > $start
 		 * 		AND rc_timestamp < $end AND rc_namespace = $namespace
-		 * 		AND rc_deleted = 0
+		 * 		AND rc_deleted = '0'
 		 */
 		$this->addTables( 'recentchanges' );
 		$index = array( 'recentchanges' => 'rc_timestamp' ); // May change
@@ -236,7 +223,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			$this->addFieldsIf( 'rc_comment', $this->fld_comment || $this->fld_parsedcomment );
 			$this->addFieldsIf( 'rc_user', $this->fld_user );
 			$this->addFieldsIf( 'rc_user_text', $this->fld_user || $this->fld_userid );
-			$this->addFieldsIf( array( 'rc_minor', 'rc_type', 'rc_bot' ) , $this->fld_flags );
+			$this->addFieldsIf( array( 'rc_minor', 'rc_new', 'rc_bot' ) , $this->fld_flags );
 			$this->addFieldsIf( array( 'rc_old_len', 'rc_new_len' ), $this->fld_sizes );
 			$this->addFieldsIf( 'rc_patrolled', $this->fld_patrolled );
 			$this->addFieldsIf( array( 'rc_logid', 'rc_log_type', 'rc_log_action', 'rc_params' ), $this->fld_loginfo );
@@ -317,7 +304,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 	 * Extracts from a single sql row the data needed to describe one recent change.
 	 *
 	 * @param $row The row from which to extract the data.
-	 * @return array An array mapping strings (descriptors) to their respective string values.
+	 * @return An array mapping strings (descriptors) to their respective string values.
 	 * @access public
 	 */
 	public function extractRowInfo( $row ) {
@@ -393,7 +380,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			if ( $row->rc_bot ) {
 				$vals['bot'] = '';
 			}
-			if ( $row->rc_type == RC_NEW ) {
+			if ( $row->rc_new ) {
 				$vals['new'] = '';
 			}
 			if ( $row->rc_minor ) {
@@ -436,14 +423,13 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			$vals['logid'] = intval( $row->rc_logid );
 			$vals['logtype'] = $row->rc_log_type;
 			$vals['logaction'] = $row->rc_log_action;
-			$logEntry = DatabaseLogEntry::newFromRow( (array)$row );
 			ApiQueryLogEvents::addLogParams(
 				$this->getResult(),
 				$vals,
-				$logEntry->getParameters(),
-				$logEntry->getType(),
-				$logEntry->getSubtype(),
-				$logEntry->getTimestamp()
+				$row->rc_params,
+				$row->rc_log_action,
+				$row->rc_log_type,
+				$row->rc_timestamp
 			);
 		}
 
@@ -503,7 +489,7 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			return 'private';
 		}
 		if ( !is_null( $params['prop'] ) && in_array( 'parsedcomment', $params['prop'] ) ) {
-			// formatComment() calls wfMessage() among other things
+			// formatComment() calls wfMsg() among other things
 			return 'anon-public-user-private';
 		}
 		return 'public';
@@ -627,97 +613,6 @@ class ApiQueryRecentChanges extends ApiQueryGeneratorBase {
 			'tag' => 'Only list changes tagged with this tag',
 			'toponly' => 'Only list changes which are the latest revision',
 		);
-	}
-
-	public function getResultProperties() {
-		global $wgLogTypes;
-		$props = array(
-			'' => array(
-				'type' => array(
-					ApiBase::PROP_TYPE => array(
-						'edit',
-						'new',
-						'move',
-						'log',
-						'move over redirect'
-					)
-				)
-			),
-			'title' => array(
-				'ns' => 'namespace',
-				'title' => 'string',
-				'new_ns' => array(
-					ApiBase::PROP_TYPE => 'namespace',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'new_title' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'ids' => array(
-				'rcid' => 'integer',
-				'pageid' => 'integer',
-				'revid' => 'integer',
-				'old_revid' => 'integer'
-			),
-			'user' => array(
-				'user' => 'string',
-				'anon' => 'boolean'
-			),
-			'userid' => array(
-				'userid' => 'integer',
-				'anon' => 'boolean'
-			),
-			'flags' => array(
-				'bot' => 'boolean',
-				'new' => 'boolean',
-				'minor' => 'boolean'
-			),
-			'sizes' => array(
-				'oldlen' => 'integer',
-				'newlen' => 'integer'
-			),
-			'timestamp' => array(
-				'timestamp' => 'timestamp'
-			),
-			'comment' => array(
-				'comment' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'parsedcomment' => array(
-				'parsedcomment' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			),
-			'redirect' => array(
-				'redirect' => 'boolean'
-			),
-			'patrolled' => array(
-				'patrolled' => 'boolean'
-			),
-			'loginfo' => array(
-				'logid' => array(
-					ApiBase::PROP_TYPE => 'integer',
-					ApiBase::PROP_NULLABLE => true
-				),
-				'logtype' => array(
-					ApiBase::PROP_TYPE => $wgLogTypes,
-					ApiBase::PROP_NULLABLE => true
-				),
-				'logaction' => array(
-					ApiBase::PROP_TYPE => 'string',
-					ApiBase::PROP_NULLABLE => true
-				)
-			)
-		);
-
-		self::addTokenProperties( $props, $this->getTokenFunctions() );
-
-		return $props;
 	}
 
 	public function getDescription() {

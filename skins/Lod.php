@@ -172,6 +172,7 @@ class LodTemplate extends BaseTemplate {
 	 * Outputs the entire contents of the (X)HTML page
 	 */
 	public function execute() {
+
 		global $wgLang, $wgVectorUseIconWatch, $wgRequest, $wgUser,
 		$wgAuthOcdla_HostRedirect, $wgUseCustomContactForms,
 		
@@ -187,10 +188,11 @@ class LodTemplate extends BaseTemplate {
 		 * by the AuthOcdla extension.
 		 *
 		 */
+
+		// These are set on line #17 in LocalSettings.php
 		$wgAuthOcdla_ReplaceLogin,
-		
+		$wgAuthOcdla_ReplaceLogout, // This one is new.
 		$wgAuthOcdla_LogoutURL,
-		
 		$wgAuthOcdla_LoginURL,
 		
 		$wgOcdlaShowBooksOnlineDrawer;
@@ -200,8 +202,8 @@ class LodTemplate extends BaseTemplate {
 		$retURL = urlencode($requestServer.$requestUrl);
 		$fullUrl = "{$wgAuthOcdla_LoginURL}?retURL={$retURL}";
 	
-		$loginUrl = $wgAuthOcdla_ReplaceLogin ? $fullUrl : "/Special:UserLogin";
-		$logoutUrl = $wgAuthOcdla_ReplaceLogin ? "{$wgAuthOcdla_LogoutURL}?retURL={$retURL}" : "/Special:UserLogout";
+		$loginUrl = $wgAuthOcdla_ReplaceLogin ? $wgAuthOcdla_LoginURL : "/Special:UserLogin";
+		$logoutUrl = $wgAuthOcdla_ReplaceLogout ? "{$wgAuthOcdla_LogoutURL}?retURL={$retURL}" : "/Special:UserLogout";
 
 		$sessionAction = $wgUser->mId == 0 ? "<a href='{$loginUrl}'>Login</a>" : "<a href='{$logoutUrl}'>Logout</a>";
 
@@ -333,9 +335,6 @@ class LodTemplate extends BaseTemplate {
 					$this->renderNavigation( 'PERSONAL' );
 				}
 			?>
-			<div id="p-personal" class="">
-			
-			</div>
 			<div id="left-navigation">
 				<?php $this->renderNavigation( array( 'NAMESPACES', 'VARIANTS', 'SEARCH' ) ); ?>
 			</div>

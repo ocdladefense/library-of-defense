@@ -124,7 +124,7 @@ class SearchOracle extends SearchEngine {
 	/**
 	 * Return a LIMIT clause to limit results on the query.
 	 *
-	 * @param $sql string
+	 * @param string
 	 *
 	 * @return String
 	 */
@@ -147,7 +147,6 @@ class SearchOracle extends SearchEngine {
 	 * The guts shoulds be constructed in queryMain()
 	 * @param $filteredTerm String
 	 * @param $fulltext Boolean
-	 * @return String
 	 */
 	function getQuery( $filteredTerm, $fulltext ) {
 		return $this->queryLimit($this->queryMain($filteredTerm, $fulltext) . ' ' .
@@ -185,7 +184,6 @@ class SearchOracle extends SearchEngine {
 	/**
 	 * Parse a user input search string, and return an SQL fragment to be used
 	 * as part of a WHERE clause
-	 * @return string
 	 */
 	function parseQuery($filteredText, $fulltext) {
 		global $wgContLang;

@@ -49,23 +49,6 @@ class WikiExporter {
 	const TEXT = 0;
 	const STUB = 1;
 
-	var $buffer;
-
-	var $text;
-
-	/**
-	 * @var DumpOutput
-	 */
-	var $sink;
-
-	/**
-	 * Returns the export schema version.
-	 * @return string
-	 */
-	public static function schemaVersion() {
-		return "0.7";
-	}
-
 	/**
 	 * If using WikiExporter::STREAM to stream a large amount of data,
 	 * provide a database connection which is not managed by
@@ -120,7 +103,7 @@ class WikiExporter {
 	 * the most recent version.
 	 */
 	public function allPages() {
-		$this->dumpFrom( '' );
+		return $this->dumpFrom( '' );
 	}
 
 	/**
@@ -135,7 +118,7 @@ class WikiExporter {
 		if ( $end ) {
 			$condition .= ' AND page_id < ' . intval( $end );
 		}
-		$this->dumpFrom( $condition );
+		return $this->dumpFrom( $condition );
 	}
 
 	/**
@@ -150,34 +133,27 @@ class WikiExporter {
 		if ( $end ) {
 			$condition .= ' AND rev_id < ' . intval( $end );
 		}
-		$this->dumpFrom( $condition );
+		return $this->dumpFrom( $condition );
 	}
 
 	/**
 	 * @param $title Title
 	 */
 	public function pageByTitle( $title ) {
-		$this->dumpFrom(
+		return $this->dumpFrom(
 			'page_namespace=' . $title->getNamespace() .
 			' AND page_title=' . $this->db->addQuotes( $title->getDBkey() ) );
 	}
 
-	/**
-	 * @param $name string
-	 * @throws MWException
-	 */
 	public function pageByName( $name ) {
 		$title = Title::newFromText( $name );
 		if ( is_null( $title ) ) {
 			throw new MWException( "Can't export invalid title" );
 		} else {
-			$this->pageByTitle( $title );
+			return $this->pageByTitle( $title );
 		}
 	}
 
-	/**
-	 * @param $names array
-	 */
 	public function pagesByName( $names ) {
 		foreach ( $names as $name ) {
 			$this->pageByName( $name );
@@ -185,28 +161,20 @@ class WikiExporter {
 	}
 
 	public function allLogs() {
-		$this->dumpFrom( '' );
+		return $this->dumpFrom( '' );
 	}
 
-	/**
-	 * @param $start int
-	 * @param $end int
-	 */
 	public function logsByRange( $start, $end ) {
 		$condition = 'log_id >= ' . intval( $start );
 		if ( $end ) {
 			$condition .= ' AND log_id < ' . intval( $end );
 		}
-		$this->dumpFrom( $condition );
+		return $this->dumpFrom( $condition );
 	}
 
-	/**
-	 * Generates the distinct list of authors of an article
-	 * Not called by default (depends on $this->list_authors)
-	 * Can be set by Special:Export when not exporting whole history
-	 *
-	 * @param $cond
-	 */
+	# Generates the distinct list of authors of an article
+	# Not called by default (depends on $this->list_authors)
+	# Can be set by Special:Export when not exporting whole history
 	protected function do_list_authors( $cond ) {
 		wfProfileIn( __METHOD__ );
 		$this->author_list = "<contributors>";
@@ -237,15 +205,13 @@ class WikiExporter {
 		wfProfileOut( __METHOD__ );
 	}
 
-	/**
-	 * @param $cond string
-	 * @throws MWException
-	 * @throws Exception
-	 */
 	protected function dumpFrom( $cond = '' ) {
 		wfProfileIn( __METHOD__ );
 		# For logging dumps...
 		if ( $this->history & self::LOGS ) {
+			if ( $this->buffer == WikiExporter::STREAM ) {
+				$prev = $this->db->bufferResults( false );
+			}
 			$where = array( 'user_id = log_user' );
 			# Hide private logs
 			$hideLogs = LogEventsList::getExcludeClause( $this->db );
@@ -254,49 +220,16 @@ class WikiExporter {
 			if ( $cond ) $where[] = $cond;
 			# Get logging table name for logging.* clause
 			$logging = $this->db->tableName( 'logging' );
-
+			$result = $this->db->select( array( 'logging', 'user' ),
+				array( "{$logging}.*", 'user_name' ), // grab the user name
+				$where,
+				__METHOD__,
+				array( 'ORDER BY' => 'log_id', 'USE INDEX' => array( 'logging' => 'PRIMARY' ) )
+			);
+			$wrapper = $this->db->resultObject( $result );
+			$this->outputLogStream( $wrapper );
 			if ( $this->buffer == WikiExporter::STREAM ) {
-				$prev = $this->db->bufferResults( false );
-			}
-			$wrapper = null; // Assuring $wrapper is not undefined, if exception occurs early
-			try {
-				$result = $this->db->select( array( 'logging', 'user' ),
-					array( "{$logging}.*", 'user_name' ), // grab the user name
-					$where,
-					__METHOD__,
-					array( 'ORDER BY' => 'log_id', 'USE INDEX' => array( 'logging' => 'PRIMARY' ) )
-				);
-				$wrapper = $this->db->resultObject( $result );
-				$this->outputLogStream( $wrapper );
-				if ( $this->buffer == WikiExporter::STREAM ) {
-					$this->db->bufferResults( $prev );
-				}
-			} catch ( Exception $e ) {
-				// Throwing the exception does not reliably free the resultset, and
-				// would also leave the connection in unbuffered mode.
-
-				// Freeing result
-				try {
-					if ( $wrapper ) {
-						$wrapper->free();
-					}
-				} catch ( Exception $e2 ) {
-					// Already in panic mode -> ignoring $e2 as $e has
-					// higher priority
-				}
-
-				// Putting database back in previous buffer mode
-				try {
-					if ( $this->buffer == WikiExporter::STREAM ) {
-						$this->db->bufferResults( $prev );
-					}
-				} catch ( Exception $e2 ) {
-					// Already in panic mode -> ignoring $e2 as $e has
-					// higher priority
-				}
-
-				// Inform caller about problem
-				throw $e;
+				$this->db->bufferResults( $prev );
 			}
 		# For page dumps...
 		} else {
@@ -346,7 +279,7 @@ class WikiExporter {
 			} elseif ( $this->history & WikiExporter::RANGE ) {
 				# Dump of revisions within a specified range
 				$join['revision'] = array( 'INNER JOIN', 'page_id=rev_page' );
-				$opts['ORDER BY'] = array( 'rev_page ASC', 'rev_id ASC' );
+				$opts['ORDER BY'] = 'rev_page ASC, rev_id ASC';
 			} else {
 				# Uknown history specification parameter?
 				wfProfileOut( __METHOD__ );
@@ -367,46 +300,20 @@ class WikiExporter {
 				$prev = $this->db->bufferResults( false );
 			}
 
-			$wrapper = null; // Assuring $wrapper is not undefined, if exception occurs early
-			try {
-				wfRunHooks( 'ModifyExportQuery',
+			wfRunHooks( 'ModifyExportQuery',
 						array( $this->db, &$tables, &$cond, &$opts, &$join ) );
 
-				# Do the query!
-				$result = $this->db->select( $tables, '*', $cond, __METHOD__, $opts, $join );
-				$wrapper = $this->db->resultObject( $result );
-				# Output dump results
+			# Do the query!
+			$result = $this->db->select( $tables, '*', $cond, __METHOD__, $opts, $join );
+			$wrapper = $this->db->resultObject( $result );
+			# Output dump results
+			$this->outputPageStream( $wrapper );
+			if ( $this->list_authors ) {
 				$this->outputPageStream( $wrapper );
+			}
 
-				if ( $this->buffer == WikiExporter::STREAM ) {
-					$this->db->bufferResults( $prev );
-				}
-			} catch ( Exception $e ) {
-				// Throwing the exception does not reliably free the resultset, and
-				// would also leave the connection in unbuffered mode.
-
-				// Freeing result
-				try {
-					if ( $wrapper ) {
-						$wrapper->free();
-					}
-				} catch ( Exception $e2 ) {
-					// Already in panic mode -> ignoring $e2 as $e has
-					// higher priority
-				}
-
-				// Putting database back in previous buffer mode
-				try {
-					if ( $this->buffer == WikiExporter::STREAM ) {
-						$this->db->bufferResults( $prev );
-					}
-				} catch ( Exception $e2 ) {
-					// Already in panic mode -> ignoring $e2 as $e has
-					// higher priority
-				}
-
-				// Inform caller about problem
-				throw $e;
+			if ( $this->buffer == WikiExporter::STREAM ) {
+				$this->db->bufferResults( $prev );
 			}
 		}
 		wfProfileOut( __METHOD__ );
@@ -417,7 +324,7 @@ class WikiExporter {
 	 * The result set should be sorted/grouped by page to avoid duplicate
 	 * page records in the output.
 	 *
-	 * Should be safe for
+	 * The result set will be freed once complete. Should be safe for
 	 * streaming (non-buffered) queries, as long as it was made on a
 	 * separate database connection not managed by LoadBalancer; some
 	 * blob storage types will make queries to pull source data.
@@ -456,9 +363,6 @@ class WikiExporter {
 		}
 	}
 
-	/**
-	 * @param $resultset array
-	 */
 	protected function outputLogStream( $resultset ) {
 		foreach ( $resultset as $row ) {
 			$output = $this->writer->writeLogItem( $row );
@@ -473,16 +377,14 @@ class WikiExporter {
 class XmlDumpWriter {
 	/**
 	 * Returns the export schema version.
-	 * @deprecated in 1.20; use WikiExporter::schemaVersion() instead
 	 * @return string
 	 */
 	function schemaVersion() {
-		wfDeprecated( __METHOD__, '1.20' );
-		return WikiExporter::schemaVersion();
+		return "0.6";
 	}
 
 	/**
-	 * Opens the XML output stream's root "<mediawiki>" element.
+	 * Opens the XML output stream's root <mediawiki> element.
 	 * This does not include an xml directive, so is safe to include
 	 * as a subelement in a larger XML stream. Namespace and XML Schema
 	 * references are included.
@@ -493,7 +395,7 @@ class XmlDumpWriter {
 	 */
 	function openStream() {
 		global $wgLanguageCode;
-		$ver = WikiExporter::schemaVersion();
+		$ver = $this->schemaVersion();
 		return Xml::element( 'mediawiki', array(
 			'xmlns'              => "http://www.mediawiki.org/xml/export-$ver/",
 			'xmlns:xsi'          => "http://www.w3.org/2001/XMLSchema-instance",
@@ -506,9 +408,6 @@ class XmlDumpWriter {
 			$this->siteInfo();
 	}
 
-	/**
-	 * @return string
-	 */
 	function siteInfo() {
 		$info = array(
 			$this->sitename(),
@@ -521,32 +420,20 @@ class XmlDumpWriter {
 			"\n  </siteinfo>\n";
 	}
 
-	/**
-	 * @return string
-	 */
 	function sitename() {
 		global $wgSitename;
 		return Xml::element( 'sitename', array(), $wgSitename );
 	}
 
-	/**
-	 * @return string
-	 */
 	function generator() {
 		global $wgVersion;
 		return Xml::element( 'generator', array(), "MediaWiki $wgVersion" );
 	}
 
-	/**
-	 * @return string
-	 */
 	function homelink() {
 		return Xml::element( 'base', array(), Title::newMainPage()->getCanonicalUrl() );
 	}
 
-	/**
-	 * @return string
-	 */
 	function caseSetting() {
 		global $wgCapitalLinks;
 		// "case-insensitive" option is reserved for future
@@ -554,9 +441,6 @@ class XmlDumpWriter {
 		return Xml::element( 'case', array(), $sensitivity );
 	}
 
-	/**
-	 * @return string
-	 */
 	function namespaces() {
 		global $wgContLang;
 		$spaces = "<namespaces>\n";
@@ -582,7 +466,7 @@ class XmlDumpWriter {
 	}
 
 	/**
-	 * Opens a "<page>" section on the output stream, with data
+	 * Opens a <page> section on the output stream, with data
 	 * from the given database row.
 	 *
 	 * @param $row object
@@ -602,7 +486,13 @@ class XmlDumpWriter {
 				$out .= '    ' . Xml::element( 'redirect', array( 'title' => self::canonicalTitle( $redirect ) ) ) . "\n";
 			}
 		}
-
+		
+		if ( $row->rev_sha1 ) {
+			$out .= "      " . Xml::element('sha1', null, strval($row->rev_sha1) ) . "\n";
+		} else {
+			$out .= "      <sha1/>\n";
+		}
+		
 		if ( $row->page_restrictions != '' ) {
 			$out .= '    ' . Xml::element( 'restrictions', array(),
 				strval( $row->page_restrictions ) ) . "\n";
@@ -614,17 +504,16 @@ class XmlDumpWriter {
 	}
 
 	/**
-	 * Closes a "<page>" section on the output stream.
+	 * Closes a <page> section on the output stream.
 	 *
 	 * @access private
-	 * @return string
 	 */
 	function closePage() {
 		return "  </page>\n";
 	}
 
 	/**
-	 * Dumps a "<revision>" section on the output stream, with
+	 * Dumps a <revision> section on the output stream, with
 	 * data filled in from the given database row.
 	 *
 	 * @param $row object
@@ -636,9 +525,6 @@ class XmlDumpWriter {
 
 		$out  = "    <revision>\n";
 		$out .= "      " . Xml::element( 'id', null, strval( $row->rev_id ) ) . "\n";
-		if( $row->rev_parent_id ) {
-			$out .= "      " . Xml::element( 'parentid', null, strval( $row->rev_parent_id ) ) . "\n";
-		}
 
 		$out .= $this->writeTimestamp( $row->rev_timestamp );
 
@@ -654,13 +540,7 @@ class XmlDumpWriter {
 		if ( $row->rev_deleted & Revision::DELETED_COMMENT ) {
 			$out .= "      " . Xml::element( 'comment', array( 'deleted' => 'deleted' ) ) . "\n";
 		} elseif ( $row->rev_comment != '' ) {
-			$out .= "      " . Xml::elementClean( 'comment', array(), strval( $row->rev_comment ) ) . "\n";
-		}
-
-		if ( $row->rev_sha1 && !( $row->rev_deleted & Revision::DELETED_TEXT ) ) {
-			$out .= "      " . Xml::element('sha1', null, strval( $row->rev_sha1 ) ) . "\n";
-		} else {
-			$out .= "      <sha1/>\n";
+			$out .= "      " . Xml::elementClean( 'comment', null, strval( $row->rev_comment ) ) . "\n";
 		}
 
 		$text = '';
@@ -688,7 +568,7 @@ class XmlDumpWriter {
 	}
 
 	/**
-	 * Dumps a "<logitem>" section on the output stream, with
+	 * Dumps a <logitem> section on the output stream, with
 	 * data filled in from the given database row.
 	 *
 	 * @param $row object
@@ -698,78 +578,64 @@ class XmlDumpWriter {
 	function writeLogItem( $row ) {
 		wfProfileIn( __METHOD__ );
 
-		$out  = "  <logitem>\n";
-		$out .= "    " . Xml::element( 'id', null, strval( $row->log_id ) ) . "\n";
+		$out  = "    <logitem>\n";
+		$out .= "      " . Xml::element( 'id', null, strval( $row->log_id ) ) . "\n";
 
-		$out .= $this->writeTimestamp( $row->log_timestamp, "    " );
+		$out .= $this->writeTimestamp( $row->log_timestamp );
 
 		if ( $row->log_deleted & LogPage::DELETED_USER ) {
-			$out .= "    " . Xml::element( 'contributor', array( 'deleted' => 'deleted' ) ) . "\n";
+			$out .= "      " . Xml::element( 'contributor', array( 'deleted' => 'deleted' ) ) . "\n";
 		} else {
-			$out .= $this->writeContributor( $row->log_user, $row->user_name, "    " );
+			$out .= $this->writeContributor( $row->log_user, $row->user_name );
 		}
 
 		if ( $row->log_deleted & LogPage::DELETED_COMMENT ) {
-			$out .= "    " . Xml::element( 'comment', array( 'deleted' => 'deleted' ) ) . "\n";
+			$out .= "      " . Xml::element( 'comment', array( 'deleted' => 'deleted' ) ) . "\n";
 		} elseif ( $row->log_comment != '' ) {
-			$out .= "    " . Xml::elementClean( 'comment', null, strval( $row->log_comment ) ) . "\n";
+			$out .= "      " . Xml::elementClean( 'comment', null, strval( $row->log_comment ) ) . "\n";
 		}
 
-		$out .= "    " . Xml::element( 'type', null, strval( $row->log_type ) ) . "\n";
-		$out .= "    " . Xml::element( 'action', null, strval( $row->log_action ) ) . "\n";
+		$out .= "      " . Xml::element( 'type', null, strval( $row->log_type ) ) . "\n";
+		$out .= "      " . Xml::element( 'action', null, strval( $row->log_action ) ) . "\n";
 
 		if ( $row->log_deleted & LogPage::DELETED_ACTION ) {
-			$out .= "    " . Xml::element( 'text', array( 'deleted' => 'deleted' ) ) . "\n";
+			$out .= "      " . Xml::element( 'text', array( 'deleted' => 'deleted' ) ) . "\n";
 		} else {
 			$title = Title::makeTitle( $row->log_namespace, $row->log_title );
-			$out .= "    " . Xml::elementClean( 'logtitle', null, self::canonicalTitle( $title ) ) . "\n";
-			$out .= "    " . Xml::elementClean( 'params',
+			$out .= "      " . Xml::elementClean( 'logtitle', null, self::canonicalTitle( $title ) ) . "\n";
+			$out .= "      " . Xml::elementClean( 'params',
 				array( 'xml:space' => 'preserve' ),
 				strval( $row->log_params ) ) . "\n";
 		}
 
-		$out .= "  </logitem>\n";
+		$out .= "    </logitem>\n";
 
 		wfProfileOut( __METHOD__ );
 		return $out;
 	}
 
-	/**
-	 * @param $timestamp string
-	 * @param $indent string Default to six spaces
-	 * @return string
-	 */
-	function writeTimestamp( $timestamp, $indent = "      " ) {
+	function writeTimestamp( $timestamp ) {
 		$ts = wfTimestamp( TS_ISO_8601, $timestamp );
-		return $indent . Xml::element( 'timestamp', null, $ts ) . "\n";
+		return "      " . Xml::element( 'timestamp', null, $ts ) . "\n";
 	}
 
-	/**
-	 * @param $id
-	 * @param $text string
-	 * @param $indent string Default to six spaces
-	 * @return string
-	 */
-	function writeContributor( $id, $text, $indent = "      " ) {
-		$out = $indent . "<contributor>\n";
+	function writeContributor( $id, $text ) {
+		$out = "      <contributor>\n";
 		if ( $id || !IP::isValid( $text ) ) {
-			$out .= $indent . "  " . Xml::elementClean( 'username', null, strval( $text ) ) . "\n";
-			$out .= $indent . "  " . Xml::element( 'id', null, strval( $id ) ) . "\n";
+			$out .= "        " . Xml::elementClean( 'username', null, strval( $text ) ) . "\n";
+			$out .= "        " . Xml::element( 'id', null, strval( $id ) ) . "\n";
 		} else {
-			$out .= $indent . "  " . Xml::elementClean( 'ip', null, strval( $text ) ) . "\n";
+			$out .= "        " . Xml::elementClean( 'ip', null, strval( $text ) ) . "\n";
 		}
-		$out .= $indent . "</contributor>\n";
+		$out .= "      </contributor>\n";
 		return $out;
 	}
 
 	/**
 	 * Warning! This data is potentially inconsistent. :(
-	 * @param $row
-	 * @param $dumpContents bool
-	 * @return string
 	 */
 	function writeUploads( $row, $dumpContents = false ) {
-		if ( $row->page_namespace == NS_FILE ) {
+		if ( $row->page_namespace == NS_IMAGE ) {
 			$img = wfLocalFile( $row->page_title );
 			if ( $img && $img->exists() ) {
 				$out = '';
@@ -796,23 +662,21 @@ class XmlDumpWriter {
 			$archiveName = '';
 		}
 		if ( $dumpContents ) {
+			$be = $file->getRepo()->getBackend();
 			# Dump file as base64
 			# Uses only XML-safe characters, so does not need escaping
+			# @TODO: too bad this loads the contents into memory (script might swap)
 			$contents = '      <contents encoding="base64">' .
-				chunk_split( base64_encode( file_get_contents( $file->getPath() ) ) ) .
+				chunk_split( base64_encode(
+					$be->getFileContents( array( 'src' => $file->getPath() ) ) ) ) .
 				"      </contents>\n";
 		} else {
 			$contents = '';
 		}
-		if ( $file->isDeleted( File::DELETED_COMMENT ) ) {
-			$comment = Xml::element( 'comment', array( 'deleted' => 'deleted' ) );
-		} else {
-			$comment = Xml::elementClean( 'comment', null, $file->getDescription() );
-		}
 		return "    <upload>\n" .
 			$this->writeTimestamp( $file->getTimestamp() ) .
 			$this->writeContributor( $file->getUser( 'id' ), $file->getUser( 'text' ) ) .
-			"      " . $comment . "\n" .
+			"      " . Xml::elementClean( 'comment', null, $file->getDescription() ) . "\n" .
 			"      " . Xml::element( 'filename', null, $file->getName() ) . "\n" .
 			$archiveName .
 			"      " . Xml::element( 'src', null, $file->getCanonicalUrl() ) . "\n" .
@@ -827,7 +691,7 @@ class XmlDumpWriter {
 	 * Return prefixed text form of title, but using the content language's
 	 * canonical namespace. This skips any special-casing such as gendered
 	 * user namespaces -- which while useful, are not yet listed in the
-	 * XML "<siteinfo>" data so are unsafe in export.
+	 * XML <siteinfo> data so are unsafe in export.
 	 *
 	 * @param Title $title
 	 * @return string
@@ -855,55 +719,32 @@ class XmlDumpWriter {
  * @ingroup Dump
  */
 class DumpOutput {
-
-	/**
-	 * @param $string string
-	 */
 	function writeOpenStream( $string ) {
 		$this->write( $string );
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeCloseStream( $string ) {
 		$this->write( $string );
 	}
 
-	/**
-	 * @param $page
-	 * @param $string string
-	 */
 	function writeOpenPage( $page, $string ) {
 		$this->write( $string );
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeClosePage( $string ) {
 		$this->write( $string );
 	}
 
-	/**
-	 * @param $rev
-	 * @param $string string
-	 */
 	function writeRevision( $rev, $string ) {
 		$this->write( $string );
 	}
 
-	/**
-	 * @param $rev
-	 * @param $string string
-	 */
 	function writeLogItem( $rev, $string ) {
 		$this->write( $string );
 	}
 
 	/**
 	 * Override to write to a different stream type.
-	 * @param $string string
 	 * @return bool
 	 */
 	function write( $string ) {
@@ -935,7 +776,6 @@ class DumpOutput {
 	/**
 	 * Returns the name of the file or files which are
 	 * being written to, if there are any.
-	 * @return null
 	 */
 	function getFilenames() {
 		return NULL;
@@ -947,56 +787,27 @@ class DumpOutput {
  * @ingroup Dump
  */
 class DumpFileOutput extends DumpOutput {
-	protected $handle = false, $filename;
+	protected $handle, $filename;
 
-	/**
-	 * @param $file
-	 */
 	function __construct( $file ) {
 		$this->handle = fopen( $file, "wt" );
 		$this->filename = $file;
 	}
 
-	/**
-	 * @param $string string
-	 */
-	function writeCloseStream( $string ) {
-		parent::writeCloseStream( $string );
-		if ( $this->handle ) {
-			fclose( $this->handle );
-			$this->handle = false;
-		}
-	}
-
-	/**
-	 * @param $string string
-	 */
 	function write( $string ) {
 		fputs( $this->handle, $string );
 	}
 
-	/**
-	 * @param $newname
-	 */
 	function closeRenameAndReopen( $newname ) {
 		$this->closeAndRename( $newname, true );
 	}
 
-	/**
-	 * @param $newname
-	 * @throws MWException
-	 */
 	function renameOrException( $newname ) {
 			if (! rename( $this->filename, $newname ) ) {
 				throw new MWException( __METHOD__ . ": rename of file {$this->filename} to $newname failed\n" );
 			}
 	}
 
-	/**
-	 * @param $newname array
-	 * @return mixed
-	 * @throws MWException
-	 */
 	function checkRenameArgCount( $newname ) {
 		if ( is_array( $newname ) ) {
 			if ( count( $newname ) > 1 ) {
@@ -1008,17 +819,10 @@ class DumpFileOutput extends DumpOutput {
 		return $newname;
 	}
 
-	/**
-	 * @param $newname mixed
-	 * @param $open bool
-	 */
 	function closeAndRename( $newname, $open = false ) {
 		$newname = $this->checkRenameArgCount( $newname );
 		if ( $newname ) {
-			if ( $this->handle ) {
-				fclose( $this->handle );
-				$this->handle = false;
-			}
+			fclose( $this->handle );
 			$this->renameOrException( $newname );
 			if ( $open ) {
 				$this->handle = fopen( $this->filename, "wt" );
@@ -1026,9 +830,6 @@ class DumpFileOutput extends DumpOutput {
 		}
 	}
 
-	/**
-	 * @return string|null
-	 */
 	function getFilenames() {
 		return $this->filename;
 	}
@@ -1042,12 +843,7 @@ class DumpFileOutput extends DumpOutput {
  */
 class DumpPipeOutput extends DumpFileOutput {
 	protected $command, $filename;
-	protected $procOpenResource = false;
 
-	/**
-	 * @param $command
-	 * @param $file null
-	 */
 	function __construct( $command, $file = null ) {
 		if ( !is_null( $file ) ) {
 			$command .=  " > " . wfEscapeShellArg( $file );
@@ -1058,20 +854,6 @@ class DumpPipeOutput extends DumpFileOutput {
 		$this->filename = $file;
 	}
 
-	/**
-	 * @param $string string
-	 */
-	function writeCloseStream( $string ) {
-		parent::writeCloseStream( $string );
-		if ( $this->procOpenResource ) {
-			proc_close( $this->procOpenResource );
-			$this->procOpenResource = false;
-		}
-	}
-
-	/**
-	 * @param $command
-	 */
 	function startCommand( $command ) {
 		$spec = array(
 			0 => array( "pipe", "r" ),
@@ -1081,28 +863,15 @@ class DumpPipeOutput extends DumpFileOutput {
 		$this->handle = $pipes[0];
 	}
 
-	/**
-	 * @param mixed $newname
-	 */
 	function closeRenameAndReopen( $newname ) {
 		$this->closeAndRename( $newname, true );
 	}
 
-	/**
-	 * @param $newname mixed
-	 * @param $open bool
-	 */
 	function closeAndRename( $newname, $open = false ) {
 		$newname = $this->checkRenameArgCount( $newname );
 		if ( $newname ) {
-			if ( $this->handle ) {
-				fclose( $this->handle );
-				$this->handle = false;
-			}
-			if ( $this->procOpenResource ) {
-				proc_close( $this->procOpenResource );
-				$this->procOpenResource = false;
-			}
+			fclose( $this->handle );
+			proc_close( $this->procOpenResource );
 			$this->renameOrException( $newname );
 			if ( $open ) {
 				$command = $this->command;
@@ -1119,10 +888,6 @@ class DumpPipeOutput extends DumpFileOutput {
  * @ingroup Dump
  */
 class DumpGZipOutput extends DumpPipeOutput {
-
-	/**
-	 * @param $file string
-	 */
 	function __construct( $file ) {
 		parent::__construct( "gzip", $file );
 	}
@@ -1133,10 +898,6 @@ class DumpGZipOutput extends DumpPipeOutput {
  * @ingroup Dump
  */
 class DumpBZip2Output extends DumpPipeOutput {
-
-	/**
-	 * @param $file string
-	 */
 	function __construct( $file ) {
 		parent::__construct( "bzip2", $file );
 	}
@@ -1147,20 +908,12 @@ class DumpBZip2Output extends DumpPipeOutput {
  * @ingroup Dump
  */
 class Dump7ZipOutput extends DumpPipeOutput {
-
-	/**
-	 * @param $file string
-	 */
 	function __construct( $file ) {
 		$command = $this->setup7zCommand( $file );
 		parent::__construct( $command );
 		$this->filename = $file;
 	}
 
-	/**
-	 * @param $file string
-	 * @return string
-	 */
 	function setup7zCommand( $file ) {
 		$command = "7za a -bd -si " . wfEscapeShellArg( $file );
 		// Suppress annoying useless crap from p7zip
@@ -1169,10 +922,6 @@ class Dump7ZipOutput extends DumpPipeOutput {
 		return( $command );
 	}
 
-	/**
-	 * @param $newname string
-	 * @param $open bool
-	 */
 	function closeAndRename( $newname, $open = false ) {
 		$newname = $this->checkRenameArgCount( $newname );
 		if ( $newname ) {
@@ -1187,6 +936,8 @@ class Dump7ZipOutput extends DumpPipeOutput {
 	}
 }
 
+
+
 /**
  * Dump output filter class.
  * This just does output filtering and streaming; XML formatting is done
@@ -1194,44 +945,18 @@ class Dump7ZipOutput extends DumpPipeOutput {
  * @ingroup Dump
  */
 class DumpFilter {
-
-	/**
-	 * @var DumpOutput
-	 * FIXME will need to be made protected whenever legacy code
-	 * is updated.
-	 */
-	public $sink;
-
-	/**
-	 * @var bool
-	 */
-	protected $sendingThisPage;
-
-	/**
-	 * @param $sink DumpOutput
-	 */
 	function __construct( &$sink ) {
 		$this->sink =& $sink;
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeOpenStream( $string ) {
 		$this->sink->writeOpenStream( $string );
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeCloseStream( $string ) {
 		$this->sink->writeCloseStream( $string );
 	}
 
-	/**
-	 * @param $page
-	 * @param $string string
-	 */
 	function writeOpenPage( $page, $string ) {
 		$this->sendingThisPage = $this->pass( $page, $string );
 		if ( $this->sendingThisPage ) {
@@ -1239,9 +964,6 @@ class DumpFilter {
 		}
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeClosePage( $string ) {
 		if ( $this->sendingThisPage ) {
 			$this->sink->writeClosePage( $string );
@@ -1249,49 +971,30 @@ class DumpFilter {
 		}
 	}
 
-	/**
-	 * @param $rev
-	 * @param $string string
-	 */
 	function writeRevision( $rev, $string ) {
 		if ( $this->sendingThisPage ) {
 			$this->sink->writeRevision( $rev, $string );
 		}
 	}
 
-	/**
-	 * @param $rev
-	 * @param $string string
-	 */
 	function writeLogItem( $rev, $string ) {
 		$this->sink->writeRevision( $rev, $string );
 	}
 
-	/**
-	 * @param $newname string
-	 */
 	function closeRenameAndReopen( $newname ) {
 		$this->sink->closeRenameAndReopen( $newname );
 	}
 
-	/**
-	 * @param $newname string
-	 * @param $open bool
-	 */
 	function closeAndRename( $newname, $open = false ) {
 		$this->sink->closeAndRename( $newname, $open );
 	}
 
-	/**
-	 * @return array
-	 */
 	function getFilenames() {
 		return $this->sink->getFilenames();
 	}
 
 	/**
 	 * Override for page-based filter types.
-	 * @param $page
 	 * @return bool
 	 */
 	function pass( $page ) {
@@ -1304,11 +1007,6 @@ class DumpFilter {
  * @ingroup Dump
  */
 class DumpNotalkFilter extends DumpFilter {
-
-	/**
-	 * @param $page
-	 * @return bool
-	 */
 	function pass( $page ) {
 		return !MWNamespace::isTalk( $page->page_namespace );
 	}
@@ -1322,10 +1020,6 @@ class DumpNamespaceFilter extends DumpFilter {
 	var $invert = false;
 	var $namespaces = array();
 
-	/**
-	 * @param $sink DumpOutput
-	 * @param $param
-	 */
 	function __construct( &$sink, $param ) {
 		parent::__construct( $sink );
 
@@ -1368,10 +1062,6 @@ class DumpNamespaceFilter extends DumpFilter {
 		}
 	}
 
-	/**
-	 * @param $page
-	 * @return bool
-	 */
 	function pass( $page ) {
 		$match = isset( $this->namespaces[$page->page_namespace] );
 		return $this->invert xor $match;
@@ -1386,18 +1076,11 @@ class DumpNamespaceFilter extends DumpFilter {
 class DumpLatestFilter extends DumpFilter {
 	var $page, $pageString, $rev, $revString;
 
-	/**
-	 * @param $page
-	 * @param $string string
-	 */
 	function writeOpenPage( $page, $string ) {
 		$this->page = $page;
 		$this->pageString = $string;
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeClosePage( $string ) {
 		if ( $this->rev ) {
 			$this->sink->writeOpenPage( $this->page, $this->pageString );
@@ -1410,10 +1093,6 @@ class DumpLatestFilter extends DumpFilter {
 		$this->pageString = null;
 	}
 
-	/**
-	 * @param $rev
-	 * @param $string string
-	 */
 	function writeRevision( $rev, $string ) {
 		if ( $rev->rev_id == $this->page->page_latest ) {
 			$this->rev = $rev;
@@ -1427,82 +1106,51 @@ class DumpLatestFilter extends DumpFilter {
  * @ingroup Dump
  */
 class DumpMultiWriter {
-
-	/**
-	 * @param $sinks
-	 */
 	function __construct( $sinks ) {
 		$this->sinks = $sinks;
 		$this->count = count( $sinks );
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeOpenStream( $string ) {
 		for ( $i = 0; $i < $this->count; $i++ ) {
 			$this->sinks[$i]->writeOpenStream( $string );
 		}
 	}
 
-	/**
-	 * @param $string string
-	 */
 	function writeCloseStream( $string ) {
 		for ( $i = 0; $i < $this->count; $i++ ) {
 			$this->sinks[$i]->writeCloseStream( $string );
 		}
 	}
 
-	/**
-	 * @param $page
-	 * @param $string string
-	 */
 	function writeOpenPage( $page, $string ) {
 		for ( $i = 0; $i < $this->count; $i++ ) {
 			$this->sinks[$i]->writeOpenPage( $page, $string );
 		}
 	}
 
-	/**
-	 * @param $string
-	 */
 	function writeClosePage( $string ) {
 		for ( $i = 0; $i < $this->count; $i++ ) {
 			$this->sinks[$i]->writeClosePage( $string );
 		}
 	}
 
-	/**
-	 * @param $rev
-	 * @param $string
-	 */
 	function writeRevision( $rev, $string ) {
 		for ( $i = 0; $i < $this->count; $i++ ) {
 			$this->sinks[$i]->writeRevision( $rev, $string );
 		}
 	}
 
-	/**
-	 * @param $newnames
-	 */
 	function closeRenameAndReopen( $newnames ) {
 		$this->closeAndRename( $newnames, true );
 	}
 
-	/**
-	 * @param $newnames array
-	 * @param bool $open
-	 */
 	function closeAndRename( $newnames, $open = false ) {
 		for ( $i = 0; $i < $this->count; $i++ ) {
 			$this->sinks[$i]->closeAndRename( $newnames[$i], $open );
 		}
 	}
 
-	/**
-	 * @return array
-	 */
 	function getFilenames() {
 		$filenames = array();
 		for ( $i = 0; $i < $this->count; $i++ ) {
@@ -1513,10 +1161,6 @@ class DumpMultiWriter {
 
 }
 
-/**
- * @param $string string
- * @return string
- */
 function xmlsafe( $string ) {
 	wfProfileIn( __FUNCTION__ );
 

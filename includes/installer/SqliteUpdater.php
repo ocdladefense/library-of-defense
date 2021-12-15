@@ -2,21 +2,6 @@
 /**
  * Sqlite-specific updater.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
  * @file
  * @ingroup Deployment
  */
@@ -86,12 +71,6 @@ class SqliteUpdater extends DatabaseUpdater {
 			array( 'addField',	'uploadstash',	'us_chunk_inx',		'patch-uploadstash_chunk.sql' ),
 			array( 'addfield', 'job',           'job_timestamp',    'patch-jobs-add-timestamp.sql' ),
 			array( 'modifyField', 'user_former_groups', 'ufg_group', 'patch-ug_group-length-increase.sql' ),
-
-			// 1.20
-			array( 'addIndex', 'revision', 'page_user_timestamp', 'patch-revision-user-page-index.sql' ),
-			array( 'addField', 'ipblocks', 'ipb_parent_block_id', 'patch-ipb-parent-block-id.sql' ),
-			array( 'addIndex', 'ipblocks', 'ipb_parent_block_id', 'patch-ipb-parent-block-id-index.sql' ),
-			array( 'dropField', 'category',     'cat_hidden',       'patch-cat_hidden.sql' ),
 		);
 	}
 
@@ -101,16 +80,22 @@ class SqliteUpdater extends DatabaseUpdater {
 			$this->output( "...have initial indexes\n" );
 			return;
 		}
-		$this->applyPatch( 'initial-indexes.sql', false, "Adding initial indexes" );
+		$this->output( "Adding initial indexes..." );
+		$this->applyPatch( 'initial-indexes.sql' );
+		$this->output( "done\n" );
 	}
 
 	protected function sqliteSetupSearchindex() {
 		$module = DatabaseSqlite::getFulltextSearchModule();
 		$fts3tTable = $this->updateRowExists( 'fts3' );
 		if ( $fts3tTable &&  !$module ) {
-			$this->applyPatch( 'searchindex-no-fts.sql', false, 'PHP is missing FTS3 support, downgrading tables' );
+			$this->output( '...PHP is missing FTS3 support, downgrading tables...' );
+			$this->applyPatch( 'searchindex-no-fts.sql' );
+			$this->output( "done\n" );
 		} elseif ( !$fts3tTable && $module == 'FTS3' ) {
-			$this->applyPatch( 'searchindex-fts3.sql', false, "Adding FTS3 search capabilities" );
+			$this->output( '...adding FTS3 search capabilities...' );
+			$this->applyPatch( 'searchindex-fts3.sql' );
+			$this->output( "done\n" );
 		} else {
 			$this->output( "...fulltext search table appears to be in order.\n" );
 		}

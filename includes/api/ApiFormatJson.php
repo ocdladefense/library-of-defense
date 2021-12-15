@@ -4,7 +4,7 @@
  *
  * Created on Sep 19, 2006
  *
- * Copyright © 2006 Yuri Astrakhan "<Firstname><Lastname>@gmail.com"
+ * Copyright © 2006 Yuri Astrakhan <Firstname><Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,11 +62,26 @@ class ApiFormatJson extends ApiFormatBase {
 		$callback = $params['callback'];
 		if ( !is_null( $callback ) ) {
 			$prefix = preg_replace( "/[^][.\\'\\\"_A-Za-z0-9]/", '', $callback ) . '(';
+			# Prepend a comment to try to avoid attacks against content
+			# sniffers, such as bug 68187.
+			$prefix = ( "/**/$prefix" );
 			$suffix = ')';
 		}
+
+		$json = FormatJson::encode( $this->getResultData(), $this->getIsHtml() );
+
+		// Bug 66776: wfMangleFlashPolicy() is needed to avoid a nasty bug in
+		// Flash, but what it does isn't friendly for the API, so we need to
+		// work around it.
+		if ( preg_match( '/\<\s*cross-domain-policy\s*\>/i', $json ) ) {
+			$json = preg_replace(
+				'/\<(\s*cross-domain-policy\s*)\>/i', '\\u003C$1\\u003E', $json
+			);
+		}
+
 		$this->printText(
 			$prefix .
-			FormatJson::encode( $this->getResultData(), $this->getIsHtml() ) .
+			$json .
 			$suffix
 		);
 	}

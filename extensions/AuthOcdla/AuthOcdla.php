@@ -104,8 +104,6 @@ final class AuthOcdlaSetup
 	
 	
 	
-	
-	
 		$wgResourceModules['ext.authOcdla'] = array(
 			// JavaScript and CSS styles. To combine multiple files, just list them as an array.
 			'scripts' => array( 'authocdla.js' ),

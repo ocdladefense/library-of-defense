@@ -54,9 +54,8 @@ class SpecialRecentchangeslinked extends SpecialRecentChanges {
 	public function getFeedObject( $feedFormat ){
 		$feed = new ChangesFeed( $feedFormat, false );
 		$feedObj = $feed->getFeedObject(
-			$this->msg( 'recentchangeslinked-title', $this->getTargetTitle()->getPrefixedText() )
-				->inContentLanguage()->text(),
-			$this->msg( 'recentchangeslinked-feed' )->inContentLanguage()->text(),
+			wfMsgForContent( 'recentchangeslinked-title', $this->getTargetTitle()->getPrefixedText() ),
+			wfMsgForContent( 'recentchangeslinked-feed' ),
 			$this->getTitle()->getFullUrl()
 		);
 		return array( $feed, $feedObj );
@@ -89,7 +88,7 @@ class SpecialRecentchangeslinked extends SpecialRecentChanges {
 		 */
 
 		$dbr = wfGetDB( DB_SLAVE, 'recentchangeslinked' );
-		$id = $title->getArticleID();
+		$id = $title->getArticleId();
 		$ns = $title->getNamespace();
 		$dbkey = $title->getDBkey();
 
@@ -110,14 +109,10 @@ class SpecialRecentchangeslinked extends SpecialRecentChanges {
 			$join_conds['page'] = array('LEFT JOIN', 'rc_cur_id=page_id');
 			$select[] = 'page_latest';
 		}
-		ChangeTags::modifyDisplayQuery(
-			$tables,
-			$select,
-			$conds,
-			$join_conds,
-			$query_options,
-			$opts['tagfilter']
-		);
+		if ( !$this->including() ) { // bug 23293
+			ChangeTags::modifyDisplayQuery( $tables, $select, $conds, $join_conds,
+				$query_options, $opts['tagfilter'] );
+		}
 
 		if ( !wfRunHooks( 'SpecialRecentChangesQuery', array( &$conds, &$tables, &$join_conds, $opts, &$query_options, &$select ) ) ) {
 			return false;
@@ -229,10 +224,10 @@ class SpecialRecentchangeslinked extends SpecialRecentChanges {
 		$opts->consumeValues( array( 'showlinkedto', 'target', 'tagfilter' ) );
 		$extraOpts = array();
 		$extraOpts['namespace'] = $this->namespaceFilterForm( $opts );
-		$extraOpts['target'] = array( $this->msg( 'recentchangeslinked-page' )->escaped(),
+		$extraOpts['target'] = array( wfMsgHtml( 'recentchangeslinked-page' ),
 			Xml::input( 'target', 40, str_replace('_',' ',$opts['target']) ) .
 			Xml::check( 'showlinkedto', $opts['showlinkedto'], array('id' => 'showlinkedto') ) . ' ' .
-			Xml::label( $this->msg( 'recentchangeslinked-to' )->text(), 'showlinkedto' ) );
+			Xml::label( wfMsg("recentchangeslinked-to"), 'showlinkedto' ) );
 		$tagFilter = ChangeTags::buildTagFilterSelector( $opts['tagfilter'] );
 		if ($tagFilter) {
 			$extraOpts['tagfilter'] = $tagFilter;

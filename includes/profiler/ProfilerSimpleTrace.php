@@ -1,22 +1,5 @@
 <?php
 /**
- * Profiler showing execution trace.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
  * @file
  * @ingroup Profiler
  */
@@ -27,11 +10,20 @@
  * @ingroup Profiler
  */
 class ProfilerSimpleTrace extends ProfilerSimple {
-	var $trace = "Beginning trace: \n";
+	var $trace = "";
 	var $memory = 0;
 
-	function profileIn( $functionname ) {
-		parent::profileIn( $functionname );
+	function __construct( $params ) {
+		global $wgRequestTime, $wgRUstart;
+		parent::__construct( $params );
+		if ( !empty( $wgRequestTime ) && !empty( $wgRUstart ) ) {
+			$this->mWorkStack[] = array( '-total', 0, $wgRequestTime, $this->getCpuTime( $wgRUstart ) );
+		}
+		$this->trace .= "Beginning trace: \n";
+	}
+
+	function profileIn($functionname) {
+		$this->mWorkStack[] = array($functionname, count( $this->mWorkStack ), microtime(true), $this->getCpuTime());
 		$this->trace .= "         " . sprintf("%6.1f",$this->memoryDiff()) .
 				str_repeat( " ", count($this->mWorkStack)) . " > " . $functionname . "\n";
 	}
@@ -56,12 +48,12 @@ class ProfilerSimpleTrace extends ProfilerSimple {
 			elseif ( $ofname != $functionname ) {
 				$this->trace .= "Profiling error: in({$ofname}), out($functionname)";
 			}
-			$elapsedreal = $this->getTime() - $ortime;
+			$elapsedreal = microtime( true ) - $ortime;
 			$this->trace .= sprintf( "%03.6f %6.1f", $elapsedreal, $this->memoryDiff() ) .
 					str_repeat(" ", count( $this->mWorkStack ) + 1 ) . " < " . $functionname . "\n";
 		}
 	}
-
+	
 	function memoryDiff() {
 		$diff = memory_get_usage() - $this->memory;
 		$this->memory = memory_get_usage();

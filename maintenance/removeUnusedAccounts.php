@@ -18,18 +18,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @file
  * @ingroup Maintenance
  * @author Rob Church <robchur@gmail.com>
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
-/**
- * Maintenance script that removes unused user accounts from the database.
- *
- * @ingroup Maintenance
- */
 class RemoveUnusedAccounts extends Maintenance {
 	public function __construct() {
 		parent::__construct();
@@ -92,7 +86,7 @@ class RemoveUnusedAccounts extends Maintenance {
 	 * (No edits, no deleted edits, no log entries, no current/old uploads)
 	 *
 	 * @param $id User's ID
-	 * @param $master bool Perform checking on the master
+	 * @param $master Perform checking on the master
 	 * @return bool
 	 */
 	private function isInactiveAccount( $id, $master = false ) {
@@ -101,12 +95,12 @@ class RemoveUnusedAccounts extends Maintenance {
 						 'image' => 'img', 'oldimage' => 'oi', 'filearchive' => 'fa' );
 		$count = 0;
 
-		$dbo->begin( __METHOD__ );
+		$dbo->begin();
 		foreach ( $checks as $table => $fprefix ) {
 			$conds = array( $fprefix . '_user' => $id );
 			$count += (int)$dbo->selectField( $table, 'COUNT(*)', $conds, __METHOD__ );
 		}
-		$dbo->commit( __METHOD__ );
+		$dbo->commit();
 
 		return $count == 0;
 	}

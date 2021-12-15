@@ -27,11 +27,38 @@ profile_log.txt
 /vendor/
 /sites/
 
+# As of 12/15/2021 we want to be using "composer install" to update our composer libraries.
+#composer.lock
+
+
+
 # Keep all extensions in master repository for now.
 #   Delete extensions from development branch as we
 #   identify those that are no longer being used; or
 #    we replace extensions management into composer.json file.
 # extensions/
+/extensions/AccessBooksOnline/
+/extensions/AccessWhitelistedNamespaces/
+/extensions/Clickpdx/
+/extensions/ClickpdxJavascriptFramework/
+/extensions/ContactForm/
+/extensions/LinkManager/
+/extensions/NoTitle/
+/extensions/OAuth/
+/extensions/OcdlaJsIndexer/
+/extensions/PhpMail/
+/extensions/PwaOcdla/
+/extensions/RegistrationForm/
+/extensions/SearchOcdla/
+/extensions/SphinxSearch/
+/extensions/Teaser/
+/extensions/UIDrawer/
+/extensions/UIFixedNav/
+/extensions/VarnishCache/
+/extensions/Wikilog/
+/extensions/WikilogOcdla/
+
+
 
 ## Ignore settings specific to the TEST/PROD sites.
 SiteSpecificSettings*

@@ -183,35 +183,34 @@ class FeedItem {
  * @todo document (needs one-sentence top-level class description).
  * @ingroup Feed
  */
-abstract class ChannelFeed extends FeedItem {
+class ChannelFeed extends FeedItem {
+	/**#@+
+	 * Abstract function, override!
+	 * @abstract
+	 */
+
 	/**
 	 * Generate Header of the feed
-	 * @par Example:
-	 * @code
-	 * print "<feed>";
-	 * @endcode
-	 * @param $item
 	 */
-	abstract public function outHeader();
+	function outHeader() {
+		# print "<feed>";
+	}
 
 	/**
 	 * Generate an item
-	 * @par Example:
-	 * @code
-	 * print "<item>...</item>";
-	 * @endcode
 	 * @param $item
 	 */
-	abstract public function outItem( $item );
+	function outItem( $item ) {
+		# print "<item>...</item>";
+	}
 
 	/**
 	 * Generate Footer of the feed
-	 * @par Example:
-	 * @code
-	 * print "</feed>";
-	 * @endcode
 	 */
-	abstract public function outFooter();
+	function outFooter() {
+		# print "</feed>";
+	}
+	/**#@-*/
 
 	/**
 	 * Setup and send HTTP headers. Don't send any content;
@@ -335,7 +334,6 @@ class RSSFeed extends ChannelFeed {
 class AtomFeed extends ChannelFeed {
 	/**
 	 * @todo document
-	 * @return string
 	 */
 	function formatTime( $ts ) {
 		// need to use RFC 822 time format at least for rss2.0

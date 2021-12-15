@@ -55,18 +55,18 @@ class QuestyCaptcha extends SimpleCaptcha {
 
 	function getMessage( $action ) {
 		$name = 'questycaptcha-' . $action;
-		$text = wfMessage( $name )->text();
+		$text = wfMsg( $name );
 		# Obtain a more tailored message, if possible, otherwise, fall back to
 		# the default for edits
-		return wfMessage( $name, $text )->isDisabled() ? wfMessage( 'questycaptcha-edit' )->text() : $text;
+		return wfEmptyMsg( $name, $text ) ? wfMsg( 'questycaptcha-edit' ) : $text;
 	}
 
 	function showHelp() {
 		global $wgOut;
-		$wgOut->setPageTitle( wfMessage( 'captchahelp-title' )->text() );
-		$wgOut->addWikiMsg( 'questycaptchahelp-text' );
+		$wgOut->setPageTitle( wfMsg( 'captchahelp-title' ) );
+		$wgOut->addWikiText( wfMsg( 'questycaptchahelp-text' ) );
 		if ( CaptchaStore::get()->cookiesNeeded() ) {
-			$wgOut->addWikiMsg( 'captchahelp-cookies-needed' );
+			$wgOut->addWikiText( wfMsg( 'captchahelp-cookies-needed' ) );
 		}
 	}
 }

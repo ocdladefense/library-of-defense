@@ -1,27 +1,5 @@
 <?php
 /**
- * Reader for XMP data containing properties relevant to images.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
- * @ingroup Media
- */
-
-/**
 * Class for reading xmp data containing properties relevant to
 * images, and spitting out an array that FormatExif accepts.
 *
@@ -62,6 +40,12 @@ class XMPReader {
 
 	protected $items;
 
+	/** @var int Flag determining if the XMP is safe to parse **/
+	private $parsable = 0;
+
+	/** @var string Buffer of XML to parse **/
+	private $xmlParsableBuffer = '';
+
 	/**
 	* These are various mode constants.
 	* they are used to figure out what to do
@@ -90,6 +74,12 @@ class XMPReader {
 	const NS_RDF = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 	const NS_XML = 'http://www.w3.org/XML/1998/namespace';
 
+
+	// States used while determining if XML is safe to parse
+	const PARSABLE_UNKNOWN = 0;
+	const PARSABLE_OK = 1;
+	const PARSABLE_BUFFERING = 2;
+	const PARSABLE_NO = 3;
 
 	/**
 	* Constructor.
@@ -128,6 +118,9 @@ class XMPReader {
 			array( $this, 'endElement' ) );
 
 		xml_set_character_data_handler( $this->xmlParser, array( $this, 'char' ) );
+
+		$this->parsable = self::PARSABLE_UNKNOWN;
+		$this->xmlParsableBuffer = '';
 	}
 
 	/** Destroy the xml parser
@@ -137,6 +130,13 @@ class XMPReader {
 	function __destruct() {
 		// not sure if this is needed.
 		xml_parser_free( $this->xmlParser );
+	}
+
+	/**
+	 * Check if this instance supports using this class
+	 */
+	public static function isSupported() {
+		return function_exists( 'xml_parser_create_ns' ) && class_exists( 'XMLReader' );
 	}
 
 	/** Get the result array. Do some post-processing before returning
@@ -213,16 +213,10 @@ class XMPReader {
 		unset( $data['xmp-special'] );
 
 		// Convert GPSAltitude to negative if below sea level.
-		if ( isset( $data['xmp-exif']['GPSAltitudeRef'] )
-			&& isset( $data['xmp-exif']['GPSAltitude'] )
-		) {
-
-			// Must convert to a real before multiplying by -1
-			// XMPValidate guarantees there will always be a '/' in this value.
-			list( $nom, $denom ) = explode( '/', $data['xmp-exif']['GPSAltitude'] );
-			$data['xmp-exif']['GPSAltitude'] = $nom / $denom;
-
-			if ( $data['xmp-exif']['GPSAltitudeRef'] == '1' ) {
+		if ( isset( $data['xmp-exif']['GPSAltitudeRef'] ) ) {
+			if ( $data['xmp-exif']['GPSAltitudeRef'] == '1'
+				&& isset( $data['xmp-exif']['GPSAltitude'] )
+			) {
 				$data['xmp-exif']['GPSAltitude'] *= -1;
 			}
 			unset( $data['xmp-exif']['GPSAltitudeRef'] );
@@ -289,6 +283,27 @@ class XMPReader {
 				wfSuppressWarnings();
 				$content = iconv( $this->charset, 'UTF-8//IGNORE', $content );
 				wfRestoreWarnings();
+			}
+
+			// Ensure the XMP block does not have an xml doctype declaration, which
+			// could declare entities unsafe to parse with xml_parse (T85848/T71210).
+			if ( $this->parsable !== self::PARSABLE_OK ) {
+				if ( $this->parsable === self::PARSABLE_NO ) {
+					throw new MWException( 'Unsafe doctype declaration in XML.' );
+				}
+
+				$content = $this->xmlParsableBuffer . $content;
+				if ( !$this->checkParseSafety( $content ) ) {
+					if ( !$allOfIt && $this->parsable !== self::PARSABLE_NO ) {
+						// parse wasn't Unsuccessful yet, so return true
+						// in this case.
+						return true;
+					}
+					$msg = ( $this->parsable === self::PARSABLE_NO ) ?
+						'Unsafe doctype declaration in XML.' :
+						'No root element found in XML.';
+					throw new MWException( $msg );
+				}
 			}
 
 			$ok = xml_parse( $this->xmlParser, $content, $allOfIt );
@@ -413,6 +428,59 @@ class XMPReader {
 
 	}
 
+	/**
+	 * Check if a block of XML is safe to pass to xml_parse, i.e. doesn't
+	 * contain a doctype declaration which could contain a dos attack if we
+	 * parse it and expand internal entities (T85848).
+	 *
+	 * @param string $content xml string to check for parse safety
+	 * @return bool true if the xml is safe to parse, false otherwise
+	 */
+	private function checkParseSafety( $content ) {
+		$reader = new XMLReader();
+		$result = null;
+
+		// For XMLReader to parse incomplete/invalid XML, it has to be open()'ed
+		// instead of using XML().
+		$reader->open(
+			'data://text/plain,' . urlencode( $content ),
+			null,
+			LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_NONET
+		);
+
+		$oldDisable = libxml_disable_entity_loader( true );
+		$reader->setParserProperty( XMLReader::SUBST_ENTITIES, false );
+
+		// Even with LIBXML_NOWARNING set, XMLReader::read gives a warning
+		// when parsing truncated XML, which causes unit tests to fail.
+		wfSuppressWarnings();
+		while ( $reader->read() ) {
+			if ( $reader->nodeType === XMLReader::ELEMENT ) {
+				// Reached the first element without hitting a doctype declaration
+				$this->parsable = self::PARSABLE_OK;
+				$result = true;
+				break;
+			}
+			if ( $reader->nodeType === XMLReader::DOC_TYPE ) {
+				$this->parsable = self::PARSABLE_NO;
+				$result = false;
+				break;
+			}
+		}
+		wfRestoreWarnings();
+		libxml_disable_entity_loader( $oldDisable );
+
+		if ( !is_null( $result ) ) {
+			return $result;
+		}
+
+		// Reached the end of the parsable xml without finding an element
+		// or doctype. Buffer and try again.
+		$this->parsable = self::PARSABLE_BUFFERING;
+		$this->xmlParsableBuffer = $content;
+		return false;
+	}
+
 	/** When we hit a closing element in MODE_IGNORE
 	* Check to see if this is the element we started to ignore,
 	* in which case we get out of MODE_IGNORE
@@ -467,15 +535,13 @@ class XMPReader {
 	* generally means we've finished processing a nested structure.
 	* resets some internal variables to indicate that.
 	*
-	* Note this means we hit the closing element not the "</rdf:Seq>".
+	* Note this means we hit the </closing element> not the </rdf:Seq>.
 	*
-	* @par For example, when processing:
-	* @code{,xml}
+	* For example, when processing:
 	* <exif:ISOSpeedRatings> <rdf:Seq> <rdf:li>64</rdf:li>
 	*   </rdf:Seq> </exif:ISOSpeedRatings>
-	* @endcode
 	*
-	* This method is called when we hit the "</exif:ISOSpeedRatings>" tag.
+	* This method is called when we hit the </exif:ISOSpeedRatings> tag.
 	*
 	* @param $elm String namespace . space . tag name.
 	*/
@@ -531,17 +597,15 @@ class XMPReader {
 	* Hit a closing element in MODE_LI (either rdf:Seq, or rdf:Bag )
 	* Add information about what type of element this is.
 	*
-	* Note we still have to hit the outer "</property>"
+	* Note we still have to hit the outer </property>
 	*
-	* @par For example, when processing:
-	* @code{,xml}
+	* For example, when processing:
 	* <exif:ISOSpeedRatings> <rdf:Seq> <rdf:li>64</rdf:li>
 	*   </rdf:Seq> </exif:ISOSpeedRatings>
-	* @endcode
 	*
-	* This method is called when we hit the "</rdf:Seq>".
+	* This method is called when we hit the </rdf:Seq>.
 	* (For comparison, we call endElementModeSimple when we
-	* hit the "</rdf:li>")
+	* hit the </rdf:li>)
 	*
 	* @param $elm String namespace . ' ' . element name
 	*/
@@ -1020,7 +1084,7 @@ class XMPReader {
 	* Also does some initial set up for the wrapper element
 	*
 	* @param $parser XMLParser
-	* @param $elm String namespace "<space>" element
+	* @param $elm String namespace <space> element
 	* @param $attribs Array attribute name => value
 	*/
 	function startElement( $parser, $elm, $attribs ) {
@@ -1103,13 +1167,11 @@ class XMPReader {
 	* Process attributes.
 	* Simple values can be stored as either a tag or attribute
 	*
-	* Often the initial "<rdf:Description>" tag just has all the simple
+	* Often the initial <rdf:Description> tag just has all the simple
 	* properties as attributes.
 	*
-	* @par Example:
-	* @code
+	* Example:
 	* <rdf:Description rdf:about="" xmlns:exif="http://ns.adobe.com/exif/1.0/" exif:DigitalZoomRatio="0/10">
-	* @endcode
 	*
 	* @param $attribs Array attribute=>value array.
 	*/

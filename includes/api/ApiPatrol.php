@@ -65,10 +65,7 @@ class ApiPatrol extends ApiBase {
 
 	public function getAllowedParams() {
 		return array(
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
+			'token' => null,
 			'rcid' => array(
 				ApiBase::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_REQUIRED => true
@@ -80,16 +77,6 @@ class ApiPatrol extends ApiBase {
 		return array(
 			'token' => 'Patrol token obtained from list=recentchanges',
 			'rcid' => 'Recentchanges ID to patrol',
-		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'rcid' => 'integer',
-				'ns' => 'namespace',
-				'title' => 'string'
-			)
 		);
 	}
 

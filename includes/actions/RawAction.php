@@ -7,20 +7,7 @@
  *
  * Based on HistoryPage and SpecialExport
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * License: GPL (http://www.gnu.org/copyleft/gpl.html)
  *
  * @author Gabriel Wicke <wicke@wikidev.net>
  * @file
@@ -94,7 +81,9 @@ class RawAction extends FormlessAction {
 		$privateCache = !$wgGroupPermissions['*']['read'] && ( $smaxage == 0 || session_id() != '' );
 		// Bug 53032 - make this private if user is logged in,
 		// so we don't accidentally cache cookies
-		$privateCache = $privateCache ?: $this->getUser()->isLoggedIn();
+		if ( !$privateCache ) {
+			$privateCache = $this->getUser()->isLoggedIn();
+		}
 		# allow the client to cache this for 24 hours
 		$mode = $privateCache ? 'private' : 'public';
 		$response->header( 'Cache-Control: ' . $mode . ', s-maxage=' . $smaxage . ', max-age=' . $maxage );
@@ -136,13 +125,10 @@ class RawAction extends FormlessAction {
 
 		// If it's a MediaWiki message we can just hit the message cache
 		if ( $request->getBool( 'usemsgcache' ) && $title->getNamespace() == NS_MEDIAWIKI ) {
-			// The first "true" is to use the database, the second is to use the content langue
-			// and the last one is to specify the message key already contains the language in it ("/de", etc.)
-			$text = MessageCache::singleton()->get( $title->getDBkey(), true, true, true );
-			// If the message doesn't exist, return a blank
-			if ( $text === false ) {
-				$text = '';
-			}
+			$key = $title->getDBkey();
+			$msg = wfMessage( $key )->inContentLanguage();
+			# If the message doesn't exist, return a blank
+			$text = !$msg->exists() ? '' : $msg->plain();
 		} else {
 			// Get it from the DB
 			$rev = Revision::newFromTitle( $title, $this->getOldId() );

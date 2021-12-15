@@ -93,13 +93,6 @@ class SpecialExport extends SpecialPage {
 		elseif( $request->getCheck( 'exportall' ) && $wgExportAllowAll ) {
 			$this->doExport = true;
 			$exportall = true;
-
-			/* Although $page and $history are not used later on, we
-			nevertheless set them to avoid that PHP notices about using
-			undefined variables foul up our XML output (see call to
-			doExport(...) further down) */
-			$page = '';
-			$history = '';
 		}
 		elseif( $request->wasPosted() && $par == '' ) {
 			$page = $request->getText( 'pages' );
@@ -188,26 +181,17 @@ class SpecialExport extends SpecialPage {
 
 		$form = Xml::openElement( 'form', array( 'method' => 'post',
 			'action' => $this->getTitle()->getLocalUrl( 'action=submit' ) ) );
-		$form .= Xml::inputLabel( $this->msg( 'export-addcattext' )->text(), 'catname', 'catname', 40 ) . '&#160;';
-		$form .= Xml::submitButton( $this->msg( 'export-addcat' )->text(), array( 'name' => 'addcat' ) ) . '<br />';
+		$form .= Xml::inputLabel( wfMsg( 'export-addcattext' )    , 'catname', 'catname', 40 ) . '&#160;';
+		$form .= Xml::submitButton( wfMsg( 'export-addcat' ), array( 'name' => 'addcat' ) ) . '<br />';
 
 		if ( $wgExportFromNamespaces ) {
-			$form .= Html::namespaceSelector(
-				array(
-					'selected' => $nsindex,
-					'label' => $this->msg( 'export-addnstext' )->text()
-				), array(
-					'name'  => 'nsindex',
-					'id'    => 'namespace',
-					'class' => 'namespaceselector',
-				)
-			) . '&#160;';
-			$form .= Xml::submitButton( $this->msg( 'export-addns' )->text(), array( 'name' => 'addns' ) ) . '<br />';
+			$form .= Xml::namespaceSelector( $nsindex, null, 'nsindex', wfMsg( 'export-addnstext' ) ) . '&#160;';
+			$form .= Xml::submitButton( wfMsg( 'export-addns' ), array( 'name' => 'addns' ) ) . '<br />';
 		}
 
 		if ( $wgExportAllowAll ) {
 			$form .= Xml::checkLabel(
-				$this->msg( 'exportall' )->text(),
+				wfMsg( 'exportall' ),
 				'exportall',
 				'exportall',
 				$request->wasPosted() ? $request->getCheck( 'exportall' ) : false
@@ -219,29 +203,29 @@ class SpecialExport extends SpecialPage {
 
 		if( $wgExportAllowHistory ) {
 			$form .= Xml::checkLabel(
-				$this->msg( 'exportcuronly' )->text(),
+				wfMsg( 'exportcuronly' ),
 				'curonly',
 				'curonly',
 				$request->wasPosted() ? $request->getCheck( 'curonly' ) : true
 			) . '<br />';
 		} else {
-			$out->addWikiMsg( 'exportnohistory' );
+			$out->addHTML( wfMsgExt( 'exportnohistory', 'parse' ) );
 		}
 
 		$form .= Xml::checkLabel(
-			$this->msg( 'export-templates' )->text(),
+			wfMsg( 'export-templates' ),
 			'templates',
 			'wpExportTemplates',
 			$request->wasPosted() ? $request->getCheck( 'templates' ) : false
 		) . '<br />';
 
 		if( $wgExportMaxLinkDepth || $this->userCanOverrideExportDepth() ) {
-			$form .= Xml::inputLabel( $this->msg( 'export-pagelinks' )->text(), 'pagelink-depth', 'pagelink-depth', 20, 0 ) . '<br />';
+			$form .= Xml::inputLabel( wfMsg( 'export-pagelinks' ), 'pagelink-depth', 'pagelink-depth', 20, 0 ) . '<br />';
 		}
 		// Enable this when we can do something useful exporting/importing image information. :)
-		//$form .= Xml::checkLabel( $this->msg( 'export-images' )->text(), 'images', 'wpExportImages', false ) . '<br />';
+		//$form .= Xml::checkLabel( wfMsg( 'export-images' ), 'images', 'wpExportImages', false ) . '<br />';
 		$form .= Xml::checkLabel(
-			$this->msg( 'export-download' )->text(),
+			wfMsg( 'export-download' ),
 			'wpDownload',
 			'wpDownload',
 			$request->wasPosted() ? $request->getCheck( 'wpDownload' ) : true
@@ -249,14 +233,14 @@ class SpecialExport extends SpecialPage {
 
 		if ( $wgExportAllowListContributors ) {
 			$form .= Xml::checkLabel(
-				$this->msg( 'exportlistauthors' )->text(),
+				wfMsg( 'exportlistauthors' ),
 				'listauthors',
 				'listauthors',
 				$request->wasPosted() ? $request->getCheck( 'listauthors' ) : false
 			) . '<br />';
 		}
 
-		$form .= Xml::submitButton( $this->msg( 'export-submit' )->text(), Linker::tooltipAndAccesskeyAttribs( 'export' ) );
+		$form .= Xml::submitButton( wfMsg( 'export-submit' ), Linker::tooltipAndAccesskeyAttribs( 'export' ) );
 		$form .= Xml::closeElement( 'form' );
 
 		$out->addHTML( $form );
@@ -455,7 +439,7 @@ class SpecialExport extends SpecialPage {
 	private function getTemplates( $inputPages, $pageSet ) {
 		return $this->getLinks( $inputPages, $pageSet,
 			'templatelinks',
-			array( 'namespace' => 'tl_namespace', 'title' => 'tl_title' ),
+			array( 'tl_namespace AS namespace', 'tl_title AS title' ),
 			array( 'page_id=tl_from' )
 		);
 	}
@@ -497,7 +481,7 @@ class SpecialExport extends SpecialPage {
 		for( ; $depth > 0; --$depth ) {
 			$pageSet = $this->getLinks(
 				$inputPages, $pageSet, 'pagelinks',
-				array( 'namespace' => 'pl_namespace', 'title' => 'pl_title' ),
+				array( 'pl_namespace AS namespace', 'pl_title AS title' ),
 				array( 'page_id=pl_from' )
 			);
 			$inputPages = array_keys( $pageSet );
@@ -519,14 +503,13 @@ class SpecialExport extends SpecialPage {
 			$inputPages,
 			$pageSet,
 			'imagelinks',
-			array( 'namespace' => NS_FILE, 'title' => 'il_to' ),
+			array( NS_FILE . ' AS namespace', 'il_to AS title' ),
 			array( 'page_id=il_from' )
 		);
 	}
 
 	/**
 	 * Expand a list of pages to include items used in those pages.
-	 * @return array
 	 */
 	private function getLinks( $inputPages, $pageSet, $table, $fields, $join ) {
 		$dbr = wfGetDB( DB_SLAVE );

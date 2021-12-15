@@ -58,20 +58,21 @@ class SpecialProtectedpages extends SpecialPage {
 		$this->getOutput()->addHTML( $this->showOptions( $NS, $type, $level, $sizetype, $size, $indefOnly, $cascadeOnly ) );
 
 		if( $pager->getNumRows() ) {
-			$this->getOutput()->addHTML(
-				$pager->getNavigationBar() .
-				'<ul>' . $pager->getBody() . '</ul>' .
-				$pager->getNavigationBar()
-			);
+			$s = $pager->getNavigationBar();
+			$s .= "<ul>" .
+				$pager->getBody() .
+				"</ul>";
+			$s .= $pager->getNavigationBar();
 		} else {
-			$this->getOutput()->addWikiMsg( 'protectedpagesempty' );
+			$s = '<p>' . wfMsgHtml( 'protectedpagesempty' ) . '</p>';
 		}
+		$this->getOutput()->addHTML( $s );
 	}
 
 	/**
 	 * Callback function to output a restriction
-	 * @param Title $row Protected title
-	 * @return string Formatted "<li>" element
+	 * @param $row object Protected title
+	 * @return string Formatted <li> element
 	 */
 	public function formatRow( $row ) {
 		wfProfileIn( __METHOD__ );
@@ -87,12 +88,12 @@ class SpecialProtectedpages extends SpecialPage {
 
 		$description_items = array ();
 
-		$protType = $this->msg( 'restriction-level-' . $row->pr_level )->escaped();
+		$protType = wfMsgHtml( 'restriction-level-' . $row->pr_level );
 
 		$description_items[] = $protType;
 
 		if( $row->pr_cascade ) {
-			$description_items[] = $this->msg( 'protect-summary-cascade' )->text();
+			$description_items[] = wfMsg( 'protect-summary-cascade' );
 		}
 
 		$stxt = '';
@@ -100,13 +101,15 @@ class SpecialProtectedpages extends SpecialPage {
 
 		$expiry = $lang->formatExpiry( $row->pr_expiry, TS_MW );
 		if( $expiry != $infinity ) {
-			$user = $this->getUser();
-			$description_items[] = $this->msg(
+
+			$expiry_description = wfMsg(
 				'protect-expiring-local',
-				$lang->userTimeAndDate( $expiry, $user ),
-				$lang->userDate( $expiry, $user ),
-				$lang->userTime( $expiry, $user )
-			)->escaped();
+				$lang->timeanddate( $expiry, true ),
+				$lang->date( $expiry, true ),
+				$lang->time( $expiry, true )
+			);
+
+			$description_items[] = htmlspecialchars($expiry_description);
 		}
 
 		if(!is_null($size = $row->page_len)) {
@@ -115,26 +118,24 @@ class SpecialProtectedpages extends SpecialPage {
 
 		# Show a link to the change protection form for allowed users otherwise a link to the protection log
 		if( $this->getUser()->isAllowed( 'protect' ) ) {
-			$changeProtection = Linker::linkKnown(
+			$changeProtection = ' (' . Linker::linkKnown(
 				$title,
-				$this->msg( 'protect_change' )->escaped(),
+				wfMsgHtml( 'protect_change' ),
 				array(),
 				array( 'action' => 'unprotect' )
-			);
+			) . ')';
 		} else {
 			$ltitle = SpecialPage::getTitleFor( 'Log' );
-			$changeProtection = Linker::linkKnown(
+			$changeProtection = ' (' . Linker::linkKnown(
 				$ltitle,
-				$this->msg( 'protectlogpage' )->escaped(),
+				wfMsgHtml( 'protectlogpage' ),
 				array(),
 				array(
 					'type' => 'protect',
 					'page' => $title->getPrefixedText()
 				)
-			);
+			) . ')';
 		}
-
-		$changeProtection = ' ' . $this->msg( 'parentheses' )->rawParams( $changeProtection )->escaped();
 
 		wfProfileOut( __METHOD__ );
 
@@ -159,7 +160,7 @@ class SpecialProtectedpages extends SpecialPage {
 		$title = $this->getTitle();
 		return Xml::openElement( 'form', array( 'method' => 'get', 'action' => $wgScript ) ) .
 			Xml::openElement( 'fieldset' ) .
-			Xml::element( 'legend', array(), $this->msg( 'protectedpages' )->text() ) .
+			Xml::element( 'legend', array(), wfMsg( 'protectedpages' ) ) .
 			Html::hidden( 'title', $title->getPrefixedDBkey() ) . "\n" .
 			$this->getNamespaceMenu( $namespace ) . "&#160;\n" .
 			$this->getTypeMenu( $type ) . "&#160;\n" .
@@ -170,7 +171,7 @@ class SpecialProtectedpages extends SpecialPage {
 			"</span><br /><span style='white-space: nowrap'>" .
 			$this->getSizeLimit( $sizetype, $size ) . "&#160;\n" .
 			"</span>" .
-			"&#160;" . Xml::submitButton( $this->msg( 'allpagessubmit' )->text() ) . "\n" .
+			"&#160;" . Xml::submitButton( wfMsg( 'allpagessubmit' ) ) . "\n" .
 			Xml::closeElement( 'fieldset' ) .
 			Xml::closeElement( 'form' );
 	}
@@ -183,19 +184,9 @@ class SpecialProtectedpages extends SpecialPage {
 	 * @return String
 	 */
 	protected function getNamespaceMenu( $namespace = null ) {
-		return Html::rawElement( 'span', array( 'style' => 'white-space: nowrap;' ),
-			Html::namespaceSelector(
-				array(
-					'selected' => $namespace,
-					'all' => '',
-					'label' => $this->msg( 'namespace' )->text()
-				), array(
-					'name'  => 'namespace',
-					'id'    => 'namespace',
-					'class' => 'namespaceselector',
-				)
-			)
-		);
+		return "<span style='white-space: nowrap'>" .
+			Xml::label( wfMsg( 'namespace' ), 'namespace' ) . '&#160;'
+			. Xml::namespaceSelector( $namespace, '' ) . "</span>";
 	}
 
 	/**
@@ -203,7 +194,7 @@ class SpecialProtectedpages extends SpecialPage {
 	 */
 	protected function getExpiryCheck( $indefOnly ) {
 		return
-			Xml::checkLabel( $this->msg( 'protectedpages-indef' )->text(), 'indefonly', 'indefonly', $indefOnly ) . "\n";
+			Xml::checkLabel( wfMsg('protectedpages-indef'), 'indefonly', 'indefonly', $indefOnly ) . "\n";
 	}
 
 	/**
@@ -211,7 +202,7 @@ class SpecialProtectedpages extends SpecialPage {
 	 */
 	protected function getCascadeCheck( $cascadeOnly ) {
 		return
-			Xml::checkLabel( $this->msg( 'protectedpages-cascade' )->text(), 'cascadeonly', 'cascadeonly', $cascadeOnly ) . "\n";
+			Xml::checkLabel( wfMsg('protectedpages-cascade'), 'cascadeonly', 'cascadeonly', $cascadeOnly ) . "\n";
 	}
 
 	/**
@@ -221,13 +212,13 @@ class SpecialProtectedpages extends SpecialPage {
 		$max = $sizetype === 'max';
 
 		return
-			Xml::radioLabel( $this->msg( 'minimum-size' )->text(), 'sizetype', 'min', 'wpmin', !$max ) .
+			Xml::radioLabel( wfMsg('minimum-size'), 'sizetype', 'min', 'wpmin', !$max ) .
 			'&#160;' .
-			Xml::radioLabel( $this->msg( 'maximum-size' )->text(), 'sizetype', 'max', 'wpmax', $max ) .
+			Xml::radioLabel( wfMsg('maximum-size'), 'sizetype', 'max', 'wpmax', $max ) .
 			'&#160;' .
 			Xml::input( 'size', 9, $size, array( 'id' => 'wpsize' ) ) .
 			'&#160;' .
-			Xml::label( $this->msg( 'pagesize' )->text(), 'wpsize' );
+			Xml::label( wfMsg('pagesize'), 'wpsize' );
 	}
 
 	/**
@@ -241,7 +232,7 @@ class SpecialProtectedpages extends SpecialPage {
 
 		// First pass to load the log names
 		foreach( Title::getFilteredRestrictionTypes( true ) as $type ) {
-			$text = $this->msg( "restriction-$type" )->text();
+			$text = wfMsg("restriction-$type");
 			$m[$text] = $type;
 		}
 
@@ -252,7 +243,7 @@ class SpecialProtectedpages extends SpecialPage {
 		}
 
 		return "<span style='white-space: nowrap'>" .
-			Xml::label( $this->msg( 'restriction-type' )->text(), $this->IdType ) . '&#160;' .
+			Xml::label( wfMsg('restriction-type') , $this->IdType ) . '&#160;' .
 			Xml::tags( 'select',
 				array( 'id' => $this->IdType, 'name' => $this->IdType ),
 				implode( "\n", $options ) ) . "</span>";
@@ -266,14 +257,14 @@ class SpecialProtectedpages extends SpecialPage {
 	protected function getLevelMenu( $pr_level ) {
 		global $wgRestrictionLevels;
 
-		$m = array( $this->msg( 'restriction-level-all' )->text() => 0 ); // Temporary array
+		$m = array( wfMsg('restriction-level-all') => 0 ); // Temporary array
 		$options = array();
 
 		// First pass to load the log names
 		foreach( $wgRestrictionLevels as $type ) {
 			// Messages used can be 'restriction-level-sysop' and 'restriction-level-autoconfirmed'
 			if( $type !='' && $type !='*') {
-				$text = $this->msg( "restriction-level-$type" )->text();
+				$text = wfMsg("restriction-level-$type");
 				$m[$text] = $type;
 			}
 		}
@@ -285,7 +276,7 @@ class SpecialProtectedpages extends SpecialPage {
 		}
 
 		return "<span style='white-space: nowrap'>" .
-			Xml::label( $this->msg( 'restriction-level' )->text(), $this->IdLevel ) . ' ' .
+			Xml::label( wfMsg( 'restriction-level' ) , $this->IdLevel ) . ' ' .
 			Xml::tags( 'select',
 				array( 'id' => $this->IdLevel, 'name' => $this->IdLevel ),
 				implode( "\n", $options ) ) . "</span>";

@@ -150,14 +150,8 @@ class SpecialRenameuser extends SpecialPage {
 					Xml::submitButton( wfMsg( 'renameusersubmit' ), array( 'name' => 'submit',
 						'tabindex' => '7', 'id' => 'submit' ) ) .
 					' ' .
-					Xml::submitButton(
-						wfMsg( 'renameuser-submit-blocklog' ),
-						array (
-							'name' => 'submit-showBlockLog',
-							'id' => 'submit-showBlockLog',
-							'tabindex' => '8'
-						)
-					) .
+					Xml::submitButton( wfMsg( 'blocklogpage' ), array ( 'name' => 'submit-showBlockLog',
+						'id' => 'submit-showBlockLog', 'tabindex' => '8' ) ) .
 				"</td>
 			</tr>" .
 			Xml::closeElement( 'table' ) .
@@ -306,7 +300,7 @@ class SpecialRenameuser extends SpecialPage {
 				} else {
 					$success = $oldPage->moveTo(
 								$newPage,
-								false,
+								false, 
 								wfMessage(
 									'renameuser-move-log',
 									$oldusername->getText(),

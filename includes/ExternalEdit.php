@@ -80,16 +80,10 @@ class ExternalEdit extends ContextSource {
 		} elseif ( $this->getRequest()->getVal( 'mode' ) == 'file' ) {
 			$type = "Edit file";
 			$image = wfLocalFile( $this->getTitle() );
-			if ( $image ) {
-				$urls = array(
-					'File' => array(
-						'Extension' => $image->getExtension(),
-						'URL' => $image->getCanonicalURL()
-					)
-				);
-			} else{
-				$urls = array();
-			}
+			$urls = array( 'File' => array(
+				'Extension' => $image->getExtension(),
+				'URL' => $image->getCanonicalURL()
+			) );
 		} else {
 			$type = "Edit text";
 			# *.wiki file extension is used by some editors for syntax

@@ -1,29 +1,10 @@
 <?php
 /**
- * Base class and functions for profiling.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * @defgroup Profiler Profiler
  *
  * @file
  * @ingroup Profiler
  * This file is only included if profiling is enabled
- */
-
-/**
- * @defgroup Profiler Profiler
  */
 
 /**
@@ -67,7 +48,14 @@ class Profiler {
 			$this->mProfileID = $params['profileID'];
 		}
 
-		$this->addInitialStack();
+		// Push an entry for the pre-profile setup time onto the stack
+		$initial = $this->getInitialTime();
+		if ( $initial !== null ) {
+			$this->mWorkStack[] = array( '-total', 0, $initial, 0 );
+			$this->mStack[] = array( '-setup', 1, $initial, 0, $this->getTime(), 0 );
+		} else {
+			$this->profileIn( '-total' );
+		}
 	}
 
 	/**
@@ -114,16 +102,6 @@ class Profiler {
 		return false;
 	}
 
-	/**
-	 * Return whether this profiler stores data
-	 *
-	 * @see Profiler::logData()
-	 * @return Boolean
-	 */
-	public function isPersistent() {
-		return true;
-	}
-
 	public function setProfileID( $id ) {
 		$this->mProfileID = $id;
 	}
@@ -133,20 +111,6 @@ class Profiler {
 			return wfWikiID();
 		} else {
 			return $this->mProfileID;
-		}
-	}
-
-	/**
-	 * Add the inital item in the stack.
-	 */
-	protected function addInitialStack() {
-		// Push an entry for the pre-profile setup time onto the stack
-		$initial = $this->getInitialTime();
-		if ( $initial !== null ) {
-			$this->mWorkStack[] = array( '-total', 0, $initial, 0 );
-			$this->mStack[] = array( '-setup', 1, $initial, 0, $this->getTime(), 0 );
-		} else {
-			$this->profileIn( '-total' );
 		}
 	}
 
@@ -241,7 +205,6 @@ class Profiler {
 
 	/**
 	 * Returns a tree of function call instead of a list of functions
-	 * @return string
 	 */
 	function getCallTree() {
 		return implode( '', array_map( array( &$this, 'getCallTreeLine' ), $this->remapCallTree( $this->mStack ) ) );
@@ -250,8 +213,7 @@ class Profiler {
 	/**
 	 * Recursive function the format the current profiling array into a tree
 	 *
-	 * @param $stack array profiling array
-	 * @return array
+	 * @param $stack profiling array
 	 */
 	function remapCallTree( $stack ) {
 		if( count( $stack ) < 2 ){
@@ -290,7 +252,6 @@ class Profiler {
 
 	/**
 	 * Callback to get a formatted line for the call tree
-	 * @return string
 	 */
 	function getCallTreeLine( $entry ) {
 		list( $fname, $level, $start, /* $x */, $end)  = $entry;
@@ -301,69 +262,28 @@ class Profiler {
 		return sprintf( "%10s %s %s\n", trim( sprintf( "%7.3f", $delta * 1000.0 ) ), $space, $fname );
 	}
 
-	/**
-	 * Get the initial time of the request, based either on $wgRequestTime or
-	 * $wgRUstart. Will return null if not able to find data.
-	 *
-	 * @param $metric string|false: metric to use, with the following possibilities:
-	 *   - user: User CPU time (without system calls)
-	 *   - cpu: Total CPU time (user and system calls)
-	 *   - wall (or any other string): elapsed time
-	 *   - false (default): will fall back to default metric
-	 * @return float|null
-	 */
-	function getTime( $metric = false ) {
-		if ( $metric === false ) {
-			$metric = $this->mTimeMetric;
-		}
-
-		if ( $metric === 'cpu' || $this->mTimeMetric === 'user' ) {
-			if ( !function_exists( 'getrusage' ) ) {
-				return 0;
-			}
-			$ru = getrusage();
-			$time = $ru['ru_utime.tv_sec'] + $ru['ru_utime.tv_usec'] / 1e6;
-			if ( $metric === 'cpu' ) {
-				# This is the time of system calls, added to the user time
-				# it gives the total CPU time
-				$time += $ru['ru_stime.tv_sec'] + $ru['ru_stime.tv_usec'] / 1e6;
-			}
-			return $time;
+	function getTime() {
+		if ( $this->mTimeMetric === 'user' ) {
+			return $this->getUserTime();
 		} else {
 			return microtime( true );
 		}
 	}
 
-	/**
-	 * Get the initial time of the request, based either on $wgRequestTime or
-	 * $wgRUstart. Will return null if not able to find data.
-	 *
-	 * @param $metric string|false: metric to use, with the following possibilities:
-	 *   - user: User CPU time (without system calls)
-	 *   - cpu: Total CPU time (user and system calls)
-	 *   - wall (or any other string): elapsed time
-	 *   - false (default): will fall back to default metric
-	 * @return float|null
-	 */
-	protected function getInitialTime( $metric = false ) {
+	function getUserTime() {
+		$ru = getrusage();
+		return $ru['ru_utime.tv_sec'] + $ru['ru_utime.tv_usec'] / 1e6;
+	}
+
+	private function getInitialTime() {
 		global $wgRequestTime, $wgRUstart;
 
-		if ( $metric === false ) {
-			$metric = $this->mTimeMetric;
-		}
-
-		if ( $metric === 'cpu' || $this->mTimeMetric === 'user' ) {
-			if ( !count( $wgRUstart ) ) {
+		if ( $this->mTimeMetric === 'user' ) {
+			if ( count( $wgRUstart ) ) {
+				return $wgRUstart['ru_utime.tv_sec'] + $wgRUstart['ru_utime.tv_usec'] / 1e6;
+			} else {
 				return null;
 			}
-
-			$time = $wgRUstart['ru_utime.tv_sec'] + $wgRUstart['ru_utime.tv_usec'] / 1e6;
-			if ( $metric === 'cpu' ) {
-				# This is the time of system calls, added to the user time
-				# it gives the total CPU time
-				$time += $wgRUstart['ru_stime.tv_sec'] + $wgRUstart['ru_stime.tv_usec'] / 1e6;
-			}
-			return $time;
 		} else {
 			if ( empty( $wgRequestTime ) ) {
 				return null;
@@ -489,7 +409,7 @@ class Profiler {
 		}
 		wfProfileOut( '-overhead-total' );
 	}
-
+	
 	/**
 	 * Counts the number of profiled function calls sitting under
 	 * the given point in the call graph. Not the most efficient algo.
@@ -559,7 +479,7 @@ class Profiler {
 			$rc = $dbw->affectedRows();
 			if ( $rc == 0 ) {
 				$dbw->insert('profiling', array ('pf_name' => $name, 'pf_count' => $eventCount,
-					'pf_time' => $timeSum, 'pf_memory' => $memorySum, 'pf_server' => $pfhost ),
+					'pf_time' => $timeSum, 'pf_memory' => $memorySum, 'pf_server' => $pfhost ), 
 					__METHOD__, array ('IGNORE'));
 			}
 			// When we upgrade to mysql 4.1, the insert+update
@@ -574,7 +494,6 @@ class Profiler {
 
 	/**
 	 * Get the function name of the current profiling section
-	 * @return
 	 */
 	function getCurrentSection() {
 		$elt = end( $this->mWorkStack );

@@ -1,26 +1,12 @@
 <?php
+
 /**
- * Generate an OpenSearch description file.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
+ * Generate an OpenSearch description file
  *
  * @file
  */
 
-require_once( __DIR__ . '/includes/WebStart.php' );
+require_once( dirname(__FILE__) . '/includes/WebStart.php' );
 
 if( $wgRequest->getVal( 'ctype' ) == 'application/xml' ) {
 	// Makes testing tweaks about a billion times easier
@@ -54,7 +40,7 @@ print Xml::openElement( 'OpenSearchDescription',
 //
 // Behavior seems about the same between Firefox and IE 7/8 here.
 // 'Description' doesn't appear to be used by either.
-$fullName = wfMessage( 'opensearch-desc' )->inContentLanguage()->text();
+$fullName = wfMsgForContent( 'opensearch-desc' );
 print Xml::element( 'ShortName', null, $fullName );
 print Xml::element( 'Description', null, $fullName );
 

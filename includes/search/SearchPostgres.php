@@ -146,7 +146,6 @@ class SearchPostgres extends SearchEngine {
 	 * @param $term String
 	 * @param $fulltext String
 	 * @param $colname
-	 * @return string
 	 */
 	function searchQuery( $term, $fulltext, $colname ) {
 		# Get the SQL fragment for the given term

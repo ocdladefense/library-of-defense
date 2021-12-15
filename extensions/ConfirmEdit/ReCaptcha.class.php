@@ -36,11 +36,9 @@ class ReCaptcha extends SimpleCaptcha {
 			return false;
 		}
 
-		$ip = $wgRequest->getIP();
-
 		$recaptcha_response = recaptcha_check_answer(
 			$wgReCaptchaPrivateKey,
-			$ip,
+			$wgRequest->getIP(),
 			$challenge,
 			$response
 		);
@@ -69,16 +67,16 @@ class ReCaptcha extends SimpleCaptcha {
 	 * Show a message asking the user to enter a captcha on edit
 	 * The result will be treated as wiki text
 	 *
-	 * @param $action string Action being performed
+	 * @param $action Action being performed
 	 * @return string
 	 */
 	function getMessage( $action ) {
 		$name = 'recaptcha-' . $action;
-		$text = wfMessage( $name )->text();
+		$text = wfMsg( $name );
 
 		# Obtain a more tailored message, if possible, otherwise, fall back to
 		# the default for edits
-		return wfMessage( $name, $text )->isDisabled() ? wfMessage( 'recaptcha-edit' )->text() : $text;
+		return wfEmptyMsg( $name, $text ) ? wfMsg( 'recaptcha-edit' ) : $text;
 	}
 
 	public function APIGetAllowedParams( &$module, &$params ) {

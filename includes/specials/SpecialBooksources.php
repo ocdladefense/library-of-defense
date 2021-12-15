@@ -46,7 +46,7 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Show the special page
 	 *
-	 * @param $isbn string ISBN passed as a subpage parameter
+	 * @param $isbn ISBN passed as a subpage parameter
 	 */
 	public function execute( $isbn ) {
 		$this->setHeaders();
@@ -63,8 +63,7 @@ class SpecialBookSources extends SpecialPage {
 
 	/**
 	 * Returns whether a given ISBN (10 or 13) is valid.  True indicates validity.
-	 * @param isbn string ISBN passed for check
-	 * @return bool
+	 * @param isbn ISBN passed for check
 	 */
 	public static function isValidISBN( $isbn ) {
 		$isbn = self::cleanIsbn( $isbn );
@@ -101,7 +100,7 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Trim ISBN and remove characters which aren't required
 	 *
-	 * @param $isbn string Unclean ISBN
+	 * @param $isbn Unclean ISBN
 	 * @return string
 	 */
 	private static function cleanIsbn( $isbn ) {
@@ -143,7 +142,7 @@ class SpecialBookSources extends SpecialPage {
 		$page = $this->msg( 'booksources' )->inContentLanguage()->text();
 		$title = Title::makeTitleSafe( NS_PROJECT, $page ); # Show list in content language
 		if( is_object( $title ) && $title->exists() ) {
-			$rev = Revision::newFromTitle( $title, false, Revision::READ_NORMAL );
+			$rev = Revision::newFromTitle( $title );
 			$this->getOutput()->addWikiText( str_replace( 'MAGICNUMBER', $this->isbn, $rev->getText() ) );
 			return true;
 		}
@@ -161,8 +160,8 @@ class SpecialBookSources extends SpecialPage {
 	/**
 	 * Format a book source list item
 	 *
-	 * @param $label string Book source label
-	 * @param $url string Book source URL
+	 * @param $label Book source label
+	 * @param $url Book source URL
 	 * @return string
 	 */
 	private function makeListItem( $label, $url ) {

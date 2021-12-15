@@ -1,25 +1,4 @@
 <?php
-/**
- * Helper functions for feeds.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- * http://www.gnu.org/copyleft/gpl.html
- *
- * @file
- * @ingroup Feed
- */
 
 /**
  * Helper functions for feeds
@@ -85,7 +64,7 @@ class FeedUtils {
 			$row->rc_last_oldid, $row->rc_this_oldid,
 			$timestamp,
 			($row->rc_deleted & Revision::DELETED_COMMENT)
-				? wfMessage('rev-deleted-comment')->escaped()
+				? wfMsgHtml('rev-deleted-comment') 
 				: $row->rc_comment,
 			$actiontext 
 		);
@@ -129,22 +108,21 @@ class FeedUtils {
 		if( $oldid ) {
 			wfProfileIn( __METHOD__."-dodiff" );
 
-			#$diffText = $de->getDiff( wfMessage( 'revisionasof',
+			#$diffText = $de->getDiff( wfMsg( 'revisionasof',
 			#	$wgLang->timeanddate( $timestamp ),
 			#	$wgLang->date( $timestamp ),
-			#	$wgLang->time( $timestamp ) )->text(),
-			#	wfMessage( 'currentrev' )->text() );
+			#	$wgLang->time( $timestamp ) ),
+			#	wfMsg( 'currentrev' ) );
 
-			$diffText = '';
 			// Don't bother generating the diff if we won't be able to show it
 			if ( $wgFeedDiffCutoff > 0 ) {
 				$de = new DifferenceEngine( $title, $oldid, $newid );
 				$diffText = $de->getDiff(
-					wfMessage( 'previousrevision' )->text(), // hack
-					wfMessage( 'revisionasof',
+					wfMsg( 'previousrevision' ), // hack
+					wfMsg( 'revisionasof',
 					$wgLang->timeanddate( $timestamp ),
 					$wgLang->date( $timestamp ),
-					$wgLang->time( $timestamp ) )->text() );
+					$wgLang->time( $timestamp ) ) );
 			}
 
 			if ( $wgFeedDiffCutoff <= 0 || ( strlen( $diffText ) > $wgFeedDiffCutoff ) ) {
@@ -170,7 +148,7 @@ class FeedUtils {
 				// Omit large new page diffs, bug 29110
 				$diffText = self::getDiffLink( $title, $newid );
 			} else {
-				$diffText = '<p><b>' . wfMessage( 'newpage' )->text() . '</b></p>' .
+				$diffText = '<p><b>' . wfMsg( 'newpage' ) . '</b></p>' .
 					'<div>' . nl2br( htmlspecialchars( $newtext ) ) . '</div>';
 			}
 		}
@@ -187,7 +165,6 @@ class FeedUtils {
 	 * @param $title Title object: used to generate the diff URL
 	 * @param $newid Integer newid for this diff
 	 * @param $oldid Integer|null oldid for the diff. Null means it is a new article
-	 * @return string
 	 */
 	protected static function getDiffLink( Title $title, $newid, $oldid = null ) {
 		$queryParameters = ($oldid == null)
@@ -196,7 +173,7 @@ class FeedUtils {
 		$diffUrl = $title->getFullUrl( $queryParameters );
 
 		$diffLink = Html::element( 'a', array( 'href' => $diffUrl ),
-			wfMessage( 'showdiff' )->inContentLanguage()->text() );
+			wfMsgForContent( 'showdiff' ) );
 
 		return $diffLink;
 	}

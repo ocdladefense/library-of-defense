@@ -115,7 +115,6 @@ class SearchMssql extends SearchEngine {
 	 *
 	 * @param $filteredTerm String
 	 * @param $fulltext Boolean
-	 * @return String
 	 */
 	function getQuery( $filteredTerm, $fulltext ) {
 		return $this->queryLimit( $this->queryMain( $filteredTerm, $fulltext ) . ' ' .
@@ -152,9 +151,7 @@ class SearchMssql extends SearchEngine {
 			'WHERE page_id=ftindex.[KEY] ';
 	}
 
-	/** @todo document
-	 * @return string
-	 */
+	/** @todo document */
 	function parseQuery( $filteredText, $fulltext ) {
 		global $wgContLang;
 		$lc = SearchEngine::legalSearchChars();
@@ -192,7 +189,6 @@ class SearchMssql extends SearchEngine {
 	 * @param $id Integer
 	 * @param $title String
 	 * @param $text String
-	 * @return bool|\ResultWrapper
 	 */
 	function update( $id, $title, $text ) {
 		// We store the column data as UTF-8 byte order marked binary stream
@@ -215,7 +211,6 @@ class SearchMssql extends SearchEngine {
 	 *
 	 * @param $id Integer
 	 * @param $title String
-	 * @return bool|\ResultWrapper
 	 */
 	function updateTitle( $id, $title ) {
 		$table = $this->db->tableName( 'searchindex' );

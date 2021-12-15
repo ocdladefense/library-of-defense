@@ -1,7 +1,8 @@
 /**
  * Additional mw.Api methods to assist with API calls related to categories.
  */
-( function ( mw, $ ) {
+
+( function( $, mw, undefined ) {
 
 	$.extend( mw.Api.prototype, {
 		/**
@@ -11,23 +12,22 @@
 		 * @param err {Function} optional callback to run if api error
 		 * @return ajax call object
 		 */
-		isCategory: function ( title, success, err ) {
-			var params, ok;
-			params = {
-				prop: 'categoryinfo',
-				titles: title.toString()
-			};
-			ok = function ( data ) {
-				var exists = false;
-				if ( data.query && data.query.pages ) {
-					$.each( data.query.pages, function ( id, page ) {
-						if ( page.categoryinfo ) {
-							exists = true;
-						}
-					} );
-				}
-				success( exists );
-			};
+		isCategory: function( title, success, err ) {
+			var params = {
+					prop: 'categoryinfo',
+					titles: title.toString()
+				},
+				ok = function( data ) {
+					var exists = false;
+					if ( data.query && data.query.pages ) {
+						$.each( data.query.pages, function( id, page ) {
+							if ( page.categoryinfo ) {
+								exists = true;
+							}
+						} );
+					}
+					success( exists );
+				};
 
 			return this.get( params, { ok: ok, err: err } );
 		},
@@ -40,18 +40,19 @@
 		 * @param err {Function} optional callback to run if api error
 		 * @return {jqXHR}
 		 */
-		getCategoriesByPrefix: function ( prefix, success, err ) {
-			// Fetch with allpages to only get categories that have a corresponding description page.
-			var params, ok;
-			params = {
+		getCategoriesByPrefix: function( prefix, success, err ) {
+
+			// fetch with allpages to only get categories that have a corresponding description page.
+			var params = {
 				'list': 'allpages',
 				'apprefix': prefix,
 				'apnamespace': mw.config.get('wgNamespaceIds').category
 			};
-			ok = function ( data ) {
+
+			var ok = function( data ) {
 				var texts = [];
 				if ( data.query && data.query.allpages ) {
-					$.each( data.query.allpages, function ( i, category ) {
+					$.each( data.query.allpages, function( i, category ) {
 						texts.push( new mw.Title( category.title ).getNameText() );
 					} );
 				}
@@ -70,7 +71,7 @@
 		 * @param async {Boolean} optional asynchronousness (default = true = async)
 		 * @return {jqXHR}
 		 */
-		getCategories: function ( title, success, err, async ) {
+		getCategories: function( title, success, err, async ) {
 			var params, ok;
 			params = {
 				prop: 'categories',
@@ -79,15 +80,15 @@
 			if ( async === undefined ) {
 				async = true;
 			}
-			ok = function ( data ) {
+			ok = function( data ) {
 				var ret = false;
 				if ( data.query && data.query.pages ) {
-					$.each( data.query.pages, function ( id, page ) {
+					$.each( data.query.pages, function( id, page ) {
 						if ( page.categories ) {
 							if ( typeof ret !== 'object' ) {
 								ret = [];
 							}
-							$.each( page.categories, function ( i, cat ) {
+							$.each( page.categories, function( i, cat ) {
 								ret.push( new mw.Title( cat.title ) );
 							} );
 						}
@@ -101,4 +102,4 @@
 
 	} );
 
-}( mediaWiki, jQuery ) );
+} )( jQuery, mediaWiki );

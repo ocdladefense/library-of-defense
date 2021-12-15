@@ -4,7 +4,7 @@
  *
  * Created on Jan 4, 2008
  *
- * Copyright © 2008 Yuri Astrakhan "<Firstname><Lastname>@gmail.com",
+ * Copyright © 2008 Yuri Astrakhan <Firstname><Lastname>@gmail.com,
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,10 +88,7 @@ class ApiWatch extends ApiBase {
 				ApiBase::PARAM_REQUIRED => true
 			),
 			'unwatch' => false,
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
+			'token' => null,
 		);
 	}
 
@@ -100,17 +97,6 @@ class ApiWatch extends ApiBase {
 			'title' => 'The page to (un)watch',
 			'unwatch' => 'If set the page will be unwatched rather than watched',
 			'token' => 'A token previously acquired via prop=info',
-		);
-	}
-
-	public function getResultProperties() {
-		return array(
-			'' => array(
-				'title' => 'string',
-				'unwatched' => 'boolean',
-				'watched' => 'boolean',
-				'message' => 'string'
-			)
 		);
 	}
 

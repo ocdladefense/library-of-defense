@@ -5,7 +5,7 @@
  *
  * Created on Mar 24, 2009
  *
- * Copyright © 2009 Roan Kattouw "<Firstname>.<Lastname>@gmail.com"
+ * Copyright © 2009 Roan Kattouw <Firstname>.<Lastname>@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,6 @@ class ApiUserrights extends ApiBase {
 
 		$form = new UserrightsPage;
 		$r['user'] = $user->getName();
-		$r['userid'] = $user->getId();
 		list( $r['added'], $r['removed'] ) =
 			$form->doSaveUserGroups(
 				$user, (array)$params['add'],
@@ -100,10 +99,7 @@ class ApiUserrights extends ApiBase {
 				ApiBase::PARAM_TYPE => User::getAllGroups(),
 				ApiBase::PARAM_ISMULTI => true
 			),
-			'token' => array(
-				ApiBase::PARAM_TYPE => 'string',
-				ApiBase::PARAM_REQUIRED => true
-			),
+			'token' => null,
 			'reason' => array(
 				ApiBase::PARAM_DFLT => ''
 			)

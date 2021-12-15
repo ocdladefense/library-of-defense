@@ -77,7 +77,6 @@ class WebRequest {
 	 * @return Array: Any query arguments found in path matches.
 	 */
 	static public function getPathInfo( $want = 'all' ) {
-		global $wgUsePathInfo;
 		// PATH_INFO is mangled due to http://bugs.php.net/bug.php?id=31892
 		// And also by Apache 2.x, double slashes are converted to single slashes.
 		// So we will use REQUEST_URI if possible.
@@ -88,9 +87,7 @@ class WebRequest {
 			if ( !preg_match( '!^https?://!', $url ) ) {
 				$url = 'http://unused' . $url;
 			}
-			wfSuppressWarnings();
 			$a = parse_url( $url );
-			wfRestoreWarnings();
 			if( $a ) {
 				$path = isset( $a['path'] ) ? $a['path'] : '';
 
@@ -137,17 +134,15 @@ class WebRequest {
 
 				$matches = $router->parse( $path );
 			}
-		} elseif ( $wgUsePathInfo ) {
-			if ( isset( $_SERVER['ORIG_PATH_INFO'] ) && $_SERVER['ORIG_PATH_INFO'] != '' ) {
-				// Mangled PATH_INFO
-				// http://bugs.php.net/bug.php?id=31892
-				// Also reported when ini_get('cgi.fix_pathinfo')==false
-				$matches['title'] = substr( $_SERVER['ORIG_PATH_INFO'], 1 );
+		} elseif ( isset( $_SERVER['ORIG_PATH_INFO'] ) && $_SERVER['ORIG_PATH_INFO'] != '' ) {
+			// Mangled PATH_INFO
+			// http://bugs.php.net/bug.php?id=31892
+			// Also reported when ini_get('cgi.fix_pathinfo')==false
+			$matches['title'] = substr( $_SERVER['ORIG_PATH_INFO'], 1 );
 
-			} elseif ( isset( $_SERVER['PATH_INFO'] ) && ($_SERVER['PATH_INFO'] != '') ) {
-				// Regular old PATH_INFO yay
-				$matches['title'] = substr( $_SERVER['PATH_INFO'], 1 );
-			}
+		} elseif ( isset( $_SERVER['PATH_INFO'] ) && ($_SERVER['PATH_INFO'] != '') ) {
+			// Regular old PATH_INFO yay
+			$matches['title'] = substr( $_SERVER['PATH_INFO'], 1 );
 		}
 
 		return $matches;
@@ -211,14 +206,18 @@ class WebRequest {
 	 * available variant URLs.
 	 */
 	public function interpolateTitle() {
+		global $wgUsePathInfo;
+
 		// bug 16019: title interpolation on API queries is useless and sometimes harmful
 		if ( defined( 'MW_API' ) ) {
 			return;
 		}
 
-		$matches = self::getPathInfo( 'title' );
-		foreach( $matches as $key => $val) {
-			$this->data[$key] = $_GET[$key] = $_REQUEST[$key] = $val;
+		if ( $wgUsePathInfo ) {
+			$matches = self::getPathInfo( 'title' );
+			foreach( $matches as $key => $val) {
+				$this->data[$key] = $_GET[$key] = $_REQUEST[$key] = $val;
+			}
 		}
 	}
 
@@ -299,8 +298,8 @@ class WebRequest {
 	/**
 	 * Recursively normalizes UTF-8 strings in the given array.
 	 *
-	 * @param $data string|array
-	 * @return array|string cleaned-up version of the given
+	 * @param $data string or array
+	 * @return cleaned-up version of the given
 	 * @private
 	 */
 	function normalizeUnicode( $data ) {
@@ -377,23 +376,6 @@ class WebRequest {
 	public function setVal( $key, $value ) {
 		$ret = isset( $this->data[$key] ) ? $this->data[$key] : null;
 		$this->data[$key] = $value;
-		return $ret;
-	}
-
-	
-	/**
-	 * Unset an arbitrary value from our get/post data.
- 	 *
-	 * @param $key String: key name to use
-	 * @return Mixed: old value if one was present, null otherwise
-	 */
-	public function unsetVal( $key ) {
-		if ( !isset( $this->data[$key] ) ) {
-			$ret = null;
-		} else {
-			$ret = $this->data[$key];
-			unset( $this->data[$key] );
-		}
 		return $ret;
 	}
 
@@ -498,16 +480,17 @@ class WebRequest {
 	public function getCheck( $name ) {
 		# Checkboxes and buttons are only present when clicked
 		# Presence connotes truth, abscense false
-		return $this->getVal( $name, null ) !== null;
+		$val = $this->getVal( $name, null );
+		return isset( $val );
 	}
 
 	/**
 	 * Fetch a text string from the given array or return $default if it's not
 	 * set. Carriage returns are stripped from the text, and with some language
 	 * modules there is an input transliteration applied. This should generally
-	 * be used for form "<textarea>" and "<input>" fields. Used for
-	 * user-supplied freeform text input (for which input transformations may
-	 * be required - e.g.  Esperanto x-coding).
+	 * be used for form <textarea> and <input> fields. Used for user-supplied
+	 * freeform text input (for which input transformations may be required - e.g.
+	 * Esperanto x-coding).
 	 *
 	 * @param $name String
 	 * @param $default String: optional
@@ -535,7 +518,7 @@ class WebRequest {
 
 		$retVal = array();
 		foreach ( $names as $name ) {
-			$value = $this->getGPCVal( $this->data, $name, null );
+			$value = $this->getVal( $name );
 			if ( !is_null( $value ) ) {
 				$retVal[$name] = $value;
 			}
@@ -564,15 +547,6 @@ class WebRequest {
 	 }
 
 	/**
-	 * Get the HTTP method used for this request.
-	 *
-	 * @return String
-	 */
-	public function getMethod() {
-		return isset( $_SERVER['REQUEST_METHOD'] ) ? $_SERVER['REQUEST_METHOD'] : 'GET';
-	}
-
-	/**
 	 * Returns true if the present request was reached by a POST operation,
 	 * false otherwise (GET, HEAD, or command-line).
 	 *
@@ -582,7 +556,7 @@ class WebRequest {
 	 * @return Boolean
 	 */
 	public function wasPosted() {
-		return $this->getMethod() == 'POST';
+		return isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'POST';
 	}
 
 	/**
@@ -681,7 +655,6 @@ class WebRequest {
 
 	/**
 	 * HTML-safe version of appendQuery().
-	 * @deprecated: Deprecated in 1.20, warnings in 1.21, remove in 1.22.
 	 *
 	 * @param $query String: query string fragment; do not include initial '?'
 	 * @return String
@@ -865,7 +838,7 @@ class WebRequest {
 	 * Get a request header, or false if it isn't set
 	 * @param $name String: case-insensitive header name
 	 *
-	 * @return string|bool False on failure
+	 * @return string|false
 	 */
 	public function getHeader( $name ) {
 		$this->initHeaders();
@@ -991,11 +964,9 @@ HTML;
 
 	/**
 	 * Parse the Accept-Language header sent by the client into an array
-	 * @return array array( languageCode => q-value ) sorted by q-value in descending order then
-	 *                                                appearing time in the header in ascending order.
+	 * @return array array( languageCode => q-value ) sorted by q-value in descending order
 	 * May contain the "language" '*', which applies to languages other than those explicitly listed.
 	 * This is aligned with rfc2616 section 14.4
-	 * Preference for earlier languages appears in rfc3282 as an extension to HTTP/1.1.
 	 */
 	public function getAcceptLang() {
 		// Modified version of code found at http://www.thefutureoftheweb.com/blog/use-accept-language-header
@@ -1016,25 +987,19 @@ HTML;
 			return array();
 		}
 
-		$langcodes = $lang_parse[1];
-		$qvalues = $lang_parse[4];
-		$indices = range( 0, count( $lang_parse[1] ) - 1 );
-
+		// Create a list like "en" => 0.8
+		$langs = array_combine( $lang_parse[1], $lang_parse[4] );
 		// Set default q factor to 1
-		foreach ( $indices as $index ) {
-			if ( $qvalues[$index] === '' ) {
-				$qvalues[$index] = 1;
-			} elseif ( $qvalues[$index] == 0 ) {
-				unset( $langcodes[$index], $qvalues[$index], $indices[$index] );
+		foreach ( $langs as $lang => $val ) {
+			if ( $val === '' ) {
+				$langs[$lang] = 1;
+			} elseif ( $val == 0 ) {
+				unset($langs[$lang]);
 			}
 		}
 
-		// Sort list. First by $qvalues, then by order. Reorder $langcodes the same way
-		array_multisort( $qvalues, SORT_DESC, SORT_NUMERIC, $indices, $langcodes );
-
-		// Create a list like "en" => 0.8
-		$langs = array_combine( $langcodes, $qvalues );
-
+		// Sort list
+		arsort( $langs, SORT_NUMERIC );
 		return $langs;
 	}
 
@@ -1286,10 +1251,6 @@ class FauxRequest extends WebRequest {
 		}
 	}
 
-	public function getMethod() {
-		return $this->wasPosted ? 'POST' : 'GET';
-	}
-
 	/**
 	 * @return bool
 	 */
@@ -1379,7 +1340,6 @@ class FauxRequest extends WebRequest {
  * (cookies, session and headers).
  *
  * @ingroup HTTP
- * @since 1.19
  */
 class DerivativeRequest extends FauxRequest {
 	private $base;
@@ -1410,7 +1370,7 @@ class DerivativeRequest extends FauxRequest {
 	}
 
 	public function setSessionData( $key, $data ) {
-		$this->base->setSessionData( $key, $data );
+		return $this->base->setSessionData( $key, $data );
 	}
 
 	public function getAcceptLang() {

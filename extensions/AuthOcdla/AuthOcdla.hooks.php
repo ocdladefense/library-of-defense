@@ -35,7 +35,13 @@ class AuthOcdlaHooks
 			'text' => NULL,
 		);
 		*/
-	
+
+
+
+	     
+
+
+
 		if ($GLOBALS['wgShowIPinHeader'] && isset($_COOKIE[ini_get("session.name")]))
 		{
 			// shown for anonymous users without a session?
@@ -52,6 +58,12 @@ class AuthOcdlaHooks
 				'href' => $GLOBALS['wgAuthOcdla_LoginURL'] . $appendQueryString
 			);
 		}
+
+
+
+
+
+
 		return true;
 	}
 }

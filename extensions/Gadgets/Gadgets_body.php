@@ -87,7 +87,7 @@ class GadgetHooks {
 			}
 
 			if ( $section !== '' ) {
-				$section = wfMessage( "gadget-section-$section" )->parse();
+				$section = wfMsgExt( "gadget-section-$section", 'parseinline' );
 
 				if ( count ( $available ) ) {
 					$options[$section] = $available;
@@ -103,7 +103,7 @@ class GadgetHooks {
 				'label' => '&#160;',
 				'default' => Xml::tags( 'tr', array(),
 					Xml::tags( 'td', array( 'colspan' => 2 ),
-						wfMessage( 'gadgets-prefstext' )->parseAsBlock() ) ),
+						wfMsgExt( 'gadgets-prefstext', 'parse' ) ) ),
 				'section' => 'gadgets',
 				'raw' => 1,
 				'rawrow' => 1,
@@ -152,6 +152,8 @@ class GadgetHooks {
 	 * @return bool
 	 */
 	public static function beforePageDisplay( $out ) {
+		global $wgUser;
+
 		wfProfileIn( __METHOD__ );
 
 		$gadgets = Gadget::loadList();
@@ -167,9 +169,8 @@ class GadgetHooks {
 		/**
 		 * @var $gadget Gadget
 		 */
-		$user = $out->getUser();
 		foreach ( $gadgets as $gadget ) {
-			if ( $gadget->isEnabled( $user ) && $gadget->isAllowed( $user ) ) {
+			if ( $gadget->isEnabled( $wgUser ) && $gadget->isAllowed( $wgUser ) ) {
 				if ( $gadget->hasModule() ) {
 					$out->addModuleStyles( $gadget->getModuleName() );
 					$out->addModules( $gadget->getModuleName() );

@@ -18,18 +18,11 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  * http://www.gnu.org/copyleft/gpl.html
  *
- * @file
  * @ingroup Maintenance
  */
 
-require_once( __DIR__ . '/Maintenance.php' );
+require_once( dirname( __FILE__ ) . '/Maintenance.php' );
 
-/**
- * Maintenance script that fills the rev_sha1 and ar_sha1 columns of revision
- * and archive tables for revisions created before MW 1.19.
- *
- * @ingroup Maintenance
- */
 class PopulateRevisionSha1 extends LoggedUpdateMaintenance {
 	public function __construct() {
 		parent::__construct();
@@ -88,13 +81,13 @@ class PopulateRevisionSha1 extends LoggedUpdateMaintenance {
 				AND $idCol IS NOT NULL AND {$prefix}_sha1 = ''";
 			$res = $db->select( $table, '*', $cond, __METHOD__ );
 
-			$db->begin( __METHOD__ );
+			$db->begin();
 			foreach ( $res as $row ) {
 				if ( $this->upgradeRow( $row, $table, $idCol, $prefix ) ) {
 					$count++;
 				}
 			}
-			$db->commit( __METHOD__ );
+			$db->commit();
 
 			$blockStart += $this->mBatchSize;
 			$blockEnd += $this->mBatchSize;
@@ -109,24 +102,23 @@ class PopulateRevisionSha1 extends LoggedUpdateMaintenance {
 	protected function doSha1LegacyUpdates() {
 		$count = 0;
 		$db = $this->getDB( DB_MASTER );
-		$res = $db->select( 'archive', '*',
-			array( 'ar_rev_id IS NULL', 'ar_sha1' => '' ), __METHOD__ );
+		$res = $db->select( 'archive', '*', array( 'ar_rev_id IS NULL' ), __METHOD__ );
 
 		$updateSize = 0;
-		$db->begin( __METHOD__ );
+		$db->begin();
 		foreach ( $res as $row ) {
 			if ( $this->upgradeLegacyArchiveRow( $row ) ) {
 				++$count;
 			}
 			if ( ++$updateSize >= 100 ) {
 				$updateSize = 0;
-				$db->commit( __METHOD__ );
+				$db->commit();
 				$this->output( "Commited row with ar_timestamp={$row->ar_timestamp}\n" );
 				wfWaitForSlaves();
-				$db->begin( __METHOD__ );
+				$db->begin();
 			}
 		}
-		$db->commit( __METHOD__ );
+		$db->commit();
 		return $count;
 	}
 
@@ -139,15 +131,12 @@ class PopulateRevisionSha1 extends LoggedUpdateMaintenance {
 	 */
 	protected function upgradeRow( $row, $table, $idCol, $prefix ) {
 		$db = $this->getDB( DB_MASTER );
-		try {
-			$rev = ( $table === 'archive' )
-				? Revision::newFromArchiveRow( $row )
-				: new Revision( $row );
-			$text = $rev->getRawText();
-		} catch ( MWException $e ) {
-			$this->output( "Text of revision with {$idCol}={$row->$idCol} unavailable!\n" );
-			return false; // bug 22624?
+		if ( $table === 'archive' ) {
+			$rev = Revision::newFromArchiveRow( $row );
+		} else {
+			$rev = new Revision( $row );
 		}
+		$text = $rev->getRawText();
 		if ( !is_string( $text ) ) {
 			# This should not happen, but sometimes does (bug 20757)
 			$this->output( "Text of revision with {$idCol}={$row->$idCol} unavailable!\n" );
@@ -156,7 +145,7 @@ class PopulateRevisionSha1 extends LoggedUpdateMaintenance {
 			$db->update( $table,
 				array( "{$prefix}_sha1" => Revision::base36Sha1( $text ) ),
 				array( $idCol => $row->$idCol ),
-				__METHOD__
+				__METHOD__ 
 			);
 			return true;
 		}
@@ -168,12 +157,7 @@ class PopulateRevisionSha1 extends LoggedUpdateMaintenance {
 	 */
 	protected function upgradeLegacyArchiveRow( $row ) {
 		$db = $this->getDB( DB_MASTER );
-		try {
-			$rev = Revision::newFromArchiveRow( $row );
-		} catch ( MWException $e ) {
-			$this->output( "Text of revision with timestamp {$row->ar_timestamp} unavailable!\n" );
-			return false; // bug 22624?
-		}
+		$rev = Revision::newFromArchiveRow( $row );
 		$text = $rev->getRawText();
 		if ( !is_string( $text ) ) {
 			# This should not happen, but sometimes does (bug 20757)
@@ -190,7 +174,7 @@ class PopulateRevisionSha1 extends LoggedUpdateMaintenance {
 					'ar_timestamp' => $row->ar_timestamp,
 					'ar_len'       => $row->ar_len // extra sanity
 				),
-				__METHOD__
+				__METHOD__ 
 			);
 			return true;
 		}

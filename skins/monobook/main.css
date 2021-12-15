@@ -83,7 +83,7 @@ input.historysubmit {
 	margin-left: 1.6em;
 }
 
-pre, .mw-code {
+pre {
 	line-height: 1.1em;
 }
 
@@ -759,6 +759,10 @@ div#userloginForm .captcha {
 	margin: 5px;
 }
 
+.printfooter {
+	display: none;
+}
+
 div.patrollink {
 	clear: both;
 }
@@ -840,7 +844,7 @@ div#searchTargetHide {
 }
 
 #powersearch p {
-	margin-top: 0;
+	margin-top:0px;
 }
 
 div.multipageimagenavbox {
@@ -912,11 +916,4 @@ div.mw-lag-warn-high {
 /* Tooltips are outside of the normal body code, so this helps make the size of the text sensible */
 .tipsy {
 	font-size: 127%;
-}
-
-/* mediawiki.notification */
-.skin-monobook .mw-notification {
-	-webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.125);
-	-moz-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.125);
-	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.125);
 }

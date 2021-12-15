@@ -13,8 +13,6 @@
  * @author Marmzok
  */
 
-$rtl = true;
-
 $fallback = 'ckb';
 
 $digitTransformTable = array(

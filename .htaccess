@@ -83,7 +83,7 @@ DirectoryIndex index.php
 
 AddType text/cache-manifest .manifest
 AddType text/cache-manifest .appcache
-Header merge Cache-Control max-age=600
+# Header merge Cache-Control max-age=600
 
 # Various rewrite rules.
 <IfModule mod_rewrite.c>
