@@ -1,0 +1,790 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "798ce0295e8af988aa2ec0588b10395d",
+    "packages": [
+        {
+            "name": "clickpdx/services",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/clickpdx-services.git",
+                "reference": "d45e9de3075a8e13ad4b79d813a4194da0045cea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/clickpdx-services/zipball/d45e9de3075a8e13ad4b79d813a4194da0045cea",
+                "reference": "d45e9de3075a8e13ad4b79d813a4194da0045cea",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Clickpdx\\": [
+                        "service/lib",
+                        "salesforce/lib",
+                        "resource/lib",
+                        "oauth/lib",
+                        "http/lib"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jose Bernal",
+                    "email": "jbernal.web.dev@gmail.com",
+                    "homepage": "http://clickpdx.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Http services libraries.",
+            "homepage": "https://github.com/ocdladefense/clickpdx-services",
+            "keywords": [
+                "http service",
+                "services"
+            ],
+            "support": {
+                "issues": "https://github.com/ocdladefense/clickpdx-services/issues",
+                "source": "https://github.com/ocdladefense/clickpdx-services/tree/master"
+            },
+            "time": "2020-02-01T22:40:27+00:00"
+        },
+        {
+            "name": "composer/installers",
+            "version": "v1.12.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/installers.git",
+                "reference": "d20a64ed3c94748397ff5973488761b22f6d3f19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/installers/zipball/d20a64ed3c94748397ff5973488761b22f6d3f19",
+                "reference": "d20a64ed3c94748397ff5973488761b22f6d3f19",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0 || ^2.0"
+            },
+            "replace": {
+                "roundcube/plugin-installer": "*",
+                "shama/baton": "*"
+            },
+            "require-dev": {
+                "composer/composer": "1.6.* || ^2.0",
+                "composer/semver": "^1 || ^3",
+                "phpstan/phpstan": "^0.12.55",
+                "phpstan/phpstan-phpunit": "^0.12.16",
+                "symfony/phpunit-bridge": "^4.2 || ^5",
+                "symfony/process": "^2.3"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Composer\\Installers\\Plugin",
+                "branch-alias": {
+                    "dev-main": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\Installers\\": "src/Composer/Installers"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kyle Robinson Young",
+                    "email": "kyle@dontkry.com",
+                    "homepage": "https://github.com/shama"
+                }
+            ],
+            "description": "A multi-framework Composer library installer",
+            "homepage": "https://composer.github.io/installers/",
+            "keywords": [
+                "Craft",
+                "Dolibarr",
+                "Eliasis",
+                "Hurad",
+                "ImageCMS",
+                "Kanboard",
+                "Lan Management System",
+                "MODX Evo",
+                "MantisBT",
+                "Mautic",
+                "Maya",
+                "OXID",
+                "Plentymarkets",
+                "Porto",
+                "RadPHP",
+                "SMF",
+                "Starbug",
+                "Thelia",
+                "Whmcs",
+                "WolfCMS",
+                "agl",
+                "aimeos",
+                "annotatecms",
+                "attogram",
+                "bitrix",
+                "cakephp",
+                "chef",
+                "cockpit",
+                "codeigniter",
+                "concrete5",
+                "croogo",
+                "dokuwiki",
+                "drupal",
+                "eZ Platform",
+                "elgg",
+                "expressionengine",
+                "fuelphp",
+                "grav",
+                "installer",
+                "itop",
+                "joomla",
+                "known",
+                "kohana",
+                "laravel",
+                "lavalite",
+                "lithium",
+                "magento",
+                "majima",
+                "mako",
+                "mediawiki",
+                "miaoxing",
+                "modulework",
+                "modx",
+                "moodle",
+                "osclass",
+                "pantheon",
+                "phpbb",
+                "piwik",
+                "ppi",
+                "processwire",
+                "puppet",
+                "pxcms",
+                "reindex",
+                "roundcube",
+                "shopware",
+                "silverstripe",
+                "sydes",
+                "sylius",
+                "symfony",
+                "tastyigniter",
+                "typo3",
+                "wordpress",
+                "yawik",
+                "zend",
+                "zikula"
+            ],
+            "support": {
+                "issues": "https://github.com/composer/installers/issues",
+                "source": "https://github.com/composer/installers/tree/v1.12.0"
+            },
+            "funding": [
+                {
+                    "url": "https://packagist.com",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/composer",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/composer/composer",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-09-13T08:19:44+00:00"
+        },
+        {
+            "name": "ocdladefense/lib-http",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/lib-http.git",
+                "reference": "b85436ec93b92748988015e252f4076b5e5b3ca3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/lib-http/zipball/b85436ec93b92748988015e252f4076b5e5b3ca3",
+                "reference": "b85436ec93b92748988015e252f4076b5e5b3ca3",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ],
+                "files": [
+                    "src/HttpConstants.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jose Bernal",
+                    "email": "jbernal.web.dev@gmail.com"
+                }
+            ],
+            "description": "PHP wrapper classes for curl functions.",
+            "support": {
+                "issues": "https://github.com/ocdladefense/lib-http/issues",
+                "source": "https://github.com/ocdladefense/lib-http/tree/v3.0.1"
+            },
+            "time": "2021-11-11T23:03:02+00:00"
+        },
+        {
+            "name": "ocdladefense/lib-oauth-config",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/lib-oauth-config.git",
+                "reference": "0156d8208ae2a48ae238cd6c71b2b40bde7ef89b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/lib-oauth-config/zipball/0156d8208ae2a48ae238cd6c71b2b40bde7ef89b",
+                "reference": "0156d8208ae2a48ae238cd6c71b2b40bde7ef89b",
+                "shasum": ""
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Classes to enable parsing of oauth schemas.",
+            "support": {
+                "issues": "https://github.com/ocdladefense/lib-oauth-config/issues",
+                "source": "https://github.com/ocdladefense/lib-oauth-config/tree/v2.1.1"
+            },
+            "time": "2021-04-20T21:19:09+00:00"
+        },
+        {
+            "name": "ocdladefense/lib-salesforce-rest-api",
+            "version": "v3.5.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/lib-salesforce-rest-api.git",
+                "reference": "b0841ae36e191fa8f779633ef0e9bd9ac56bf83e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/lib-salesforce-rest-api/zipball/b0841ae36e191fa8f779633ef0e9bd9ac56bf83e",
+                "reference": "b0841ae36e191fa8f779633ef0e9bd9ac56bf83e",
+                "shasum": ""
+            },
+            "require": {
+                "ocdladefense/lib-http": "~3.0",
+                "ocdladefense/lib-oauth-config": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/",
+                    "models/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "OCDLA plugin accesses.",
+            "support": {
+                "issues": "https://github.com/ocdladefense/lib-salesforce-rest-api/issues",
+                "source": "https://github.com/ocdladefense/lib-salesforce-rest-api/tree/v3.5.4"
+            },
+            "time": "2021-11-11T23:07:38+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-access-books-online",
+            "version": "v1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-access-books-online.git",
+                "reference": "f9e5f564b7ba2bee44bd2afadda2619a3c38dd62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-access-books-online/zipball/f9e5f564b7ba2bee44bd2afadda2619a3c38dd62",
+                "reference": "f9e5f564b7ba2bee44bd2afadda2619a3c38dd62",
+                "shasum": ""
+            },
+            "require": {
+                "ocdladefense/lib-http": "~3.0",
+                "ocdladefense/lib-oauth-config": "~2.0",
+                "ocdladefense/lib-salesforce-rest-api": "~3.0"
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "trevoruehlinx1",
+                    "email": "trevoruehlinx1@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-access-books-online/issues",
+                "source": "https://github.com/ocdladefense/mw-access-books-online/tree/v1.0.6"
+            },
+            "time": "2021-12-15T16:44:27+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-access-whitelisted-namespaces",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-access-whitelisted-namespaces.git",
+                "reference": "d31d734850e98a0a8e9b1c9be26dc66a366570e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-access-whitelisted-namespaces/zipball/d31d734850e98a0a8e9b1c9be26dc66a366570e0",
+                "reference": "d31d734850e98a0a8e9b1c9be26dc66a366570e0",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "trevoruehlinx1",
+                    "email": "trevoruehlinx1@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-access-whitelisted-namespaces/issues",
+                "source": "https://github.com/ocdladefense/mw-access-whitelisted-namespaces/tree/v1.0"
+            },
+            "time": "2021-11-23T18:14:27+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-clickpdx",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-clickpdx.git",
+                "reference": "b0000bf3f198b52c1c963131bdeaf6f15534b008"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-clickpdx/zipball/b0000bf3f198b52c1c963131bdeaf6f15534b008",
+                "reference": "b0000bf3f198b52c1c963131bdeaf6f15534b008",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-clickpdx/issues",
+                "source": "https://github.com/ocdladefense/mw-clickpdx/tree/v1.0"
+            },
+            "time": "2021-11-24T16:37:01+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-clickpdx-js-framework",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-clickpdx-js-framework.git",
+                "reference": "cc9572d32fafbf6b47e4e668bc01c4a2ba55f833"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-clickpdx-js-framework/zipball/cc9572d32fafbf6b47e4e668bc01c4a2ba55f833",
+                "reference": "cc9572d32fafbf6b47e4e668bc01c4a2ba55f833",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-clickpdx-js-framework/issues",
+                "source": "https://github.com/ocdladefense/mw-clickpdx-js-framework/tree/v1.0"
+            },
+            "time": "2021-11-24T16:49:09+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-contact-form",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-contact-form.git",
+                "reference": "4309f581ec2bd60664276cbd68fee2a52b44cd3a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-contact-form/zipball/4309f581ec2bd60664276cbd68fee2a52b44cd3a",
+                "reference": "4309f581ec2bd60664276cbd68fee2a52b44cd3a",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-contact-form/issues",
+                "source": "https://github.com/ocdladefense/mw-contact-form/tree/v1.0"
+            },
+            "time": "2021-11-24T17:01:39+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-link-manager",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-link-manager.git",
+                "reference": "5a2d05ad44bdeda9f774d2057269fbd78e7b758b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-link-manager/zipball/5a2d05ad44bdeda9f774d2057269fbd78e7b758b",
+                "reference": "5a2d05ad44bdeda9f774d2057269fbd78e7b758b",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-link-manager/issues",
+                "source": "https://github.com/ocdladefense/mw-link-manager/tree/v1.0"
+            },
+            "time": "2021-11-24T17:17:30+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-no-title",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-no-title.git",
+                "reference": "d61051aca4a80b3acea737ba675b6d8ad019b72d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-no-title/zipball/d61051aca4a80b3acea737ba675b6d8ad019b72d",
+                "reference": "d61051aca4a80b3acea737ba675b6d8ad019b72d",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-no-title/issues",
+                "source": "https://github.com/ocdladefense/mw-no-title/tree/v1.0"
+            },
+            "time": "2021-11-24T18:57:28+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-oauth",
+            "version": "v1.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-oauth.git",
+                "reference": "d925e0cc6770bd69329ff145bb4e1a8d599052d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-oauth/zipball/d925e0cc6770bd69329ff145bb4e1a8d599052d4",
+                "reference": "d925e0cc6770bd69329ff145bb4e1a8d599052d4",
+                "shasum": ""
+            },
+            "require": {
+                "ocdladefense/lib-http": "~3.0",
+                "ocdladefense/lib-oauth-config": "~2.0",
+                "ocdladefense/lib-salesforce-rest-api": "~3.0"
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "A mediawiki extension for OAuth.",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-oauth/issues",
+                "source": "https://github.com/ocdladefense/mw-oauth/tree/v1.0.7"
+            },
+            "time": "2021-12-15T16:42:22+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-ocdla-js-indexer",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-ocdla-js-indexer.git",
+                "reference": "c71f0b756a313461aff35fd0cd1063b1f0fc908a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-ocdla-js-indexer/zipball/c71f0b756a313461aff35fd0cd1063b1f0fc908a",
+                "reference": "c71f0b756a313461aff35fd0cd1063b1f0fc908a",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-ocdla-js-indexer/issues",
+                "source": "https://github.com/ocdladefense/mw-ocdla-js-indexer/tree/v1.0"
+            },
+            "time": "2021-11-24T17:25:04+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-php-mail",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-php-mail.git",
+                "reference": "ca105c731fe95c87d283dad1d91e53b9bf08b9fb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-php-mail/zipball/ca105c731fe95c87d283dad1d91e53b9bf08b9fb",
+                "reference": "ca105c731fe95c87d283dad1d91e53b9bf08b9fb",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-php-mail/issues",
+                "source": "https://github.com/ocdladefense/mw-php-mail/tree/v1.0"
+            },
+            "time": "2021-11-24T17:34:34+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-pwa-ocdla",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-pwa-ocdla.git",
+                "reference": "bc5290a05972cd63a882dbef9cb7f89b4333bc55"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-pwa-ocdla/zipball/bc5290a05972cd63a882dbef9cb7f89b4333bc55",
+                "reference": "bc5290a05972cd63a882dbef9cb7f89b4333bc55",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-pwa-ocdla/issues",
+                "source": "https://github.com/ocdladefense/mw-pwa-ocdla/tree/v1.0"
+            },
+            "time": "2021-11-24T17:43:44+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-registration-form",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-registration-form.git",
+                "reference": "b3440e57c40b2d43e0a7b76d53355edc1e5e78a7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-registration-form/zipball/b3440e57c40b2d43e0a7b76d53355edc1e5e78a7",
+                "reference": "b3440e57c40b2d43e0a7b76d53355edc1e5e78a7",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-registration-form/issues",
+                "source": "https://github.com/ocdladefense/mw-registration-form/tree/v1.0"
+            },
+            "time": "2021-11-24T17:53:38+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-search-ocdla",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-search-ocdla.git",
+                "reference": "6975ce60aaa0195d24ed0819f928290d411864fc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-search-ocdla/zipball/6975ce60aaa0195d24ed0819f928290d411864fc",
+                "reference": "6975ce60aaa0195d24ed0819f928290d411864fc",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-search-ocdla/issues",
+                "source": "https://github.com/ocdladefense/mw-search-ocdla/tree/v1.0"
+            },
+            "time": "2021-11-24T18:23:44+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-sphinx-search",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-sphinx-search.git",
+                "reference": "7d254f72b4b9270ed35df0342e51af36ad6851ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-sphinx-search/zipball/7d254f72b4b9270ed35df0342e51af36ad6851ce",
+                "reference": "7d254f72b4b9270ed35df0342e51af36ad6851ce",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-sphinx-search/issues",
+                "source": "https://github.com/ocdladefense/mw-sphinx-search/tree/v1.2.0"
+            },
+            "time": "2021-12-15T21:28:30+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-teaser",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-teaser.git",
+                "reference": "03287bf14ff675eaa5de155880a4c9ab3f6941ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-teaser/zipball/03287bf14ff675eaa5de155880a4c9ab3f6941ca",
+                "reference": "03287bf14ff675eaa5de155880a4c9ab3f6941ca",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-teaser/issues",
+                "source": "https://github.com/ocdladefense/mw-teaser/tree/v1.0"
+            },
+            "time": "2021-11-24T18:29:22+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-ui-drawer",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-ui-drawer.git",
+                "reference": "97f9402ea3ecc385213e69ecc8b5f037925875ff"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-ui-drawer/zipball/97f9402ea3ecc385213e69ecc8b5f037925875ff",
+                "reference": "97f9402ea3ecc385213e69ecc8b5f037925875ff",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-ui-drawer/issues",
+                "source": "https://github.com/ocdladefense/mw-ui-drawer/tree/v1.0"
+            },
+            "time": "2021-11-24T18:34:23+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-ui-fixed-nav",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-ui-fixed-nav.git",
+                "reference": "64949c7128880e4d697b3ea2a1cf6f316f483df4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-ui-fixed-nav/zipball/64949c7128880e4d697b3ea2a1cf6f316f483df4",
+                "reference": "64949c7128880e4d697b3ea2a1cf6f316f483df4",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-ui-fixed-nav/issues",
+                "source": "https://github.com/ocdladefense/mw-ui-fixed-nav/tree/v1.0"
+            },
+            "time": "2021-11-24T18:33:36+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-varnish-cache",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-varnish-cache.git",
+                "reference": "df9b40f2965018870258ffbeaaea8f4b40e73514"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-varnish-cache/zipball/df9b40f2965018870258ffbeaaea8f4b40e73514",
+                "reference": "df9b40f2965018870258ffbeaaea8f4b40e73514",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-varnish-cache/issues",
+                "source": "https://github.com/ocdladefense/mw-varnish-cache/tree/v1.0"
+            },
+            "time": "2021-11-24T18:43:24+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-wikilog",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-wikilog.git",
+                "reference": "8a085a6f962c8de8fc923225463fe3aa5a3d875c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-wikilog/zipball/8a085a6f962c8de8fc923225463fe3aa5a3d875c",
+                "reference": "8a085a6f962c8de8fc923225463fe3aa5a3d875c",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-wikilog/issues",
+                "source": "https://github.com/ocdladefense/mw-wikilog/tree/v1.0"
+            },
+            "time": "2021-11-24T18:53:08+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-wikilog-ocdla",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-wikilog-ocdla.git",
+                "reference": "75569551f2704112ac7e0bfcf235826e5d29679f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-wikilog-ocdla/zipball/75569551f2704112ac7e0bfcf235826e5d29679f",
+                "reference": "75569551f2704112ac7e0bfcf235826e5d29679f",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-wikilog-ocdla/issues",
+                "source": "https://github.com/ocdladefense/mw-wikilog-ocdla/tree/v1.0"
+            },
+            "time": "2021-11-24T18:52:11+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "clickpdx/services": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
+}
