@@ -601,25 +601,25 @@
         },
         {
             "name": "ocdladefense/mw-search-ocdla",
-            "version": "v1.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-search-ocdla.git",
-                "reference": "6975ce60aaa0195d24ed0819f928290d411864fc"
+                "reference": "1001b87f902e15371374f0691266a350c7628ff7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-search-ocdla/zipball/6975ce60aaa0195d24ed0819f928290d411864fc",
-                "reference": "6975ce60aaa0195d24ed0819f928290d411864fc",
+                "url": "https://api.github.com/repos/ocdladefense/mw-search-ocdla/zipball/1001b87f902e15371374f0691266a350c7628ff7",
+                "reference": "1001b87f902e15371374f0691266a350c7628ff7",
                 "shasum": ""
             },
             "type": "wordpress-theme",
             "notification-url": "https://packagist.org/downloads/",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-search-ocdla/issues",
-                "source": "https://github.com/ocdladefense/mw-search-ocdla/tree/v1.0"
+                "source": "https://github.com/ocdladefense/mw-search-ocdla/tree/v1.0.1"
             },
-            "time": "2021-11-24T18:23:44+00:00"
+            "time": "2021-12-17T18:02:40+00:00"
         },
         {
             "name": "ocdladefense/mw-sphinx-search",
