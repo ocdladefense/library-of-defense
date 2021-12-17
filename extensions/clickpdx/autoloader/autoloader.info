@@ -1,5 +1,0 @@
-; $Id$
-name = 'Autoloader'
-description = 'Insert an autoloader into the Drupal PHP environment.'
-core = 6.x
-package = Clickpdx modules
