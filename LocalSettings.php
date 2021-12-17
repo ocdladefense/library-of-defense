@@ -605,7 +605,7 @@ $extensions = array(
 	),
 	"PwaOcdla" => array(
 		"path"   => "PwaOcdla/PwaOcdla",
-		"active" => false,
+		"active" => true,
 		"init" 	 => array(
 			function(){PwaOcdla::SetupPwaOcdla();}
 		)
@@ -624,7 +624,7 @@ $extensions = array(
 	),
 	"SearchOcdla" => array(
 		"path"   => "SearchOcdla/SearchOcdla",
-		"active" => false,
+		"active" => true,
 		"init" => array(
 			function(){SearchOcdlaHooks::SetupSearchOcdla();}
 		)
@@ -732,6 +732,6 @@ require_once('LocalSettingsOverrides.php');
 
 
 
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
