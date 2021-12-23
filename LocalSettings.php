@@ -51,7 +51,27 @@ $wgUsePathInfo = true;
 $ocdlaProtocol = $ocdlaProtocol ?: 'https';
 
 // Important setting used through MW requests, especially to construct other resource (images, js, css) URLs.
-$wgServer = "{$ocdlaProtocol}://" . $subdomain . $domain;
+$wgServer = "{$ocdlaProtocol}://" . (empty($subdomain) ? $domain : ("$subdomain.$domain"));
+
+echo $wgServer;exit;
+
+
+# Cookie settings.
+$wgCookieDomain = $subdomain . $domain;
+
+$wgCookiePrefix = $cookiePrefix;
+
+/**
+ * Set the default cookie expiration to 1 month
+ * This ensures that users remain logged in for a reasonable
+ * period of time before their cookie is invalidated.
+ * Per OCDLA's request.
+ */
+$wgCookieExpiration = 30*86400;
+
+$wgCookieSecure = true;
+
+$wgCookieHttpOnly = false;
 
 ## The relative URL path to the skins directory
 $wgStylePath = "$wgScriptPath/skins";
@@ -77,26 +97,6 @@ $wgEmailAuthentication = true;
 # All table prefixes have been removed as of 2014-08-04
 # $wgDBprefix         = "xxxxx_";
 
-
-
-# Cookie settings.
-$wgCookieDomain = $subdomain . $domain;
-
-$wgCookiePrefix = $cookiePrefix;
-
-/**
- * Set the default cookie expiration to 1 month
- * This ensures that users remain logged in for a reasonable
- * period of time before their cookie is invalidated.
- * Per OCDLA's request.
- */
-$wgCookieExpiration = 30*86400;
-
-
-$wgCookieSecure = true;
-
-
-$wgCookieHttpOnly = false;
 
 
 
