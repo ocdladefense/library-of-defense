@@ -485,16 +485,16 @@
         },
         {
             "name": "ocdladefense/mw-oauth",
-            "version": "v1.0.7",
+            "version": "v1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-oauth.git",
-                "reference": "d925e0cc6770bd69329ff145bb4e1a8d599052d4"
+                "reference": "844aedbbacab80706b897fc210346ca1398db801"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-oauth/zipball/d925e0cc6770bd69329ff145bb4e1a8d599052d4",
-                "reference": "d925e0cc6770bd69329ff145bb4e1a8d599052d4",
+                "url": "https://api.github.com/repos/ocdladefense/mw-oauth/zipball/844aedbbacab80706b897fc210346ca1398db801",
+                "reference": "844aedbbacab80706b897fc210346ca1398db801",
                 "shasum": ""
             },
             "require": {
@@ -507,9 +507,9 @@
             "description": "A mediawiki extension for OAuth.",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-oauth/issues",
-                "source": "https://github.com/ocdladefense/mw-oauth/tree/v1.0.7"
+                "source": "https://github.com/ocdladefense/mw-oauth/tree/v1.0.8"
             },
-            "time": "2021-12-15T16:42:22+00:00"
+            "time": "2021-12-23T00:19:45+00:00"
         },
         {
             "name": "ocdladefense/mw-ocdla-js-indexer",

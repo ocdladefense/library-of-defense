@@ -689,7 +689,7 @@ $extensions = array(
 );
 
 
-
+// pwaocdla
 
 //wfLoadExtensionOnly("OAuth");
 
@@ -735,3 +735,19 @@ require_once('LocalSettingsOverrides.php');
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+
+######## These should be in "SiteSpecificSettings, but would require a refactor of this file and "SiteSpecificSettings"#########
+
+if($testingLocally) {
+
+	# Replace and set the login link in the primary navigation.  We are not replacing the logout link.
+	$wgAuthOcdla_ReplaceLogin = true;
+	$wgAuthOcdla_LoginURL = "/index.php/Special:OAuthEndpoint/login";
+	$wgAuthOcdla_ReplaceLogout = true;
+	$wgAuthOcdla_LogoutURL = "/index.php/Special:UserLogout";
+
+	$wgServer = "http://localhost";
+
+	$wgCookieDomain = "localhost";
+}
