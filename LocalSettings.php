@@ -36,7 +36,6 @@ $wgMetaNamespace = "Ocdla";
 ## defaults for all runtime URL paths are based off of this.
 ## For more information on customizing the URLs please see:
 ## http://www.mediawiki.org/wiki/Manual:Short_URL
-$wgScriptPath = "";
 $wgScriptExtension = ".php";
 
 $wgArticlePath = "$wgScriptPath/$1";
@@ -53,7 +52,7 @@ $ocdlaProtocol = $ocdlaProtocol ?: 'https';
 // Important setting used through MW requests, especially to construct other resource (images, js, css) URLs.
 $wgServer = "{$ocdlaProtocol}://" . (empty($subdomain) ? $domain : ("$subdomain.$domain"));
 
-echo $wgServer;exit;
+
 
 
 # Cookie settings.
@@ -714,9 +713,3 @@ function wfLoadExtensionOnly($name) {
 
 
 require_once('LocalSettingsOverrides.php');
-
-
-
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
