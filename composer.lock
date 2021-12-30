@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "798ce0295e8af988aa2ec0588b10395d",
+    "content-hash": "e0b0fda18413254279773e6cebe42243",
     "packages": [
         {
             "name": "clickpdx/services",
@@ -708,6 +708,28 @@
                 "source": "https://github.com/ocdladefense/mw-ui-fixed-nav/tree/v1.0"
             },
             "time": "2021-11-24T18:33:36+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-user-preferences",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-user-preferences.git",
+                "reference": "61fa3ae6389f13947748605e018b2593e4e73f08"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-user-preferences/zipball/61fa3ae6389f13947748605e018b2593e4e73f08",
+                "reference": "61fa3ae6389f13947748605e018b2593e4e73f08",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-user-preferences/issues",
+                "source": "https://github.com/ocdladefense/mw-user-preferences/tree/v1.0.2"
+            },
+            "time": "2021-12-23T20:46:15+00:00"
         },
         {
             "name": "ocdladefense/mw-varnish-cache",
