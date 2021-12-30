@@ -711,25 +711,25 @@
         },
         {
             "name": "ocdladefense/mw-user-preferences",
-            "version": "v1.0.2",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-user-preferences.git",
-                "reference": "61fa3ae6389f13947748605e018b2593e4e73f08"
+                "reference": "c7385d2d808aae7148d108dc735a36385a3b3307"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-user-preferences/zipball/61fa3ae6389f13947748605e018b2593e4e73f08",
-                "reference": "61fa3ae6389f13947748605e018b2593e4e73f08",
+                "url": "https://api.github.com/repos/ocdladefense/mw-user-preferences/zipball/c7385d2d808aae7148d108dc735a36385a3b3307",
+                "reference": "c7385d2d808aae7148d108dc735a36385a3b3307",
                 "shasum": ""
             },
             "type": "wordpress-theme",
             "notification-url": "https://packagist.org/downloads/",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-user-preferences/issues",
-                "source": "https://github.com/ocdladefense/mw-user-preferences/tree/v1.0.2"
+                "source": "https://github.com/ocdladefense/mw-user-preferences/tree/v1.0.4"
             },
-            "time": "2021-12-23T20:46:15+00:00"
+            "time": "2021-12-24T18:39:32+00:00"
         },
         {
             "name": "ocdladefense/mw-varnish-cache",
