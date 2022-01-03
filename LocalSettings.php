@@ -16,8 +16,6 @@ require_once('SiteSpecificSettingsLogging.php');
 // $wgReadOnly = "We are upgrading MediaWiki, please be patient. This wiki will be back in a few hours.";
 
 // http://www.mediawiki.org/wiki/Category:Search_variables
-$wgSearchType = 'SphinxMWSearch';
-# $wgSearchType = 'SearchOcdlaMySQL';
 # $wgAdvancedSearchHighlighting = true;
 
 ## Uncomment this line to disable 'B' type password storage (the default)
@@ -495,13 +493,6 @@ $extensions = array(
 		"path"   => "AccessBooksOnline/AccessBooksOnline",
 		"active" => true
 	),
-	"AuthOcdla" => array(
-		"path"   => "AuthOcdla/AuthOcdla",
-		"active" => false,
-		"init"	 => array(
-			function(){AuthOcdlaSetup::SetupAuthOcdla();}
-		)
-	),
 	"BooksOnlineOcdla" => array(
 		"path"   => "BooksOnlineOcdla/BooksOnlineOcdla",
 		"active" => false,
@@ -611,7 +602,7 @@ $extensions = array(
 		"active" => false
 	),
 	"SphinxSearch" => array(
-		"path"   => "SphinxSearch/SphinxSearch",
+		"path"   => "SphinxFullTextSearch/SphinxSearch",
 		"active" => true
 	),
 	"Teaser" => array(
