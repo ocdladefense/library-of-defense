@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0b0fda18413254279773e6cebe42243",
+    "content-hash": "db4ecfd2c37eb0284b00c59372ffd175",
     "packages": [
         {
             "name": "clickpdx/services",

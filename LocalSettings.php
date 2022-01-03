@@ -140,8 +140,8 @@ $wgCachePages = false;
 
 // set to false to retain wiki's own login/logout
 // if ReplaceLogin is true, set these URLs to appropriate targets:
-# $wgAuthOcdla_ReplaceLogin 		= false; // Now located in SiteSpecificOverrides
-$wgAuthOcdla_HostRedirect = "{$wgAuthOcdla_HostRedirectProtocol}://".$subdomain . ".ocdla.org";
+# $wgPersonalUrls_ReplaceLogin 		= false; // Now located in SiteSpecificOverrides
+$wgPersonalUrls_HostRedirect = "{$wgPersonalUrls_HostRedirectProtocol}://".$subdomain . ".ocdla.org";
 $wgVarnishHost = "207.189.130.196";
 
 
@@ -567,6 +567,13 @@ $extensions = array(
 		"path"   => "ParserFunctions/ParserFunctions",
 		"active" => false
 	),
+	"PersonalUrls" => array(
+		"path"   => "PersonalUrls/PersonalUrls",
+		"active" => true,
+		"init"	 => array(
+			function(){PersonalUrls::setup();}
+		)
+	),
 	"php_mail" => array(
 		"path"   => "php_mail/php_mail",
 		"active" => false
@@ -602,7 +609,7 @@ $extensions = array(
 		"active" => false
 	),
 	"SphinxSearch" => array(
-		"path"   => "SphinxFullTextSearch/SphinxSearch",
+		"path"   => "SphinxSearch/SphinxSearch",
 		"active" => true
 	),
 	"Teaser" => array(
@@ -621,13 +628,6 @@ $extensions = array(
 		"active" => true,
 		"init" 	 => array(
 			function(){UIDrawer::SetupUIDrawer();}
-		)
-	),
-	"UserPreferences" => array(
-		"path"   => "UserPreferences/UserPreferences",
-		"active" => true,
-		"init"	 => array(
-			function(){UserPreferencesSetup::SetupUserPreferences();}
 		)
 	),
 	"VarnishCache" => array(

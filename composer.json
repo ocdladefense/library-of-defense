@@ -21,7 +21,7 @@
 		"ocdladefense/mw-wikilog":"~1.0",
 		"ocdladefense/mw-wikilog-ocdla":"~1.0",
 		"ocdladefense/mw-no-title":"~1.0",
-		"ocdladefense/mw-user-preferences":"~1.0"
+		"ocdladefense/mw-personal-urls":"~1.0"
     },
     "config": {
     	"preferred-install": {
@@ -30,27 +30,27 @@
     },
     "extra": {
     	"installer-paths": {
-    	"extensions/OAuth":["ocdladefense/mw-oauth"],
-		"extensions/AccessBooksOnline":["ocdladefense/mw-access-books-online"],
-		"extensions/AccessWhitelistedNamespaces":["ocdladefense/mw-access-whitelisted-namespaces"],
-		"extensions/Clickpdx":["ocdladefense/mw-clickpdx"],
-		"extensions/ClickpdxJavascriptFramework":["ocdladefense/mw-clickpdx-js-framework"],
-		"extensions/ContactForm":["ocdladefense/mw-contact-form"],
-		"extensions/LinkManager":["ocdladefense/mw-link-manager"],
-		"extensions/OcdlaJsIndexer":["ocdladefense/mw-ocdla-js-indexer"],
-		"extensions/PhpMail":["ocdladefense/mw-php-mail"],
-		"extensions/PwaOcdla":["ocdladefense/mw-pwa-ocdla"],
-		"extensions/RegistrationForm":["ocdladefense/mw-registration-form"],
-		"extensions/SearchOcdla":["ocdladefense/mw-search-ocdla"],
-		"extensions/SphinxSearch":["ocdladefense/mw-sphinx-search"],
-		"extensions/Teaser":["ocdladefense/mw-teaser"],
-		"extensions/UIFixedNav":["ocdladefense/mw-ui-fixed-nav"],
-		"extensions/UIDrawer":["ocdladefense/mw-ui-drawer"],
-		"extensions/VarnishCache":["ocdladefense/mw-varnish-cache"],
-		"extensions/Wikilog":["ocdladefense/mw-wikilog"],
-		"extensions/WikilogOcdla":["ocdladefense/mw-wikilog-ocdla"],
-		"extensions/NoTitle":["ocdladefense/mw-no-title"],
-		"extensions/UserPreferences":["ocdladefense/mw-user-preferences"]
+			"extensions/OAuth":["ocdladefense/mw-oauth"],
+			"extensions/AccessBooksOnline":["ocdladefense/mw-access-books-online"],
+			"extensions/AccessWhitelistedNamespaces":["ocdladefense/mw-access-whitelisted-namespaces"],
+			"extensions/Clickpdx":["ocdladefense/mw-clickpdx"],
+			"extensions/ClickpdxJavascriptFramework":["ocdladefense/mw-clickpdx-js-framework"],
+			"extensions/ContactForm":["ocdladefense/mw-contact-form"],
+			"extensions/LinkManager":["ocdladefense/mw-link-manager"],
+			"extensions/OcdlaJsIndexer":["ocdladefense/mw-ocdla-js-indexer"],
+			"extensions/PhpMail":["ocdladefense/mw-php-mail"],
+			"extensions/PwaOcdla":["ocdladefense/mw-pwa-ocdla"],
+			"extensions/RegistrationForm":["ocdladefense/mw-registration-form"],
+			"extensions/SearchOcdla":["ocdladefense/mw-search-ocdla"],
+			"extensions/SphinxSearch":["ocdladefense/mw-sphinx-search"],
+			"extensions/Teaser":["ocdladefense/mw-teaser"],
+			"extensions/UIFixedNav":["ocdladefense/mw-ui-fixed-nav"],
+			"extensions/UIDrawer":["ocdladefense/mw-ui-drawer"],
+			"extensions/VarnishCache":["ocdladefense/mw-varnish-cache"],
+			"extensions/Wikilog":["ocdladefense/mw-wikilog"],
+			"extensions/WikilogOcdla":["ocdladefense/mw-wikilog-ocdla"],
+			"extensions/NoTitle":["ocdladefense/mw-no-title"],
+			"extensions/PersonalUrls":["ocdladefense/mw-personal-urls"]
     	}
     }
 }
