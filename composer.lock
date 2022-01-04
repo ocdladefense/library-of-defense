@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e0b0fda18413254279773e6cebe42243",
+    "content-hash": "02c14b82703f66ee65cc3df82890f1ae",
     "packages": [
         {
             "name": "clickpdx/services",
@@ -485,16 +485,16 @@
         },
         {
             "name": "ocdladefense/mw-oauth",
-            "version": "v1.0.8",
+            "version": "v1.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-oauth.git",
-                "reference": "844aedbbacab80706b897fc210346ca1398db801"
+                "reference": "ff9d8e5594592cbed6843b69faa04b76f0639fd9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-oauth/zipball/844aedbbacab80706b897fc210346ca1398db801",
-                "reference": "844aedbbacab80706b897fc210346ca1398db801",
+                "url": "https://api.github.com/repos/ocdladefense/mw-oauth/zipball/ff9d8e5594592cbed6843b69faa04b76f0639fd9",
+                "reference": "ff9d8e5594592cbed6843b69faa04b76f0639fd9",
                 "shasum": ""
             },
             "require": {
@@ -507,9 +507,9 @@
             "description": "A mediawiki extension for OAuth.",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-oauth/issues",
-                "source": "https://github.com/ocdladefense/mw-oauth/tree/v1.0.8"
+                "source": "https://github.com/ocdladefense/mw-oauth/tree/v1.0.9"
             },
-            "time": "2021-12-23T00:19:45+00:00"
+            "time": "2022-01-03T23:18:35+00:00"
         },
         {
             "name": "ocdladefense/mw-ocdla-js-indexer",
@@ -532,6 +532,28 @@
                 "source": "https://github.com/ocdladefense/mw-ocdla-js-indexer/tree/v1.0"
             },
             "time": "2021-11-24T17:25:04+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-personal-links",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-personal-links.git",
+                "reference": "132f5ada52b4d46fec3723d589f9341590ab21aa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-personal-links/zipball/132f5ada52b4d46fec3723d589f9341590ab21aa",
+                "reference": "132f5ada52b4d46fec3723d589f9341590ab21aa",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-personal-links/issues",
+                "source": "https://github.com/ocdladefense/mw-personal-links/tree/v1.0.0"
+            },
+            "time": "2022-01-04T19:44:34+00:00"
         },
         {
             "name": "ocdladefense/mw-php-mail",
@@ -622,26 +644,70 @@
             "time": "2021-12-17T18:02:40+00:00"
         },
         {
-            "name": "ocdladefense/mw-sphinx-search",
-            "version": "v1.2.0",
+            "name": "ocdladefense/mw-skin-lod",
+            "version": "dev-development",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ocdladefense/mw-sphinx-search.git",
-                "reference": "7d254f72b4b9270ed35df0342e51af36ad6851ce"
+                "url": "https://github.com/ocdladefense/mw-skin-lod.git",
+                "reference": "956ff16bb0136c9ff0df74a6c9e42c378b85286b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-sphinx-search/zipball/7d254f72b4b9270ed35df0342e51af36ad6851ce",
-                "reference": "7d254f72b4b9270ed35df0342e51af36ad6851ce",
+                "url": "https://api.github.com/repos/ocdladefense/mw-skin-lod/zipball/956ff16bb0136c9ff0df74a6c9e42c378b85286b",
+                "reference": "956ff16bb0136c9ff0df74a6c9e42c378b85286b",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-skin-lod/issues",
+                "source": "https://github.com/ocdladefense/mw-skin-lod/tree/development"
+            },
+            "time": "2022-01-04T22:15:18+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-skin-ocdla",
+            "version": "dev-development",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-skin-ocdla.git",
+                "reference": "4d836e9082cf860429e2299ef93f89caee3eda4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-skin-ocdla/zipball/4d836e9082cf860429e2299ef93f89caee3eda4d",
+                "reference": "4d836e9082cf860429e2299ef93f89caee3eda4d",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-skin-ocdla/issues",
+                "source": "https://github.com/ocdladefense/mw-skin-ocdla/tree/development"
+            },
+            "time": "2022-01-04T20:06:46+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-sphinx-search",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-sphinx-search.git",
+                "reference": "3c640230e5f35f0a33d580dd1979f2ee5d4a646e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-sphinx-search/zipball/3c640230e5f35f0a33d580dd1979f2ee5d4a646e",
+                "reference": "3c640230e5f35f0a33d580dd1979f2ee5d4a646e",
                 "shasum": ""
             },
             "type": "wordpress-theme",
             "notification-url": "https://packagist.org/downloads/",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-sphinx-search/issues",
-                "source": "https://github.com/ocdladefense/mw-sphinx-search/tree/v1.2.0"
+                "source": "https://github.com/ocdladefense/mw-sphinx-search/tree/v1.2"
             },
-            "time": "2021-12-15T21:28:30+00:00"
+            "time": "2022-01-04T04:15:19+00:00"
         },
         {
             "name": "ocdladefense/mw-teaser",
@@ -708,28 +774,6 @@
                 "source": "https://github.com/ocdladefense/mw-ui-fixed-nav/tree/v1.0"
             },
             "time": "2021-11-24T18:33:36+00:00"
-        },
-        {
-            "name": "ocdladefense/mw-user-preferences",
-            "version": "v1.0.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ocdladefense/mw-user-preferences.git",
-                "reference": "c7385d2d808aae7148d108dc735a36385a3b3307"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-user-preferences/zipball/c7385d2d808aae7148d108dc735a36385a3b3307",
-                "reference": "c7385d2d808aae7148d108dc735a36385a3b3307",
-                "shasum": ""
-            },
-            "type": "wordpress-theme",
-            "notification-url": "https://packagist.org/downloads/",
-            "support": {
-                "issues": "https://github.com/ocdladefense/mw-user-preferences/issues",
-                "source": "https://github.com/ocdladefense/mw-user-preferences/tree/v1.0.4"
-            },
-            "time": "2021-12-24T18:39:32+00:00"
         },
         {
             "name": "ocdladefense/mw-varnish-cache",
@@ -802,7 +846,9 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "clickpdx/services": 20
+        "clickpdx/services": 20,
+        "ocdladefense/mw-skin-lod": 20,
+        "ocdladefense/mw-skin-ocdla": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

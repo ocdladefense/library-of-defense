@@ -43,5 +43,5 @@ header('Content-Type: application/json');
 
 
 
-$personalLinks = new AuthOcdlaPersonalLinksManager($ocdlagPersonalLinksSettings);
+$personalLinks = new PersonalLinksManager();
 print $personalLinks->toJson();

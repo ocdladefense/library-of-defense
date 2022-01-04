@@ -46,6 +46,7 @@ profile_log.txt
 /extensions/NoTitle/
 /extensions/OAuth/
 /extensions/OcdlaJsIndexer/
+/extensions/PersonalLinks/
 /extensions/PhpMail/
 /extensions/PwaOcdla/
 /extensions/RegistrationForm/
@@ -54,10 +55,14 @@ profile_log.txt
 /extensions/Teaser/
 /extensions/UIDrawer/
 /extensions/UIFixedNav/
-/extensions/UserPreferences/
 /extensions/VarnishCache/
 /extensions/Wikilog/
 /extensions/WikilogOcdla/
+
+
+## Skins that are sub-repositories (Soon to be managed by composer)
+/skins/Ocdla/
+/skins/lod/
 
 
 
