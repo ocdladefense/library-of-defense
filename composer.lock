@@ -649,12 +649,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-skin-lod.git",
-                "reference": "cbd4db065b23caa6b8d1ca0ce67d7e567ad5c410"
+                "reference": "956ff16bb0136c9ff0df74a6c9e42c378b85286b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-skin-lod/zipball/cbd4db065b23caa6b8d1ca0ce67d7e567ad5c410",
-                "reference": "cbd4db065b23caa6b8d1ca0ce67d7e567ad5c410",
+                "url": "https://api.github.com/repos/ocdladefense/mw-skin-lod/zipball/956ff16bb0136c9ff0df74a6c9e42c378b85286b",
+                "reference": "956ff16bb0136c9ff0df74a6c9e42c378b85286b",
                 "shasum": ""
             },
             "type": "wordpress-theme",
@@ -663,7 +663,7 @@
                 "issues": "https://github.com/ocdladefense/mw-skin-lod/issues",
                 "source": "https://github.com/ocdladefense/mw-skin-lod/tree/development"
             },
-            "time": "2022-01-04T19:55:50+00:00"
+            "time": "2022-01-04T22:15:18+00:00"
         },
         {
             "name": "ocdladefense/mw-skin-ocdla",
