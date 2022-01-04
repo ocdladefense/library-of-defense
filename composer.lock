@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3af093c9a39ed41fd17da384fc8bddba",
+    "content-hash": "02c14b82703f66ee65cc3df82890f1ae",
     "packages": [
         {
             "name": "clickpdx/services",
@@ -644,6 +644,50 @@
             "time": "2021-12-17T18:02:40+00:00"
         },
         {
+            "name": "ocdladefense/mw-skin-lod",
+            "version": "dev-development",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-skin-lod.git",
+                "reference": "cbd4db065b23caa6b8d1ca0ce67d7e567ad5c410"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-skin-lod/zipball/cbd4db065b23caa6b8d1ca0ce67d7e567ad5c410",
+                "reference": "cbd4db065b23caa6b8d1ca0ce67d7e567ad5c410",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-skin-lod/issues",
+                "source": "https://github.com/ocdladefense/mw-skin-lod/tree/development"
+            },
+            "time": "2022-01-04T19:55:50+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-skin-ocdla",
+            "version": "dev-development",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-skin-ocdla.git",
+                "reference": "4d836e9082cf860429e2299ef93f89caee3eda4d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-skin-ocdla/zipball/4d836e9082cf860429e2299ef93f89caee3eda4d",
+                "reference": "4d836e9082cf860429e2299ef93f89caee3eda4d",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-skin-ocdla/issues",
+                "source": "https://github.com/ocdladefense/mw-skin-ocdla/tree/development"
+            },
+            "time": "2022-01-04T20:06:46+00:00"
+        },
+        {
             "name": "ocdladefense/mw-sphinx-search",
             "version": "v1.2",
             "source": {
@@ -802,7 +846,9 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "clickpdx/services": 20
+        "clickpdx/services": 20,
+        "ocdladefense/mw-skin-lod": 20,
+        "ocdladefense/mw-skin-ocdla": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -21,7 +21,9 @@
 		"ocdladefense/mw-wikilog":"~1.0",
 		"ocdladefense/mw-wikilog-ocdla":"~1.0",
 		"ocdladefense/mw-no-title":"~1.0",
-		"ocdladefense/mw-personal-links":"~1.0"
+		"ocdladefense/mw-personal-links":"~1.0",
+		"ocdladefense/mw-skin-lod":"dev-development",
+		"ocdladefense/mw-skin-ocdla":"dev-development"
     },
     "config": {
     	"preferred-install": {
@@ -50,7 +52,9 @@
 			"extensions/Wikilog":["ocdladefense/mw-wikilog"],
 			"extensions/WikilogOcdla":["ocdladefense/mw-wikilog-ocdla"],
 			"extensions/NoTitle":["ocdladefense/mw-no-title"],
-			"extensions/PersonalLinks":["ocdladefense/mw-personal-links"]
+			"extensions/PersonalLinks":["ocdladefense/mw-personal-links"],
+			"skins/lod":["ocdladefense/mw-skin-lod"],
+			"skins/ocdla":["ocdladefense/mw-skin-ocdla"]
     	}
     }
 }
