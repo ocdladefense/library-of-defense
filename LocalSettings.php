@@ -138,10 +138,6 @@ $wgParserCacheType = CACHE_NONE; //isset($ocdlaParserCacheType) ? $ocdlaParserCa
 # http://www.mediawiki.org/wiki/Manual:$wgCachePages
 $wgCachePages = false;
 
-// set to false to retain wiki's own login/logout
-// if ReplaceLogin is true, set these URLs to appropriate targets:
-# $wgPersonalUrls_ReplaceLogin 		= false; // Now located in SiteSpecificOverrides
-$wgPersonalUrls_HostRedirect = "{$wgPersonalUrls_HostRedirectProtocol}://".$subdomain . ".ocdla.org";
 $wgVarnishHost = "207.189.130.196";
 
 
@@ -568,10 +564,10 @@ $extensions = array(
 		"active" => false
 	),
 	"PersonalUrls" => array(
-		"path"   => "PersonalUrls/PersonalUrls",
+		"path"   => "PersonalLinks/PersonalLinks",
 		"active" => true,
 		"init"	 => array(
-			function(){PersonalUrls::setup();}
+			function(){PersonalLinksHooks::setup();}
 		)
 	),
 	"php_mail" => array(

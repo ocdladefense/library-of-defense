@@ -43,5 +43,5 @@ header('Content-Type: application/json');
 
 
 
-$personalLinks = new PersonalLinksManager($ocdlagPersonalLinksSettings);
+$personalLinks = new PersonalLinksManager();
 print $personalLinks->toJson();
