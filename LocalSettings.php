@@ -563,7 +563,7 @@ $extensions = array(
 		"path"   => "ParserFunctions/ParserFunctions",
 		"active" => false
 	),
-	"PersonalUrls" => array(
+	"PersonalLinks" => array(
 		"path"   => "PersonalLinks/PersonalLinks",
 		"active" => true,
 		"init"	 => array(
