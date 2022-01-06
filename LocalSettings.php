@@ -576,7 +576,7 @@ $extensions = array(
 	),
 	"PwaOcdla" => array(
 		"path"   => "PwaOcdla/PwaOcdla",
-		"active" => true,
+		"active" => false,
 		"init" 	 => array(
 			function(){PwaOcdla::SetupPwaOcdla();}
 		)
