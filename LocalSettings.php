@@ -54,7 +54,7 @@ $wgServer = "{$ocdlaProtocol}://" . (empty($subdomain) ? $domain : ("$subdomain.
 
 
 # Cookie settings.
-$wgCookieDomain = $subdomain . "." $domain;
+$wgCookieDomain = $subdomain . "." . $domain;
 
 $wgCookiePrefix = $cookiePrefix;
 
