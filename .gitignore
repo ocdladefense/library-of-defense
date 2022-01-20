@@ -39,6 +39,8 @@ profile_log.txt
 # extensions/
 /extensions/AccessBooksOnline/
 /extensions/AccessWhitelistedNamespaces/
+/extensions/BooksOnline/
+/extensions/BooksOnlineOcdla/
 /extensions/CaseReviews/
 /extensions/Clickpdx/
 /extensions/ClickpdxJavascriptFramework/
