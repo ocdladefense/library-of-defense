@@ -507,7 +507,7 @@ $extensions = array(
 	),
 	"CaseReviews" => array(
 		"path"   => "CaseReviews/CaseReviews",
-		"active" => true
+		"active" => false
 	),
 	"Cite" => array(
 		"path"   => "Cite/Cite",
