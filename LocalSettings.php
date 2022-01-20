@@ -497,6 +497,14 @@ $extensions = array(
 			//function(){AuthOcdlaSetup::OverrideMWLocalClass('LoginForm','SpecialUserlogin');}
 		)
 	),
+	"BooksOnline" => array(
+		"path"   => "BooksOnline/BooksOnlineSetup",
+		"active" => true
+	),
+	"BooksOnlineOcdla" => array(
+		"path"   => "BooksOnlineOcdla/BooksOnlineOcdla",
+		"active" => true
+	),
 	"Cite" => array(
 		"path"   => "Cite/Cite",
 		"active" => true

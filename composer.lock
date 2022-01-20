@@ -314,16 +314,16 @@
         },
         {
             "name": "ocdladefense/mw-access-books-online",
-            "version": "v1.0.13",
+            "version": "v1.0.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-access-books-online.git",
-                "reference": "f60b1039b94cf8d39c6ac116b3b2e19f0c1c22ce"
+                "reference": "fee71fe1c9257189b1be285da44e0a64a5a01480"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-access-books-online/zipball/f60b1039b94cf8d39c6ac116b3b2e19f0c1c22ce",
-                "reference": "f60b1039b94cf8d39c6ac116b3b2e19f0c1c22ce",
+                "url": "https://api.github.com/repos/ocdladefense/mw-access-books-online/zipball/fee71fe1c9257189b1be285da44e0a64a5a01480",
+                "reference": "fee71fe1c9257189b1be285da44e0a64a5a01480",
                 "shasum": ""
             },
             "require": {
@@ -341,9 +341,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-access-books-online/issues",
-                "source": "https://github.com/ocdladefense/mw-access-books-online/tree/v1.0.13"
+                "source": "https://github.com/ocdladefense/mw-access-books-online/tree/v1.0.14"
             },
-            "time": "2022-01-07T20:43:52+00:00"
+            "time": "2022-01-19T20:08:23+00:00"
         },
         {
             "name": "ocdladefense/mw-access-whitelisted-namespaces",
@@ -485,16 +485,16 @@
         },
         {
             "name": "ocdladefense/mw-oauth",
-            "version": "v1.0.14",
+            "version": "v1.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-oauth.git",
-                "reference": "cad5e4a3ad5e0d5c5838d9a838ddff5b3aab9fdc"
+                "reference": "707a6575713d35ce12950d171dc399de727294fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-oauth/zipball/cad5e4a3ad5e0d5c5838d9a838ddff5b3aab9fdc",
-                "reference": "cad5e4a3ad5e0d5c5838d9a838ddff5b3aab9fdc",
+                "url": "https://api.github.com/repos/ocdladefense/mw-oauth/zipball/707a6575713d35ce12950d171dc399de727294fb",
+                "reference": "707a6575713d35ce12950d171dc399de727294fb",
                 "shasum": ""
             },
             "require": {
@@ -507,9 +507,9 @@
             "description": "A mediawiki extension for OAuth.",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-oauth/issues",
-                "source": "https://github.com/ocdladefense/mw-oauth/tree/v1.0.14"
+                "source": "https://github.com/ocdladefense/mw-oauth/tree/v1.0.15"
             },
-            "time": "2022-01-07T20:35:33+00:00"
+            "time": "2022-01-07T20:50:42+00:00"
         },
         {
             "name": "ocdladefense/mw-ocdla-js-indexer",
