@@ -501,10 +501,6 @@ $extensions = array(
 		"path"   => "BooksOnline/BooksOnlineSetup",
 		"active" => true
 	),
-	"BooksOnlineOcdla" => array(
-		"path"   => "BooksOnlineOcdla/BooksOnlineOcdla",
-		"active" => true
-	),
 	"CaseReviews" => array(
 		"path"   => "CaseReviews/CaseReviews",
 		"active" => false
