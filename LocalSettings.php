@@ -404,7 +404,7 @@ $wgAvailableRights[] = 'edit-subscriptions';
 
 $wgGroupPermissions['*']['read'] = false;
 $wgGroupPermissions['*']['edit'] = false; // MediaWiki 1.5+ Settings
-$wgGroupPermissions['user']['edit'] = true;
+$wgGroupPermissions['user']['edit'] = false;
 $wgGroupPermissions['pageeditors']['edit'] = true;
 $wgGroupPermissions['legcomm']['read-legcomm'] = true;
 $wgGroupPermissions['subscriber']['read-subscriptions']	= true;
@@ -489,6 +489,10 @@ $extensions = array(
 		"path"   => "AccessBooksOnline/AccessBooksOnline",
 		"active" => true
 	),
+	"BooksOnline" => array(
+		"path"   => "BooksOnline/BooksOnlineSetup",
+		"active" => true
+	),
 	"BooksOnlineOcdla" => array(
 		"path"   => "BooksOnlineOcdla/BooksOnlineOcdla",
 		"active" => false,
@@ -497,13 +501,9 @@ $extensions = array(
 			//function(){AuthOcdlaSetup::OverrideMWLocalClass('LoginForm','SpecialUserlogin');}
 		)
 	),
-	"BooksOnline" => array(
-		"path"   => "BooksOnline/BooksOnlineSetup",
-		"active" => true
-	),
 	"CaseReviews" => array(
 		"path"   => "CaseReviews/CaseReviews",
-		"active" => false
+		"active" => true
 	),
 	"Cite" => array(
 		"path"   => "Cite/Cite",

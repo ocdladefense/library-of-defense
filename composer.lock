@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02c14b82703f66ee65cc3df82890f1ae",
+    "content-hash": "133467df7aab1bb341586a8dcc4ee61d",
     "packages": [
         {
             "name": "clickpdx/services",
@@ -209,6 +209,42 @@
             "time": "2021-09-13T08:19:44+00:00"
         },
         {
+            "name": "ocdladefense/lib-database",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/lib-database.git",
+                "reference": "dcfb32be30466ffb584a682cd6a4bd4a96345448"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/lib-database/zipball/dcfb32be30466ffb584a682cd6a4bd4a96345448",
+                "reference": "dcfb32be30466ffb584a682cd6a4bd4a96345448",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "mysql/",
+                    "salesforce/"
+                ],
+                "files": [
+                    "mysql/Database.php",
+                    "QueryBuilderBase.php",
+                    "DbException.php",
+                    "IDbResult.php",
+                    "QueryException.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "A PHP databse library.",
+            "support": {
+                "issues": "https://github.com/ocdladefense/lib-database/issues",
+                "source": "https://github.com/ocdladefense/lib-database/tree/v1.0.2"
+            },
+            "time": "2022-01-26T22:22:03+00:00"
+        },
+        {
             "name": "ocdladefense/lib-http",
             "version": "v3.0.1",
             "source": {
@@ -281,16 +317,16 @@
         },
         {
             "name": "ocdladefense/lib-salesforce-rest-api",
-            "version": "v3.5.4",
+            "version": "v3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/lib-salesforce-rest-api.git",
-                "reference": "b0841ae36e191fa8f779633ef0e9bd9ac56bf83e"
+                "reference": "c1f762c9dd5ad6c4fbd0f37e7aa860c6237924bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/lib-salesforce-rest-api/zipball/b0841ae36e191fa8f779633ef0e9bd9ac56bf83e",
-                "reference": "b0841ae36e191fa8f779633ef0e9bd9ac56bf83e",
+                "url": "https://api.github.com/repos/ocdladefense/lib-salesforce-rest-api/zipball/c1f762c9dd5ad6c4fbd0f37e7aa860c6237924bc",
+                "reference": "c1f762c9dd5ad6c4fbd0f37e7aa860c6237924bc",
                 "shasum": ""
             },
             "require": {
@@ -308,9 +344,9 @@
             "description": "OCDLA plugin accesses.",
             "support": {
                 "issues": "https://github.com/ocdladefense/lib-salesforce-rest-api/issues",
-                "source": "https://github.com/ocdladefense/lib-salesforce-rest-api/tree/v3.5.4"
+                "source": "https://github.com/ocdladefense/lib-salesforce-rest-api/tree/v3.6"
             },
-            "time": "2021-11-11T23:07:38+00:00"
+            "time": "2022-01-21T21:00:07+00:00"
         },
         {
             "name": "ocdladefense/mw-access-books-online",
@@ -372,6 +408,96 @@
                 "source": "https://github.com/ocdladefense/mw-access-whitelisted-namespaces/tree/v1.0.1"
             },
             "time": "2022-01-06T21:46:42+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-books-online",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-books-online.git",
+                "reference": "ed6a15dba2ae14449a2acf03bdb243c737707c44"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-books-online/zipball/ed6a15dba2ae14449a2acf03bdb243c737707c44",
+                "reference": "ed6a15dba2ae14449a2acf03bdb243c737707c44",
+                "shasum": ""
+            },
+            "require": {
+                "ocdladefense/lib-http": "~3.0",
+                "ocdladefense/lib-oauth-config": "~2.0",
+                "ocdladefense/lib-salesforce-rest-api": "~3.0"
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Jose Bernal",
+                    "email": "jbernal.web.dev@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-books-online/issues",
+                "source": "https://github.com/ocdladefense/mw-books-online/tree/v1.0"
+            },
+            "time": "2022-01-23T03:00:13+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-books-online-ocdla",
+            "version": "v1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-books-online-ocdla.git",
+                "reference": "c994c09831325c28dad53ab2b8f07c8586ef3719"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-books-online-ocdla/zipball/c994c09831325c28dad53ab2b8f07c8586ef3719",
+                "reference": "c994c09831325c28dad53ab2b8f07c8586ef3719",
+                "shasum": ""
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Jose Bernal",
+                    "email": "jbernal.web.dev@gmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-books-online-ocdla/issues",
+                "source": "https://github.com/ocdladefense/mw-books-online-ocdla/tree/v1.1"
+            },
+            "time": "2022-01-23T03:12:52+00:00"
+        },
+        {
+            "name": "ocdladefense/mw-car",
+            "version": "v1.0.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ocdladefense/mw-car.git",
+                "reference": "6ba0c0112e4a64ac1c6e0d20e4d06c9606c21821"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ocdladefense/mw-car/zipball/6ba0c0112e4a64ac1c6e0d20e4d06c9606c21821",
+                "reference": "6ba0c0112e4a64ac1c6e0d20e4d06c9606c21821",
+                "shasum": ""
+            },
+            "require": {
+                "ocdladefense/lib-database": "~1.0",
+                "ocdladefense/lib-http": "~3.0",
+                "ocdladefense/lib-oauth-config": "~2.0",
+                "ocdladefense/lib-salesforce-rest-api": "~3.0"
+            },
+            "type": "wordpress-theme",
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "A MediaWiki extension for showing recently published case reviews",
+            "support": {
+                "issues": "https://github.com/ocdladefense/mw-car/issues",
+                "source": "https://github.com/ocdladefense/mw-car/tree/v1.0.6"
+            },
+            "time": "2022-01-26T22:30:15+00:00"
         },
         {
             "name": "ocdladefense/mw-clickpdx",
@@ -733,25 +859,25 @@
         },
         {
             "name": "ocdladefense/mw-ui-drawer",
-            "version": "v1.0.2",
+            "version": "v1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-ui-drawer.git",
-                "reference": "cb3410109a95020853f0368aa4d8aa59fc9816c0"
+                "reference": "858ce8cca956a09841624b9f815b0068ac10d589"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-ui-drawer/zipball/cb3410109a95020853f0368aa4d8aa59fc9816c0",
-                "reference": "cb3410109a95020853f0368aa4d8aa59fc9816c0",
+                "url": "https://api.github.com/repos/ocdladefense/mw-ui-drawer/zipball/858ce8cca956a09841624b9f815b0068ac10d589",
+                "reference": "858ce8cca956a09841624b9f815b0068ac10d589",
                 "shasum": ""
             },
             "type": "wordpress-theme",
             "notification-url": "https://packagist.org/downloads/",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-ui-drawer/issues",
-                "source": "https://github.com/ocdladefense/mw-ui-drawer/tree/v1.0.2"
+                "source": "https://github.com/ocdladefense/mw-ui-drawer/tree/v1.1"
             },
-            "time": "2022-01-07T20:24:04+00:00"
+            "time": "2022-01-22T21:17:49+00:00"
         },
         {
             "name": "ocdladefense/mw-ui-fixed-nav",
