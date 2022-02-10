@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "133467df7aab1bb341586a8dcc4ee61d",
+    "content-hash": "71c2909adf1af401e6140e29d1832c32",
     "packages": [
         {
             "name": "clickpdx/services",
@@ -472,16 +472,16 @@
         },
         {
             "name": "ocdladefense/mw-car",
-            "version": "v1.0.6",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-car.git",
-                "reference": "6ba0c0112e4a64ac1c6e0d20e4d06c9606c21821"
+                "reference": "5410fd2d2c2048a162cc3f4bb922077b6e796d5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-car/zipball/6ba0c0112e4a64ac1c6e0d20e4d06c9606c21821",
-                "reference": "6ba0c0112e4a64ac1c6e0d20e4d06c9606c21821",
+                "url": "https://api.github.com/repos/ocdladefense/mw-car/zipball/5410fd2d2c2048a162cc3f4bb922077b6e796d5f",
+                "reference": "5410fd2d2c2048a162cc3f4bb922077b6e796d5f",
                 "shasum": ""
             },
             "require": {
@@ -495,9 +495,9 @@
             "description": "A MediaWiki extension for showing recently published case reviews",
             "support": {
                 "issues": "https://github.com/ocdladefense/mw-car/issues",
-                "source": "https://github.com/ocdladefense/mw-car/tree/v1.0.6"
+                "source": "https://github.com/ocdladefense/mw-car/tree/v2.0.0"
             },
-            "time": "2022-01-26T22:30:15+00:00"
+            "time": "2022-02-10T19:25:56+00:00"
         },
         {
             "name": "ocdladefense/mw-clickpdx",
@@ -775,12 +775,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ocdladefense/mw-skin-lod.git",
-                "reference": "75ce78ff722a8424019df376a4cc71125c3a7853"
+                "reference": "a884943bb97b229b10f2a98310db9698bdb9ac84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ocdladefense/mw-skin-lod/zipball/75ce78ff722a8424019df376a4cc71125c3a7853",
-                "reference": "75ce78ff722a8424019df376a4cc71125c3a7853",
+                "url": "https://api.github.com/repos/ocdladefense/mw-skin-lod/zipball/a884943bb97b229b10f2a98310db9698bdb9ac84",
+                "reference": "a884943bb97b229b10f2a98310db9698bdb9ac84",
                 "shasum": ""
             },
             "type": "wordpress-theme",
@@ -789,7 +789,7 @@
                 "issues": "https://github.com/ocdladefense/mw-skin-lod/issues",
                 "source": "https://github.com/ocdladefense/mw-skin-lod/tree/development"
             },
-            "time": "2022-01-07T20:19:31+00:00"
+            "time": "2022-02-08T19:01:49+00:00"
         },
         {
             "name": "ocdladefense/mw-skin-ocdla",
