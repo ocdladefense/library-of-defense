@@ -61,6 +61,7 @@ profile_log.txt
 /extensions/VarnishCache/
 /extensions/Wikilog/
 /extensions/WikilogOcdla/
+/extensions/FeaturedContent/
 
 
 ## Skins that are sub-repositories (Soon to be managed by composer)

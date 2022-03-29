@@ -1,12 +1,14 @@
 {
+	"minimum-stability":"dev",
     "require": {
         "clickpdx/services": "@dev",
         "ocdladefense/mw-oauth": "~1.0",
 		"ocdladefense/mw-access-books-online":"~1.0",
 		"ocdladefense/mw-access-whitelisted-namespaces":"~1.0",
-		"ocdladefense/mw-books-online":"~1.0",
+		"ocdladefense/mw-books-online":"~2.0",
 		"ocdladefense/mw-books-online-ocdla":"~1.0",
 		"ocdladefense/mw-car":"~2.0",
+		"ocdladefense/mw-featured-content":"dev-main",
 		"ocdladefense/mw-clickpdx":"~1.0",
 		"ocdladefense/mw-clickpdx-js-framework":"~1.0",
 		"ocdladefense/mw-contact-form":"~1.0",
@@ -42,6 +44,7 @@
 			"extensions/BooksOnline":["ocdladefense/mw-books-online"],
 			"extensions/BooksOnlineOcdla":["ocdladefense/mw-books-online-ocdla"],
 			"extensions/CaseReviews":["ocdladefense/mw-car"],
+			"extensions/FeaturedContent":["ocdladefense/mw-featured-content"],
 			"extensions/ClickpdxJavascriptFramework":["ocdladefense/mw-clickpdx-js-framework"],
 			"extensions/ContactForm":["ocdladefense/mw-contact-form"],
 			"extensions/LinkManager":["ocdladefense/mw-link-manager"],
