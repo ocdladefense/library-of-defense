@@ -505,6 +505,10 @@ $extensions = array(
 		"path"   => "CaseReviews/CaseReviews",
 		"active" => true
 	),
+	"FeaturedContent" => array(
+		"path"   => "FeaturedContent/FeaturedContent",
+		"active" => true
+	),
 	"Cite" => array(
 		"path"   => "Cite/Cite",
 		"active" => true
