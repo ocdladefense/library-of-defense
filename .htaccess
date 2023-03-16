@@ -108,3 +108,5 @@ AddType text/cache-manifest .appcache
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^(.*)$ index.php?title=$1 [PT,L,QSA]
 </IfModule>
+
+

@@ -232,6 +232,9 @@ define("NS_BLOG_TALK", 101);
 define("NS_BLOG_CASES",	102);
 define("NS_BLOG_CASES_TALK", 103);
 
+define("NS_LOCAL_PAGES",	140);
+define("NS_LOCAL_PAGES_TALK", 141);
+
 define("NS_LEGCOMM", 200);
 define("NS_LEGCOMM_TALK", 201);
 
@@ -279,49 +282,53 @@ define("NS_ALL",99999999);
 
 $wgExtraNamespaces = array(
 	
-	NS_PUBLIC        => "Public",
-	NS_PUBLIC_TALK	 => "Public_talk",
+	NS_PUBLIC 				=> "Public",
+	NS_PUBLIC_TALK			=> "Public_talk",
 
-	NS_DTN			 => "DUII_Trial_Notebook",
-	NS_DTN_TALK		 => "DUII_Trial_Notebook_talk",
+	NS_DTN					=> "DUII_Trial_Notebook",
+	NS_DTN_TALK				=> "DUII_Trial_Notebook_talk",
 	
-	NS_DNB			 => "DUII_Notebook",
-	NS_DNB_TALK		 => "DUII_Notebook_talk",
-	
-	NS_FSM			 => "Felony_Sentencing_in_Oregon",
-	NS_FSM_TALK		 => "Felony_Sentencing_in_Oregon_talk",
+	NS_DNB					=> "DUII_Notebook",
+	NS_DNB_TALK				=> "DUII_Notebook_talk",
 
-	NS_IM			 => "Investigators_Manual",
-	NS_IM_TALK		 => "Investigators_Manual_talk",
+	NS_LOCAL_PAGES			=> "Local_Pages",
+	NS_LOCAL_PAGES_TALK		=> "Local_Pages_talk",
 	
-	NS_MH			 => "Mental_Health_Manual",
-	NS_MH_TALK		 => "Mental_Health_Manual_talk",
+	NS_FSM			 		=> "Felony_Sentencing_in_Oregon",
+	NS_FSM_TALK		 		=> "Felony_Sentencing_in_Oregon_talk",
+
+	NS_IM			 		=> "Investigators_Manual",
+	NS_IM_TALK		 		=> "Investigators_Manual_talk",
 	
-	NS_PJ			 => "PostJudgment_Manual",
-	NS_PJ_TALK		 => "PostJudgment_Manual_talk",
+	NS_MH			 		=> "Mental_Health_Manual",
+	NS_MH_TALK		 		=> "Mental_Health_Manual_talk",
 	
-	NS_SE			 => "Scientific_Evidence_Manual",
-	NS_SE_TALK		 => "Scientific_Evidence_Manual_talk",
+	NS_PJ			 		=> "PostJudgment_Manual",
+	NS_PJ_TALK		 		=> "PostJudgment_Manual_talk",
 	
-	NS_SSM			 => "Search_and_Seizure",
-	NS_SSM_TALK		 => "Search_and_Seizure_talk", 
+	NS_SE			 		=> "Scientific_Evidence_Manual",
+	NS_SE_TALK				=> "Scientific_Evidence_Manual_talk",
 	
-	NS_SSMUP		 => "Search_and_Seizure_Updates",
-	NS_SSMUP_TALK	 => "Search_and_Seizure_talk",  
+	NS_SSM			 		=> "Search_and_Seizure",
+	NS_SSM_TALK		 		=> "Search_and_Seizure_talk", 
 	
-	NS_TNB			 => "Trial_Notebook", 
-	NS_TNB_TALK	     => "Trial_Notebook_talk",
+	NS_SSMUP		 		=> "Search_and_Seizure_Updates",
+	NS_SSMUP_TALK	 		=> "Search_and_Seizure_talk",  
 	
-	NS_SEXCASES		 => "Defending_Sex_Cases",
-	NS_SEXCASES_TALK => "Defending_Sex_Cases_talk",
+	NS_TNB			 		=> "Trial_Notebook", 
+	NS_TNB_TALK	     		=> "Trial_Notebook_talk",
 	
-	NS_VET			 => "Veterans_Manual",
-	NS_VET_TALK		 => "Veterans_Manual_talk"
+	NS_SEXCASES		 		=> "Defending_Sex_Cases",
+	NS_SEXCASES_TALK 		=> "Defending_Sex_Cases_talk",
+	
+	NS_VET			 		=> "Veterans_Manual",
+	NS_VET_TALK		 		=> "Veterans_Manual_talk"
 );
 
 # https://www.mediawiki.org/wiki/Manual:Using_custom_namespaces
 $wgNamespaceAliases['DTN'] = NS_DTN;
 $wgNamespaceAliases['DNB'] = NS_DNB;
+$wgNamespaceAliases['LOCAL'] = NS_LOCAL;
 $wgNamespaceAliases['FSM'] = NS_FSM;
 $wgNamespaceAliases['IM'] = NS_IM;
 $wgNamespaceAliases['MH'] = NS_MH;
@@ -337,6 +344,7 @@ $wgNamespaceAliases['VET'] = NS_VET;
 $wgNamespacesToBeSearchedDefault = array(
 	NS_MAIN       => true,
 	NS_PUBLIC	  => true,
+	NS_LOCAL	  => true,
 	NS_DTN		  => true,
 	NS_DNB		  => true,
 	NS_FSM		  => true,
@@ -372,7 +380,6 @@ $wgWhitelistRead =  array(
 	"About the Library",
 	"Main Page",
 	"Special:UserLogin",
-	"Special:Contact Form",
 	"Special:RegistrationForm",
 	"Special:Register",
 	"Special:UserLogout",
@@ -382,7 +389,7 @@ $wgWhitelistRead =  array(
 	"Resources",
 	"Get Involved",
 	"How To Edit",
-	"OcdlaWebApp",
+	"OcdlaWebApp"  
 );
 
 #######################	END PAGE AND NAMESPACE ACCESS CONFIGURATIONS ###################################################
