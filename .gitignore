@@ -38,6 +38,7 @@ profile_log.txt
 #    we replace extensions management into composer.json file.
 # extensions/
 /extensions/AccessBooksOnline/
+/extensions/Analytics/
 /extensions/AccessWhitelistedNamespaces/
 /extensions/BooksOnline/
 /extensions/BooksOnlineOcdla/
