@@ -500,6 +500,10 @@ $extensions = array(
 		"path"   => "BooksOnline/BooksOnlineSetup",
 		"active" => true
 	),
+	"Analytics" => array(
+		"path"   => "Analytics/googleAnalytics",
+		"active" => true
+	),
 	"BooksOnlineOcdla" => array(
 		"path"   => "BooksOnlineOcdla/BooksOnlineOcdla",
 		"active" => false,
