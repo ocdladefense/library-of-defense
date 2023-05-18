@@ -389,7 +389,8 @@ $wgWhitelistRead =  array(
 	"Resources",
 	"Get Involved",
 	"How To Edit",
-	"OcdlaWebApp"  
+	"OcdlaWebApp",
+	"CLE"
 );
 
 #######################	END PAGE AND NAMESPACE ACCESS CONFIGURATIONS ###################################################
@@ -514,6 +515,10 @@ $extensions = array(
 	),
 	"CaseReviews" => array(
 		"path"   => "CaseReviews/CaseReviews",
+		"active" => true
+	),
+	"Cle" => array(
+		"path"   => "Cle/Cle",
 		"active" => true
 	),
 	"FeaturedContent" => array(
