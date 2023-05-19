@@ -1,6 +1,7 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/bootstrap.php';
+
 
 # See "DefaultSettings.php" for all possible settings, but only customize by setting in this file, or "SiteSpecificSettings.php".
 
@@ -515,6 +516,10 @@ $extensions = array(
 	),
 	"CaseReviews" => array(
 		"path"   => "CaseReviews/CaseReviews",
+		"active" => true
+	),
+	"Appserver" => array(
+		"path"   => "Appserver/Appserver",
 		"active" => true
 	),
 	"Cle" => array(
