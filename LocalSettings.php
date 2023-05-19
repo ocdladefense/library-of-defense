@@ -514,17 +514,17 @@ $extensions = array(
 			//function(){AuthOcdlaSetup::OverrideMWLocalClass('LoginForm','SpecialUserlogin');}
 		)
 	),
+	"Framework" => array(
+		"path"   => "Framework/Framework",
+		"active" => false
+	),
 	"CaseReviews" => array(
 		"path"   => "CaseReviews/CaseReviews",
 		"active" => true
 	),
-	"Appserver" => array(
-		"path"   => "Appserver/Appserver",
-		"active" => true
-	),
 	"Cle" => array(
 		"path"   => "Cle/Cle",
-		"active" => true
+		"active" => false
 	),
 	"FeaturedContent" => array(
 		"path"   => "FeaturedContent/FeaturedContent",
