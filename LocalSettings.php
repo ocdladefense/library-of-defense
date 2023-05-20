@@ -516,7 +516,7 @@ $extensions = array(
 	),
 	"Framework" => array(
 		"path"   => "Framework/Framework",
-		"active" => false
+		"active" => true
 	),
 	"CaseReviews" => array(
 		"path"   => "CaseReviews/CaseReviews",
@@ -524,7 +524,7 @@ $extensions = array(
 	),
 	"Cle" => array(
 		"path"   => "Cle/Cle",
-		"active" => false
+		"active" => true
 	),
 	"FeaturedContent" => array(
 		"path"   => "FeaturedContent/FeaturedContent",
