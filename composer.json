@@ -7,6 +7,8 @@
 		"ocdladefense/mw-access-whitelisted-namespaces":"~1.0",
 		"ocdladefense/mw-books-online":"~2.0",
 		"ocdladefense/mw-books-online-ocdla":"~1.0",
+		"ocdladefense/mw-php-framework":"dev-main",
+		"ocdladefense/mw-cle":"dev-main",
 		"ocdladefense/mw-car":"~2.0",
 		"ocdladefense/mw-featured-content":"dev-main",
 		"ocdladefense/mw-clickpdx":"~1.0",
@@ -38,6 +40,8 @@
     "extra": {
     	"installer-paths": {
 			"extensions/OAuth":["ocdladefense/mw-oauth"],
+			"extensions/Cle":["ocdladefense/mw-cle"],
+			"extensions/Framework":["ocdladefense/mw-php-framework"],
 			"extensions/AccessBooksOnline":["ocdladefense/mw-access-books-online"],
 			"extensions/AccessWhitelistedNamespaces":["ocdladefense/mw-access-whitelisted-namespaces"],
 			"extensions/Clickpdx":["ocdladefense/mw-clickpdx"],
