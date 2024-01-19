@@ -251,6 +251,9 @@ define("NS_DNB_TALK", 503);
 define("NS_FSM", 504);
 define("NS_FSM_TALK", 505);
 
+define("NS_FSM_2024", 506);
+define("NS_FSM_2024_TALK", 507);
+
 define("NS_IM",	508);
 define("NS_IM_TALK", 509);
 
@@ -298,6 +301,9 @@ $wgExtraNamespaces = array(
 	NS_FSM			 		=> "Felony_Sentencing_in_Oregon",
 	NS_FSM_TALK		 		=> "Felony_Sentencing_in_Oregon_talk",
 
+	NS_FSM_2024			 		=> "Felony_Sentencing_in_Oregon_2024",
+	NS_FSM_2024_TALK		 		=> "Felony_Sentencing_in_Oregon_2024talk",
+
 	NS_IM			 		=> "Investigators_Manual",
 	NS_IM_TALK		 		=> "Investigators_Manual_talk",
 	
@@ -331,6 +337,7 @@ $wgNamespaceAliases['DTN'] = NS_DTN;
 $wgNamespaceAliases['DNB'] = NS_DNB;
 $wgNamespaceAliases['LOCAL'] = NS_LOCAL;
 $wgNamespaceAliases['FSM'] = NS_FSM;
+$wgNamespaceAliases['FSM2024'] = NS_FSM_2024;
 $wgNamespaceAliases['IM'] = NS_IM;
 $wgNamespaceAliases['MH'] = NS_MH;
 $wgNamespaceAliases['PJ'] = NS_PJ;
